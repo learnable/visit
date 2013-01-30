@@ -22,13 +22,10 @@ module Visit
     end
 
     def create_visit_event
-      Rails.logger.debug "AMHERE create_visit_event: TODO"
-      return
-
-      if !VisitEvent.ignore? request.path
+      if !Visit::VisitEvent.ignore? request.path
 
         begin
-          ve = VisitEvent.create! \
+          ve = Visit::VisitEvent.create! \
             http_method: request.method,
             url: request.url,
             vid: get_visit_vid,
