@@ -1,0 +1,10 @@
+- don't hardcode 'users' as the 'users' table in the application - make it configurable
+
+- self.table_name shouldn't be necessary in the models
+
+- haven't figured out how to get rspec working yet
+
+- this gem needs a message queue to soften the current
+  write-on-every-read semantics
+
+Leni ...  Sun Feb  3 16:48:41 EST 2013
