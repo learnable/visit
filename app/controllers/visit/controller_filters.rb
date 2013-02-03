@@ -10,7 +10,7 @@ module Visit
     protected
 
     def create_visit_event path = nil
-      Visit::Arrival::create_visit_event \
+      Visit::Arrival::create_if_interesting \
         request: request,
         path: path,
         cookies: cookies,
@@ -30,7 +30,7 @@ module Visit
     end
 
     def on_every_request
-      Visit::Arrival::create_visit_event \
+      Visit::Arrival::create_if_interesting \
         request: request,
         cookies: cookies,
         session: session,
