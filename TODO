@@ -1,9 +1,6 @@
 MAJOR
 - haven't figured out how to get rspec working yet
 
-- this gem needs a message queue to soften the current
-  write-on-every-read semantics
-
 MINOR
 - don't hardcode 'users' as the 'users' table in the application - make it configurable
 
