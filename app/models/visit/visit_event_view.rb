@@ -2,7 +2,7 @@ module Visit
   class VisitEventView < ActiveRecord::Base
     self.table_name = "visit_event_views"
 
-    set_primary_key "id" # postgres adapter needs this, otherwise find_each breaks # AMHERE - put in 'things I learned'
+    set_primary_key "id"
 
     include Visit::StoresIpAddress
     stores_ip_address :remote_ip

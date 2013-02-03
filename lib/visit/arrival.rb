@@ -3,7 +3,6 @@ module Visit
     class << self
 
       def create_visit_event h
-
         path = h[:path] || h[:request].path
         url  = h[:path] ? (h[:request].host + "/" + h[:path]) : h[:request].url
 
@@ -26,10 +25,7 @@ module Visit
           rescue
             CrashLog.notify $!
           end
-        else
-          Rails.logger.debug "AMHERE: ignored #{path}" # remove me
         end
-
       end
 
       def get_vid cookies, session
