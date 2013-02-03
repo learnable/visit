@@ -4,42 +4,38 @@ module Visit
 
     included do
       before_filter :set_visit_vid
-      before_filter :create_visit_event
+      before_filter :on_every_request
+    end
+
+    protected
+
+    def create_visit_event path = nil
+      Visit::Arrival::create_visit_event \
+        request: request,
+        path: path,
+        cookies: cookies,
+        session: session,
+        current_user: current_user,
+        is_request_ignorable: false
     end
 
     private
 
-    # Maximum unsigned INT in MySQL
-    # http://dev.mysql.com/doc/refman/5.1/en/numeric-types.html
-    #
-    MAX = 4294967295
+    MAX = 9223372036854775807 # see: http://dev.mysql.com/doc/refman/5.1/en/numeric-types.html
 
     def set_visit_vid
-      if !get_visit_vid
+      if !Visit::Arrival::get_vid cookies, session
         session[:vid] = rand(MAX)
       end
-      Rails.logger.debug "AMHERE set_visit_id: session[:vid]: #{session[:vid]}"
     end
 
-    def create_visit_event
-      if !Visit::VisitEvent.ignore? request.path
-
-        begin
-          ve = Visit::VisitEvent.create! \
-            http_method: request.method,
-            url: request.url,
-            vid: get_visit_vid,
-            user_id: current_user ? current_user.id : nil,
-            user_agent: request.env["HTTP_USER_AGENT"],
-            remote_ip: request.remote_ip
-        rescue
-          CrashLog.notify $!
-        end
-      end
-    end
-
-    def get_visit_vid
-      cookies["vid"] || session[:vid]
+    def on_every_request
+      Visit::Arrival::create_visit_event \
+        request: request,
+        cookies: cookies,
+        session: session,
+        current_user: current_user,
+        is_request_ignorable: true
     end
 
   end

@@ -1,5 +1,7 @@
 module Visit
   class VisitAttribute < ActiveRecord::Base
+    self.table_name = "visit_attributes"
+
     belongs_to :visit_event
     belongs_to :key,   :class_name => "VisitAttributeValue", foreign_key: :k_id
     belongs_to :value, :class_name => "VisitAttributeValue", foreign_key: :v_id

@@ -1,7 +1,7 @@
 module Visit
-  class Visit
-
+  class Manage
     class << self
+
       def irc_message vid
         s = summary(vid)
 
@@ -16,8 +16,9 @@ module Visit
         first_visit, last_visit = nil, nil
         is_success = false
         coupon = nil
+        vid = vid.to_s
 
-        VisitEventView.where("vid = ? AND label IS NOT NULL", vid).find_each do |vev|
+        Visit::VisitEventView.where("vid = ? AND label IS NOT NULL", vid).find_each do |vev|
           if first_visit.nil?
             first_visit = vev
           else
@@ -43,12 +44,12 @@ module Visit
 
       def destroy_ignored_rows
         a_to_destroy = []
-        VisitEvent.find_each do |ve|
+        Visit::VisitEvent.find_end do |ve|
           a_to_destroy << ve.id if ve.ignore?
         end
 
         a_to_destroy.each_slice(1000) do |a|
-          VisitEvent.destroy(a)
+          Visit::VisitEvent.destroy(a)
         end
         a_to_destroy
       end
@@ -56,13 +57,13 @@ module Visit
       def vids_for_utm utm
         h_success = { }
 
-        VisitEventView.vids_for(utm, 'success').find_each do |row|
+        Visit::VisitEventView.vids_for(utm, 'success').find_each do |row|
           h_success[row.vid] = true
         end
 
         a_nosuccess = [ ]
 
-        VisitEventView.vids_for(utm).find_each do |row|
+        Visit::VisitEventView.vids_for(utm).find_each do |row|
           a_nosuccess << row.vid unless h_success.has_key?(row.vid)
         end
 
@@ -70,8 +71,8 @@ module Visit
       end
 
       def delete_visit_attributes
-        VisitAttribute.delete_all
-        VisitAttributeValue.delete_all
+        Visit::VisitAttribute.delete_all
+        Visit::VisitAttributeValue.delete_all
       end
 
       def run *methods
@@ -87,7 +88,7 @@ module Visit
       def create_visit_attributes_batch
         vav_cache = {}
 
-        VisitEvent.newer_than_visit_attribute(VisitAttribute.last).find_in_batches do |a_ve|
+        Visit::VisitEvent.newer_than_visit_attribute(Visit::VisitAttribute.last).find_in_batches do |a_ve|
           activity = {}
           a_insert_values = []
 
@@ -117,7 +118,7 @@ module Visit
             k_id = visit_attribute_value_id k, vav_cache
             v_id = visit_attribute_value_id v, vav_cache
 
-            # va = VisitAttribute.create! :k_id => k_id, :v_id => v_id, :visit_event_id => ve.id
+            # va = Visit::VisitAttribute.create! :k_id => k_id, :v_id => v_id, :visit_event_id => ve.id
             a_insert_values << "(#{k_id}, #{v_id}, #{ve.id}, '#{Time.now}')"
             activity[ve.id][k] = v
           end
@@ -128,43 +129,16 @@ module Visit
         if vav_cache && vav_cache.has_key?(str)
           ret = vav_cache[str]
         else
-          ret = VisitAttributeValue.where(:v => str).first_or_create(:v => str).id
+          ret = Visit::VisitAttributeValue.where(:v => str).first_or_create(:v => str).id
           vav_cache[str] = ret if vav_cache
         end
         ret
       end
 
-      def create_book_views_batch
-        VisitEventView.newer_than_row(BookView.last).find_in_batches do |a_vev|
-          a_vev.each do |vev|
-            activity = {}
-
-            if vev.label.to_s == 'book' && vev.user_id && vev.sublabel
-
-              # Ignore non chapter pages
-              page = vev.url.split('/').last.split('.').first
-
-              if page[0..1] == 'ch'
-                BookView.create \
-                  sku: vev.sublabel,
-                  user_id: vev.user_id,
-                  page: page
-
-                activity[vev.id] = "book_view: sku: #{vev.sublabel} user_id: #{vev.user_id} page: #{page}"
-              end
-            end
-
-            if block_given?
-              yield activity
-            end
-          end
-        end
-      end
-
       def archive_visit_events_batch days=93
         age = days.days.ago.utc
         count = 1
-        VisitEvent.select("id").where("created_at < ?", age).find_in_batches do |a_ve|
+        Visit::VisitEvent.select("id").where("created_at < ?", age).find_in_batches do |a_ve|
           a_id = a_ve.map { |ve| ve.id }
           ids = a_id.join(',')
           activity = {}
@@ -206,4 +180,4 @@ module Visit
       end
     end
   end
-  end
+end

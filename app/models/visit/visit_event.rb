@@ -1,17 +1,25 @@
 module Visit
   class VisitEvent < ActiveRecord::Base
 
+    # I found that enclosing modules were being included in table as per the 
+    # 'class' scheme here (not module):
+    # http://apidock.com/rails/ActiveRecord/Base/table_name/class
+    # that's why table name is set explicitly here:
+    #
+    self.table_name = "visit_events"
+
     has_many :visit_attributes, dependent: :destroy
 
     belongs_to :user
 
-    include StoresIpAddress
+    include Visit::StoresIpAddress
     stores_ip_address :remote_ip
 
     attr_accessible :http_method
     attr_accessible :url
     attr_accessible :vid
     attr_accessible :user_id
+    attr_accessible :coupon
     attr_accessible :user_agent
     attr_accessible :remote_ip
 
@@ -25,28 +33,22 @@ module Visit
       def newer_than_visit_attribute row
         row.nil? ? self : where("id > ?", row.visit_event_id)
       end
+    end
 
-      def with_membership_status status
-        joins(:user => :membership)
-          .where("memberships.status = ?", status)
-      end
+    def self.ignorable
+      [
+        /.\js($|\/|\?)/
+      ]
     end
 
     def self.ignore? path
       ret = nil
-      [
-        /^\/system/,
-        /^\/webmatrix/,
-        /^\/geckoboard/,
-        /^\/visit\/tag\.gif/,
-        /^\/books\/.*\/images\//,
-        /^\/books\/.*\/figures\//,
-        /^\/books\/.*\.css\b/,
-        /.\js($|\/|\?)/
-      ].each do |re|
+
+      ignorable.each do |re|
         ret = path =~ re
         break if ret
       end
+
       !ret.nil?
     end
 
@@ -89,7 +91,7 @@ module Visit
       if m.matches?(http_method, path)
         { coupon: m.sublabel }
       else
-        cookie_membership_coupon_token.nil? ? {} : { coupon: cookie_membership_coupon_token }
+        coupon.nil? ? {} : { coupon: coupon }
       end
     end
 
@@ -108,44 +110,12 @@ module Visit
     end
 
     class Matcher < Struct.new(:http_method, :re, :label, :has_sublabel)
+      def self.labels
+        [ ]
+      end
+
       def self.all
-        [
-          {                     re: /^\/(\?.*|)$/,                                                  label: :home                     },
-          {                     re: /^\/sitepoint\b/,                                               label: :channel_sitepoint        },
-          {                     re: /^\/membership\/sitepoint\b/,                                   label: :membership_sitepoint     },
-          {                     re: /^\/membership\?course_id/,                                     label: :membership_course        },
-          {                     re: /^\/membership$/,                                               label: :membership_public        },
-          { http_method: :post, re: /\/contact/,                                                    label: :contact                  },
-          { http_method: :post, re: /\/sign-in\/lost-password/,                                     label: :lost_password            },
-          { http_method: :get,  re: /\/sign-in/,                                                    label: :sign_in_prompt           },
-          { http_method: :post, re: /\/sign-in/,                                                    label: :sign_in                  },
-          { http_method: :get,  re: /\/sign-up/,                                                    label: :sign_up_prompt           },
-          { http_method: :post, re: /\/sign-up/,                                                    label: :sign_up                  },
-          {                     re: /\/sign-out/,                                                   label: :sign_out                 },
-          {                     re: /^\/membership\/orders\/\w*\/success/,                          label: :success                  },
-          { http_method: :post, re: /^\/membership\/orders\/\w*\/payments$/,                        label: :payment_attempt          },
-          { http_method: :get,  re: /^\/membership\/orders\/\w*$/,                                  label: :place_mship_order_prompt },
-          {                     re: /^\/offer\?/,                                                   label: :offer_mship              },
-          {                     re: /^\/orders\/new\?course_id/,                                    label: :place_course_order       },
-          {                     re: /^\/learn\/topic.*q=(.*?)(|\&.*)$/,                             label: :search,                  has_sublabel: true },
-          {                     re: /^\/search.*\?q=(.*?)(|\&.*)$/,                                 label: :search,                  has_sublabel: true },
-          {                     re: /\/preview\b/,                                                  label: :preview                  },
-          {                     re: /^\/learn\/\w*/,                                                label: :topic                    },
-          {                     re: /^\/courses\/search.*\?q=(.*?)(|\&.*)$/,                        label: :search,                  has_sublabel: true },
-          { http_method: :post, re: /^\/courses\/.*-(\d+)\/enrollment/,                             label: :enroll,                  has_sublabel: true },
-          {                     re: /^\/courses\/.*-(\d+)/,                                         label: :course,                  has_sublabel: true },
-          {                     re: /^\/categories/,                                                label: :browse_courses           },
-          {                     re: /^\/courses\b/,                                                 label: :browse_courses           },
-          {                     re: /^\/books\b(|\/)$/,                                             label: :browse_books             },
-          {                     re: /^\/books\/(\w+)\/online/,                                      label: :book,                    has_sublabel: true },
-          {                     re: /^\/membership\/(monthly|annual)/,                              label: :payment_page,            has_sublabel: true },
-          {                     re: /^\/teach\b/,                                                   label: :teach                    },
-          { http_method: :post, re: /^\/social(|\/)$/,                                              label: :social_new_conversation  },
-          { http_method: :post, re: /^\/social\/(\d+)\/post$/,                                      label: :social_new_reply         },
-          {                     re: /^\/social\b(|\/)$/,                                            label: :social                   },
-          {                     re: /\/pageviews.*action=payment_processing.*payment_status=(\w*)/, label: :payment_status,          has_sublabel: true },
-          {                     re: /^\/legal-stuff\/terms-of-service/,                             label: :terms_of_service         }
-        ].map { |h| Matcher.new *h.values_at(*Matcher.members) }
+        labels.map { |h| Matcher.new *h.values_at(*Matcher.members) }
       end
 
       def self.from_hash h

@@ -1,16 +1,19 @@
 module Visit
   class VisitEventView < ActiveRecord::Base
+    self.table_name = "visit_event_views"
 
-    include StoresIpAddress
+    set_primary_key "id" # postgres adapter needs this, otherwise find_each breaks # AMHERE - put in 'things I learned'
+
+    include Visit::StoresIpAddress
     stores_ip_address :remote_ip
 
     class << self
       # Scopes
       #
-      def visit_ids_for(utm, label = nil)
-        select = select("DISTINCT(visit_event_views.visit_id)").where(:utm => utm)
+      def vids_for(utm, label = nil)
+        select = select("DISTINCT(visit_event_views.vid)").where(:utm => utm)
         label ?
-          select.joins("INNER JOIN visit_event_views vev on vev.visit_id = visit_event_views.visit_id").where("vev.label = ?", label) :
+          select.joins("INNER JOIN visit_event_views vev on vev.vid = visit_event_views.vid").where("vev.label = ?", label) :
           select
       end
 
