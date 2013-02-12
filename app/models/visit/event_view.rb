@@ -2,7 +2,7 @@ module Visit
   class EventView < ActiveRecord::Base
     self.table_name_prefix = 'visit_'
 
-    self.primary_key "id"
+    self.primary_key = "id"
 
     include Visit::StoresIpAddress
     stores_ip_address :remote_ip
