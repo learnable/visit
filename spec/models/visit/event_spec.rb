@@ -1,7 +1,6 @@
 require 'spec_helper'
-require 'addressable/uri'
 
-describe Visit::VisitEvent do
+describe Visit::Event do
 
   let(:ve)        { build :visit_event_course_utm }
   let(:utm)       { "aa__bb_cc_" }
@@ -38,12 +37,12 @@ describe Visit::VisitEvent do
     end
   end
 
-  describe VisitEvent::Matcher do
+  describe Visit::Event::Matcher do
     describe ".all" do
       it "returns a collection of Matcher instances" do
-        matchers = VisitEvent::Matcher.all
+        matchers = Visit::Event::Matcher.all
         matchers.size.should >= 1
-        matchers.each { |m| m.should be_a VisitEvent::Matcher }
+        matchers.each { |m| m.should be_a Visit::Event::Matcher }
       end
     end
   end

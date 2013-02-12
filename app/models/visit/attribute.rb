@@ -1,6 +1,6 @@
 module Visit
-  class VisitAttribute < ActiveRecord::Base
-    self.table_name = "visit_attributes"
+  class Attribute < ActiveRecord::Base
+    self.table_name_prefix = 'visit_'
 
     belongs_to :visit_event
     belongs_to :key,   :class_name => "VisitAttributeValue", foreign_key: :k_id

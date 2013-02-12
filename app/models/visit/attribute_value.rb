@@ -1,6 +1,6 @@
 module Visit
-  class VisitAttributeValue < ActiveRecord::Base
-    self.table_name = "visit_attribute_values"
+  class AttributeValue < ActiveRecord::Base
+    self.table_name_prefix = 'visit_'
 
     has_many :visit_event_attributes, dependent: :destroy
 

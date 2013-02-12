@@ -2,6 +2,11 @@ module Visit
   class Manage
     class << self
 
+      def log msg
+        Rails.logger.debug "AMHERE: Rails: #{$0}: #{msg}"
+        puts "AMHERE: puts: #{$0}: #{msg}"
+      end
+
       def irc_message vid
         s = summary(vid)
 
@@ -18,7 +23,7 @@ module Visit
         coupon = nil
         vid = vid.to_s
 
-        Visit::VisitEventView.where("vid = ? AND label IS NOT NULL", vid).find_each do |vev|
+        Visit::EventView.where("vid = ? AND label IS NOT NULL", vid).find_each do |vev|
           if first_visit.nil?
             first_visit = vev
           else
@@ -44,12 +49,12 @@ module Visit
 
       def destroy_ignored_rows
         a_to_destroy = []
-        Visit::VisitEvent.find_end do |ve|
+        Visit::Event.find_end do |ve|
           a_to_destroy << ve.id if ve.ignore?
         end
 
         a_to_destroy.each_slice(1000) do |a|
-          Visit::VisitEvent.destroy(a)
+          Visit::Event.destroy(a)
         end
         a_to_destroy
       end
@@ -57,13 +62,13 @@ module Visit
       def vids_for_utm utm
         h_success = { }
 
-        Visit::VisitEventView.vids_for(utm, 'success').find_each do |row|
+        Visit::EventView.vids_for(utm, 'success').find_each do |row|
           h_success[row.vid] = true
         end
 
         a_nosuccess = [ ]
 
-        Visit::VisitEventView.vids_for(utm).find_each do |row|
+        Visit::EventView.vids_for(utm).find_each do |row|
           a_nosuccess << row.vid unless h_success.has_key?(row.vid)
         end
 
@@ -71,8 +76,8 @@ module Visit
       end
 
       def delete_visit_attributes
-        Visit::VisitAttribute.delete_all
-        Visit::VisitAttributeValue.delete_all
+        Visit::Attribute.delete_all
+        Visit::AttributeValue.delete_all
       end
 
       def run *methods
@@ -88,7 +93,7 @@ module Visit
       def create_visit_attributes_batch
         vav_cache = {}
 
-        Visit::VisitEvent.newer_than_visit_attribute(Visit::VisitAttribute.last).find_in_batches do |a_ve|
+        Visit::Event.newer_than_visit_attribute(Visit::Attribute.last).find_in_batches do |a_ve|
           activity = {}
           a_insert_values = []
 
@@ -118,7 +123,7 @@ module Visit
             k_id = visit_attribute_value_id k, vav_cache
             v_id = visit_attribute_value_id v, vav_cache
 
-            # va = Visit::VisitAttribute.create! :k_id => k_id, :v_id => v_id, :visit_event_id => ve.id
+            # va = Visit::Attribute.create! :k_id => k_id, :v_id => v_id, :visit_event_id => ve.id
             a_insert_values << "(#{k_id}, #{v_id}, #{ve.id}, '#{Time.now}')"
             activity[ve.id][k] = v
           end
@@ -129,7 +134,7 @@ module Visit
         if vav_cache && vav_cache.has_key?(str)
           ret = vav_cache[str]
         else
-          ret = Visit::VisitAttributeValue.where(:v => str).first_or_create(:v => str).id
+          ret = Visit::AttributeValue.where(:v => str).first_or_create(:v => str).id
           vav_cache[str] = ret if vav_cache
         end
         ret
@@ -138,7 +143,7 @@ module Visit
       def archive_visit_events_batch days=93
         age = days.days.ago.utc
         count = 1
-        Visit::VisitEvent.select("id").where("created_at < ?", age).find_in_batches do |a_ve|
+        Visit::Event.select("id").where("created_at < ?", age).find_in_batches do |a_ve|
           a_id = a_ve.map { |ve| ve.id }
           ids = a_id.join(',')
           activity = {}

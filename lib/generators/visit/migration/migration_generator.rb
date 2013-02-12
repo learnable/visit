@@ -7,8 +7,10 @@ class Visit::MigrationGenerator < Rails::Generators::Base
 
   def create_migration_file
     %w{
+      visit_source_values
       visit_events
       visit_event_archives
+      visit_sources
       visit_attribute_values
       visit_attributes
       visit_event_views
