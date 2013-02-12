@@ -35,6 +35,8 @@ module Visit
         ve.url_id        = Visit::SourceValue.find_or_create_by_v(o[:url]).id
         ve.user_agent_id = Visit::SourceValue.find_or_create_by_v(o[:user_agent]).id
         ve.http_method   = o[:http_method]
+
+        Visit::Manage::log "Visit::Arrival::create_delegator about to save ve: #{ve.to_yaml}"
           
         ve.save!
 
