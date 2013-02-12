@@ -37,7 +37,7 @@ module Visit
     end
 
     def self.ignorable
-      Visit::Manage::log "base ignorable"
+      # Visit::Manage::log "base ignorable"
       [
         /.\js($|\/|\?)/
       ]
