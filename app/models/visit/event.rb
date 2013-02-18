@@ -3,7 +3,7 @@ module Visit
 
     self.table_name_prefix = 'visit_'
 
-    has_many :visit_attributes, dependent: :destroy
+    has_many :visit_traits, dependent: :destroy
     has_many :visit_source_values
 
     belongs_to :user
@@ -31,7 +31,7 @@ module Visit
     class << self
       # Scopes
       #
-      def newer_than_visit_attribute row
+      def newer_than_visit_trait row
         row.nil? ? self : where("id > ?", row.visit_event_id)
       end
     end
@@ -66,11 +66,11 @@ module Visit
       Visit::SourceValue.find(url_id).v
     end
 
-    def self.join_attributes col
+    def self.join_traits col
       %{
-        LEFT OUTER JOIN visit_attributes #{col}_va
-        ON visit_events.id = #{col}_va.visit_event_id AND #{col}_va.k_id = (select id from visit_attribute_values where v = '#{col}')
-        LEFT OUTER JOIN visit_attribute_values #{col}_vav
+        LEFT OUTER JOIN visit_traits #{col}_va
+        ON visit_events.id = #{col}_va.visit_event_id AND #{col}_va.k_id = (select id from visit_trait_values where v = '#{col}')
+        LEFT OUTER JOIN visit_trait_values #{col}_vav
         ON #{col}_vav.id = #{col}_va.v_id
       }
     end

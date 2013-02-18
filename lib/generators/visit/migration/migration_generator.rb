@@ -11,8 +11,8 @@ class Visit::MigrationGenerator < Rails::Generators::Base
       visit_events
       visit_event_archives
       visit_sources
-      visit_attribute_values
-      visit_attributes
+      visit_trait_values
+      visit_traits
       visit_event_views
     }.each do |name|
       migration_template "create_#{name}.rb", "db/migrate/create_#{name}.rb"

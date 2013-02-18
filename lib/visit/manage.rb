@@ -75,9 +75,9 @@ module Visit
         { :success => h_success.keys, :nosuccess => a_nosuccess }
       end
 
-      def delete_visit_attributes
-        Visit::Attribute.delete_all
-        Visit::AttributeValue.delete_all
+      def delete_visit_traits
+        Visit::Trait.delete_all
+        Visit::TraitValue.delete_all
       end
 
       def run *methods
@@ -90,24 +90,24 @@ module Visit
         end
       end
 
-      def create_visit_attributes_batch
+      def create_visit_traits_batch
         vav_cache = {}
 
-        Visit::Event.newer_than_visit_attribute(Visit::Attribute.last).find_in_batches do |a_ve|
+        Visit::Event.newer_than_visit_trait(Visit::Trait.last).find_in_batches do |a_ve|
           activity = {}
           a_insert_values = []
 
           a_ve.each do |ve|
-            create_visit_attributes_insert_values ve, a_insert_values, activity, vav_cache
+            create_visit_traits_insert_values ve, a_insert_values, activity, vav_cache
           end
 
           if !a_insert_values.empty?
-            stmt = "INSERT INTO visit_attributes (k_id, v_id, visit_event_id, created_at) values" + a_insert_values.join(',')
+            stmt = "INSERT INTO visit_traits (k_id, v_id, visit_event_id, created_at) values" + a_insert_values.join(',')
             ActiveRecord::Base.connection.execute(stmt)
           end
 
           # batch insert like this is 10x faster than create!
-          # but it wouldn't hurt to now do a batch validation of the visit_attributes just inserted
+          # but it wouldn't hurt to now do a batch validation of the visit_traits just inserted
 
           if block_given?
             yield activity
@@ -115,26 +115,26 @@ module Visit
         end
       end
 
-      def create_visit_attributes_insert_values ve, a_insert_values, activity, vav_cache = nil
+      def create_visit_traits_insert_values ve, a_insert_values, activity, vav_cache = nil
         activity[ve.id] = {}
 
         ve.cols_should_be.each do |k,v|
           if !v.nil? && !v.empty?
-            k_id = visit_attribute_value_id k, vav_cache
-            v_id = visit_attribute_value_id v, vav_cache
+            k_id = visit_trait_value_id k, vav_cache
+            v_id = visit_trait_value_id v, vav_cache
 
-            # va = Visit::Attribute.create! :k_id => k_id, :v_id => v_id, :visit_event_id => ve.id
+            # va = Visit::Trait.create! :k_id => k_id, :v_id => v_id, :visit_event_id => ve.id
             a_insert_values << "(#{k_id}, #{v_id}, #{ve.id}, '#{Time.now}')"
             activity[ve.id][k] = v
           end
         end
       end
 
-      def visit_attribute_value_id str, vav_cache
+      def visit_trait_value_id str, vav_cache
         if vav_cache && vav_cache.has_key?(str)
           ret = vav_cache[str]
         else
-          ret = Visit::AttributeValue.where(:v => str).first_or_create(:v => str).id
+          ret = Visit::TraitValue.where(:v => str).first_or_create(:v => str).id
           vav_cache[str] = ret if vav_cache
         end
         ret
@@ -150,12 +150,12 @@ module Visit
 
           stmts = [
             "INSERT INTO visit_event_archives SELECT * from visit_events WHERE id IN (#{ids})",
-            "DELETE FROM visit_attributes WHERE visit_event_id in (#{ids})",
+            "DELETE FROM visit_traits WHERE visit_event_id in (#{ids})",
             "DELETE FROM visit_events WHERE id in (#{ids})",
             %{
-              DELETE FROM visit_attribute_values
-              WHERE id NOT IN (SELECT DISTINCT k_id FROM visit_attributes)
-              AND   id NOT IN (SELECT DISTINCT v_id FROM visit_attributes)
+              DELETE FROM visit_trait_values
+              WHERE id NOT IN (SELECT DISTINCT k_id FROM visit_traits)
+              AND   id NOT IN (SELECT DISTINCT v_id FROM visit_traits)
             }
           ]
 

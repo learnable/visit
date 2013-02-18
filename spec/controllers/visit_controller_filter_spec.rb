@@ -27,7 +27,7 @@ describe VisitControllerFilter, "Visit::ControllerFilter", :type => :controller 
   context "#set_event" do
 
     before :each do
-      VisitAttribute.delete_all
+      VisitTrait.delete_all
       VisitEvent.delete_all
     end
 
