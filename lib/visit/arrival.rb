@@ -34,6 +34,7 @@ module Visit
 
         ve.url_id        = Visit::SourceValue.find_or_create_by_v(o[:url]).id
         ve.user_agent_id = Visit::SourceValue.find_or_create_by_v(o[:user_agent]).id
+        ve.referer_id    = Visit::SourceValue.find_or_create_by_v(o[:referer]).id
         ve.http_method   = o[:http_method]
 
         # Visit::Manage::log "Visit::Arrival::create_delegator about to save ve: #{ve.to_yaml}"
@@ -59,6 +60,7 @@ module Visit
             o[:user_id]     = h[:current_user] ? h[:current_user].id : nil
             o[:user_agent]  = h[:request].env["HTTP_USER_AGENT"]
             o[:remote_ip]   = h[:request].remote_ip
+            o[:referer]     = h[:request].referer
             o[:cookies]     = h[:cookies].select { |k,v| [ :coupon ].include?(k) }
           end
         end
