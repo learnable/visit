@@ -41,7 +41,14 @@ module Visit
           
         ve.save!
 
-        # AMHERE TODO - use visit_cookies
+        o[:cookies].each do |k,v|
+          vt = Visit::Trait.new
+          vt.visit_event_id = ve.id
+          vt.k_id = Visit::TraitValue.find_or_create_by_v(k).id
+          vt.v_id = Visit::TraitValue.find_or_create_by_v(v).id
+          vt.save!
+        end
+
         ve
       end
 
@@ -61,11 +68,25 @@ module Visit
             o[:user_agent]  = h[:request].env["HTTP_USER_AGENT"]
             o[:remote_ip]   = h[:request].remote_ip
             o[:referer]     = h[:request].referer
-            o[:cookies]     = h[:cookies].select { |k,v| [ :coupon ].include?(k) }
+            o[:cookies]     = get_visit_event_cookies h[:cookies]
           end
         end
 
         ret
+      end
+
+      def get_visit_event_cookies cookies
+        {}.tap do |h|
+          features = {}
+          cookies.each do |k,v|
+            if k == :coupon
+              h[:coupon] = v
+            elsif k =~ /flip_(.*?)_(.*$)/
+              features[$2] = v
+            end
+          end
+          h[:features] = features.to_json unless features.empty?
+        end
       end
 
     end
