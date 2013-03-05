@@ -38,6 +38,13 @@ module Visit
 
     def self.ignorable
       # Visit::Manage::log "base ignorable"
+
+      begin
+        raise RuntimeError, "Visit::Event::ignorable - expected this to be overridden by config/initializers'"
+      rescue => e
+        CrashLog.notify e
+      end
+
       [
         /.\js($|\/|\?)/
       ]
