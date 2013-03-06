@@ -109,7 +109,7 @@ module Visit
       ret.merge! get_gclid(path)
       ret
     end
-    
+
     private
 
     def self.h_http_method
@@ -127,7 +127,7 @@ module Visit
 
     def self.http_method_to_enum x
       @http_method_forward ||= h_http_method
-      
+
       @http_method_forward[x.to_s.downcase.to_sym]
     end
 
