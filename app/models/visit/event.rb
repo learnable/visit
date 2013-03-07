@@ -36,24 +36,10 @@ module Visit
       end
     end
 
-    def self.ignorable
-      # Visit::Manage::log "base ignorable"
-
-      begin
-        raise RuntimeError, "Visit::Event::ignorable - expected this to be overridden by config/initializers'"
-      rescue => e
-        CrashLog.notify e
-      end
-
-      [
-        /.\js($|\/|\?)/
-      ]
-    end
-
     def self.ignore? path
       ret = nil
 
-      ignorable.each do |re|
+      Visit::Configurable.ignorable.each do |re|
         ret = path =~ re
         break if ret
       end
@@ -147,12 +133,8 @@ end
 
 module Visit
   class Event::Matcher < Struct.new(:http_method, :re, :label, :has_sublabel)
-    def self.labels
-      [ ]
-    end
-
     def self.all
-      labels.map { |h| Visit::Event::Matcher.new *h.values_at(*Visit::Event::Matcher.members) }
+      Visit::Configurable.labels.map { |h| Visit::Event::Matcher.new *h.values_at(*Visit::Event::Matcher.members) }
     end
 
     def self.from_hash h
