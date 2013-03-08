@@ -49,6 +49,11 @@ module Visit
         Visit::TraitValue.delete_all
       end
 
+      def recreate_visit_traits
+        delete_visit_traits
+        run :create_visit_traits_batch
+      end
+
       def run *methods
         methods.each do |m|
           self.send m do |activity|
