@@ -16,37 +16,6 @@ module Visit
         message
       end
 
-      def summary vid
-        nav = []
-        first_visit, last_visit = nil, nil
-        is_success = false
-        coupon = nil
-        vid = vid.to_s
-
-        Visit::EventView.where("vid = ? AND label IS NOT NULL", vid).find_each do |vev|
-          if first_visit.nil?
-            first_visit = vev
-          else
-            last_visit = vev
-          end
-
-          nav << vev.label if vev.label !~ /.*_prompt$/
-
-          if vev.label == 'success'
-            is_success = true
-            coupon = vev.coupon
-          end
-        end
-
-        {
-          :coupon => coupon,
-          :is_success => is_success,
-          :nav => nav.join(summary_separator),
-          :time_on_site_words => (last_visit.nil? ? nil : helpers.distance_of_time_in_words(last_visit.created_at, first_visit.created_at)),
-          :vid => vid
-        }
-      end
-
       def destroy_ignored_rows
         a_to_destroy = []
         Visit::Event.find_end do |ve|
@@ -174,15 +143,6 @@ module Visit
         end
       end
 
-      private
-
-      def helpers
-        ActionController::Base.helpers
-      end
-
-      def summary_separator
-        " -> "
-      end
     end
   end
 end
