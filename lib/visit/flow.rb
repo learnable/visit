@@ -5,6 +5,23 @@ module Visit
       @finish_id = finish_id
     end
 
+    def self.new_flows_from vevs
+      [].tap do |a|
+        start_vev = nil
+
+        vevs.each do |vev|
+          if !start_vev.nil?
+            start_id = start_vev.id
+            finish_id = vev.id - 1
+            a.push self.new(start_vev, vev)
+          end
+          start_vev = vev
+        end
+
+        a.push self.new start_vev.id, Visit::EventView.last.id
+      end.reverse
+    end
+
     def has_label? label
       !select_label(label).empty?
     end
