@@ -10,6 +10,8 @@ module Visit
         throw_exception
       end
 
+      private
+
       def throw_exception
         begin
           raise RuntimeError, "Visit::Configurable - expected this to be overridden by config/initializers'"
