@@ -34,6 +34,10 @@ module Visit
       end.join(" -> ")
     end
 
+    def start_time_in_words
+      helpers.distance_of_time_in_words(Time.now, events.first.created_at)
+    end
+
     def time_on_site_in_words
       first = events.first
       last = events.last
