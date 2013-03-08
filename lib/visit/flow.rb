@@ -1,5 +1,5 @@
 module Visit
-  class Summary
+  class Flow
     def initialize vid
       @vid = vid.to_s
     end
@@ -8,11 +8,11 @@ module Visit
       !select_label(label).empty?
     end
 
-    def nav
+    def steps
       events_with_labels.select do |vev|
         vev.label !~ /.*_prompt$/
       end.map do |vev|
-          vev.sublabel.nil? ? vev.label : "#{vev.label} (#{vev.sublabel})"
+          vev.sublabel.nil? ? vev.label : "#{vev.label}(#{vev.sublabel})"
       end.join(" -> ")
     end
 
