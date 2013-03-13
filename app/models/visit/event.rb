@@ -24,10 +24,6 @@ module Visit
     attr_accessible :user_id
     attr_accessible :remote_ip
 
-    def ignore?
-      Visit::Event.ignore? Visit::Event.path_from_url(url)
-    end
-
     scope :newer_than_visit_trait, ->(row) { row.nil? ? self : where("id > ?", row.visit_event_id) }
 
     def self.ignore? path
@@ -41,6 +37,10 @@ module Visit
       !ret.nil?
     end
 
+    def ignore?
+      Visit::Event.ignore? Visit::Event.path_from_url(url)
+    end
+
     def http_method
       Visit::Event.http_method_from_enum http_method_enum
     end
@@ -51,15 +51,6 @@ module Visit
 
     def url
       Visit::SourceValue.find(url_id).v
-    end
-
-    def self.join_traits col
-      %{
-        LEFT OUTER JOIN visit_traits #{col}_va
-        ON visit_events.id = #{col}_va.visit_event_id AND #{col}_va.k_id = (select id from visit_trait_values where v = '#{col}')
-        LEFT OUTER JOIN visit_trait_values #{col}_vav
-        ON #{col}_vav.id = #{col}_va.v_id
-      }
     end
 
     def get_utm path
