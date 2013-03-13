@@ -42,11 +42,11 @@ module Visit
     end
 
     def http_method
-      Visit::Event.http_method_from_enum http_method_enum
+      Visit::Event::HttpMethod.instance.from_enum http_method_enum
     end
 
     def http_method=(new_value)
-      self.http_method_enum = Visit::Event.http_method_to_enum new_value
+      self.http_method_enum = Visit::Event::HttpMethod.instance.to_enum new_value
     end
 
     def url
@@ -82,31 +82,6 @@ module Visit
     end
 
     private
-
-    def self.h_http_method
-      {
-        :get     => 1,
-        :head    => 2,
-        :post    => 3,
-        :put     => 4,
-        :delete  => 5,
-        :trace   => 6,
-        :connect => 7,
-        :options => 8
-      }
-    end
-
-    def self.http_method_to_enum x
-      @http_method_forward ||= h_http_method
-
-      @http_method_forward[x.to_s.downcase.to_sym]
-    end
-
-    def self.http_method_from_enum x
-      @http_method_reverse ||= h_http_method.invert
-
-      @http_method_reverse[x]
-    end
 
     def self.path_from_url url
       uri = Addressable::URI.parse(url)
@@ -164,5 +139,36 @@ module Visit
       String(http_method).casecmp(other.to_s) == 0
     end
 
+  end
+end
+
+module Visit
+  class Event::HttpMethod
+    include Singleton
+
+    def to_enum x
+      @forward ||= get_hash
+      @forward[x.to_s.downcase.to_sym]
+    end
+
+    def from_enum x
+      @reverse ||= get_hash.invert
+      @reverse[x]
+    end
+
+    private
+
+    def get_hash
+      {
+        :get     => 1,
+        :head    => 2,
+        :post    => 3,
+        :put     => 4,
+        :delete  => 5,
+        :trace   => 6,
+        :connect => 7,
+        :options => 8
+      }
+    end
   end
 end
