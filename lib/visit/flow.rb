@@ -13,7 +13,7 @@ module Visit
     end
 
     def has_label? label
-      !select_label(label).empty?
+      !events_with_label(label).empty?
     end
 
     def steps
@@ -42,6 +42,7 @@ module Visit
     def events
       @events ||= [].tap do |a|
         vid = Visit::Event.find(@range.begin).vid
+
         Visit::EventView.
           where(vid: vid).
           with_label.
@@ -58,7 +59,7 @@ module Visit
       vev.sublabel.nil? ? vev.label : "#{vev.label}(#{vev.sublabel})"
     end
 
-    def select_label label
+    def events_with_label label
       label = label.to_s
       events.select { |vev| vev.label == label }
     end
@@ -91,10 +92,10 @@ module Visit
           vev_prev = nil
           begin_range = nil
 
-          Visit::EventView.with_label.with_visit_by_user(user_id).find_each do |vev|
+          Visit::EventView.with_label.traceable_to_user(user_id).find_each do |vev|
             begin_range = vev.id if begin_range.nil?
 
-            if !vev_prev.nil? && range_change?(vev, vev_prev)
+            if !vev_prev.nil? && start_of_range?(vev, vev_prev)
               yield (begin_range..vev_prev.id)
               begin_range = vev.id
             end
@@ -102,10 +103,10 @@ module Visit
             vev_prev = vev
           end
 
-          yield(begin_range..vev_prev.id) unless begin_range.nil?
+          yield (begin_range..vev_prev.id) unless begin_range.nil?
         end
 
-        def range_change? vev, vev_prev
+        def start_of_range? vev, vev_prev
           vid_change?(vev, vev_prev) || time_gap?(vev, vev_prev)
         end
 
