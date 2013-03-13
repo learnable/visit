@@ -30,6 +30,11 @@ module Visit
       row.nil? ? self : where("id > ?", row.visit_event_id)
     end
 
+    def self.path_from_url url
+      uri = Addressable::URI.parse(url)
+      uri.host ? url.gsub(%r(^.*?#{uri.host}), "") : url # strip scheme and host
+    end
+
     def self.ignore? path
       ret = nil
 
@@ -57,122 +62,5 @@ module Visit
       Visit::SourceValue.find(url_id).v
     end
 
-    def get_utm path
-      str = [ :utm_term, :utm_source, :utm_medium, :utm_content, :utm_campaign ].map do |k|
-        h = { http_method: :get, re: Regexp.new("[&|?]#{k.to_s}=(.*?)(&.*|)$"), label: :utm, has_sublabel: true }
-        m = Matcher.from_hash h
-        m.matches?(http_method, path) ? m.sublabel : ""
-      end.join("_")
-      str =~ /^_*$/ ? {} : { utm: str }
-    end
-
-    def get_gclid path
-      h = { http_method: :get, re: /[&|?]gclid=(.*?)(&.*|)$/, label: :gclid, has_sublabel: true }
-      m = Matcher.from_hash h
-      m.matches?(http_method, path) ?  { gclid: m.sublabel } : {}
-    end
-
-    def get_label_sublabel path
-       (m = Matcher.first_match(http_method, path)) ? { label: m.label, sublabel: m.sublabel } : {}
-    end
-
-    def cols_should_be
-      path = Visit::Event.path_from_url(url)
-      ret = { }
-      ret.merge! get_label_sublabel(path)
-      ret.merge! get_utm(path)
-      ret.merge! get_gclid(path)
-      ret
-    end
-
-    private
-
-    def self.path_from_url url
-      uri = Addressable::URI.parse(url)
-      uri.host ? url.gsub(%r(^.*?#{uri.host}), "") : url # strip scheme and host
-    end
-
-  end
-end
-
-module Visit
-  class Event::Matcher < Struct.new(:http_method, :re, :label, :has_sublabel)
-    def self.all
-      Visit::Configurable.labels.map { |h| Visit::Event::Matcher.new *h.values_at(*Visit::Event::Matcher.members) }
-    end
-
-    def self.from_hash h
-      self.new *h.values_at(*Visit::Event::Matcher.members)
-    end
-
-    def self.first_match other_http_method, path
-      all.detect { |m| m.matches? other_http_method, path }
-    end
-
-    def sublabel
-      if has_sublabel
-        raise "Sublabel not extracted" unless instance_variable_defined?(:@sublabel)
-        @sublabel
-      end
-    end
-
-    def matches? other_http_method, path
-      http_method_matches?(other_http_method) && path_matches?(path)
-    end
-
-    private
-
-    def http_method_matches? other
-      any_http_method? || !other || same_http_method?(other)
-    end
-
-    def path_matches? path
-      if re =~ path
-        @sublabel = $1
-        true
-      else
-        false
-      end
-    end
-
-    def any_http_method?
-      !http_method
-    end
-
-    def same_http_method? other
-      String(http_method).casecmp(other.to_s) == 0
-    end
-
-  end
-end
-
-module Visit
-  class Event::HttpMethod
-    include Singleton
-
-    def to_enum x
-      @forward ||= get_hash
-      @forward[x.to_s.downcase.to_sym]
-    end
-
-    def from_enum x
-      @reverse ||= get_hash.invert
-      @reverse[x]
-    end
-
-    private
-
-    def get_hash
-      {
-        :get     => 1,
-        :head    => 2,
-        :post    => 3,
-        :put     => 4,
-        :delete  => 5,
-        :trace   => 6,
-        :connect => 7,
-        :options => 8
-      }
-    end
   end
 end
