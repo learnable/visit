@@ -54,7 +54,7 @@ module Visit
     end
 
     def get_utm path
-      str = [ :utm_source, :utm_term, :utm_medium, :utm_content, :utm_campaign ].map do |k|
+      str = [ :utm_term, :utm_source, :utm_medium, :utm_content, :utm_campaign ].map do |k|
         h = { http_method: :get, re: Regexp.new("[&|?]#{k.to_s}=(.*?)(&.*|)$"), label: :utm, has_sublabel: true }
         m = Matcher.from_hash h
         m.matches?(http_method, path) ? m.sublabel : ""
