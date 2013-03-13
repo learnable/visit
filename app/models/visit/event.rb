@@ -28,13 +28,7 @@ module Visit
       Visit::Event.ignore? Visit::Event.path_from_url(url)
     end
 
-    class << self
-      # Scopes
-      #
-      def newer_than_visit_trait row
-        row.nil? ? self : where("id > ?", row.visit_event_id)
-      end
-    end
+    scope :newer_than_visit_trait, ->(row) { row.nil? ? self : where("id > ?", row.visit_event_id) }
 
     def self.ignore? path
       ret = nil
