@@ -1,24 +1,14 @@
 module Visit
   class Flow
-    def initialize start_id, finish_id
-      @start_id  = start_id
-      @finish_id = finish_id
+    def initialize r
+      @range = r
     end
 
-    def self.new_flows_from vevs
+    def self.new_from_ranges ranges
       [].tap do |a|
-        start_vev = nil
-
-        vevs.each do |vev|
-          if !start_vev.nil?
-            start_id = start_vev.id
-            finish_id = vev.id - 1
-            a.push self.new(start_vev, vev)
-          end
-          start_vev = vev
+        ranges.each do |r|
+          a << self.new(r)
         end
-
-        a.push self.new start_vev.id, Visit::EventView.last.id
       end.reverse
     end
 
@@ -51,8 +41,13 @@ module Visit
 
     def events
       @events ||= [].tap do |a|
-        Visit::EventView.with_label.where("id BETWEEN ? AND ?", @start_id, @finish_id).find_each do |vev|
-          a.push vev
+        vid = Visit::Event.find(@range.begin).vid
+        Visit::EventView.
+          where(vid: vid).
+          with_label.
+          where("id BETWEEN ? AND ?", @range.begin, @range.end).
+          find_each do |vev|
+            a.push vev
         end
       end
     end
@@ -74,5 +69,55 @@ module Visit
       ActionController::Base.helpers
     end
 
+  end
+end
+
+module Visit
+  class Flow
+    class Ranges
+      class << self
+
+        def for_user user_id
+          [].tap do |a|
+            for_each_range(user_id) do |r|
+              a << r
+            end
+          end
+        end
+
+        private
+
+        def for_each_range user_id
+          vev_prev = nil
+          begin_range = nil
+
+          Visit::EventView.with_label.with_visit_by_user(user_id).find_each do |vev|
+            begin_range = vev.id if begin_range.nil?
+
+            if !vev_prev.nil? && range_change?(vev, vev_prev)
+              yield (begin_range..vev_prev.id)
+              begin_range = vev.id
+            end
+
+            vev_prev = vev
+          end
+
+          yield(begin_range..vev_prev.id) unless begin_range.nil?
+        end
+
+        def range_change? vev, vev_prev
+          vid_change?(vev, vev_prev) || time_gap?(vev, vev_prev)
+        end
+
+        def vid_change? vev1, vev2
+          vev1.vid != vev2.vid
+        end
+
+        def time_gap? vev1, vev2
+          (vev1.created_at - vev2.created_at).abs > 2.hours
+        end
+
+      end
+    end
   end
 end
