@@ -76,7 +76,7 @@ module Visit
       def create_visit_traits_insert_values ve, a_insert_values, activity, vav_cache = nil
         activity[ve.id] = {}
 
-        ve.cols_should_be.each do |k,v|
+        Visit::Event::Traits.new(ve).to_h.each do |k,v|
           if !v.nil? && !v.empty?
             k_id = visit_trait_value_id k, vav_cache
             v_id = visit_trait_value_id v, vav_cache
