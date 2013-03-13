@@ -28,22 +28,6 @@ module Visit
         a_to_destroy
       end
 
-      def vids_for_utm utm
-        h_success = { }
-
-        Visit::EventView.vids_for(utm, 'success').find_each do |row|
-          h_success[row.vid] = true
-        end
-
-        a_nosuccess = [ ]
-
-        Visit::EventView.vids_for(utm).find_each do |row|
-          a_nosuccess << row.vid unless h_success.has_key?(row.vid)
-        end
-
-        { :success => h_success.keys, :nosuccess => a_nosuccess }
-      end
-
       def delete_visit_traits
         Visit::Trait.delete_all
         Visit::TraitValue.delete_all
