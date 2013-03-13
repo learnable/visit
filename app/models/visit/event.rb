@@ -24,7 +24,11 @@ module Visit
     attr_accessible :user_id
     attr_accessible :remote_ip
 
-    scope :newer_than_visit_trait, ->(row) { row.nil? ? self : where("id > ?", row.visit_event_id) }
+    ## Scopes
+    #
+    def self.newer_than_visit_trait row
+      row.nil? ? self : where("id > ?", row.visit_event_id)
+    end
 
     def self.ignore? path
       ret = nil
