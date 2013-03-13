@@ -25,20 +25,12 @@ module Visit
         where("label IS NOT NULL")
       end
 
-      def with_labels_for_user user_id
-        with_label.where(user_id: user_id)
+      def with_distinct_vids_for_user user_id
+        select("distinct vid").where(user_id: user_id)
       end
-    end
 
-    def self.flow_starts_for_user user_id
-      last_vev = nil
-      [].tap do |a|
-        Visit::EventView.with_labels_for_user(user_id).find_each do |vev|
-          if last_vev.nil? || last_vev.vid != vev.vid || (vev.created_at - last_vev.created_at > 2.hours)
-            a.push vev
-          end
-          last_vev = vev
-        end
+      def with_visit_by_user user_id
+        where(vid: Visit::EventView.with_distinct_vids_for_user(user_id))
       end
     end
 
