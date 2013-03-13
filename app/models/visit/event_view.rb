@@ -7,25 +7,13 @@ module Visit
     include Visit::StoresIpAddress
     stores_ip_address :remote_ip
 
-    class << self
-      # Scopes
-      #
-      def newer_than_row row
-        row.nil? ? self : where("created_at > ?", row.created_at)
-      end
+    scope :newer_than_row, ->(row) { row.nil? ? self : where("created_at > ?", row.created_at) }
 
-      def with_label
-        where("label IS NOT NULL")
-      end
+    scope :with_label, where("label IS NOT NULL")
 
-      def with_distinct_vids_for_user user_id
-        select("distinct vid").where(user_id: user_id)
-      end
+    scope :with_distinct_vids_for_user , ->(user_id) { select("distinct vid").where(user_id: user_id) }
 
-      def with_visit_by_user user_id
-        where(vid: Visit::EventView.with_distinct_vids_for_user(user_id))
-      end
-    end
+    scope :with_visit_by_user, ->(user_id) { where(vid: with_distinct_vids_for_user(user_id)) }
 
   end
 end
