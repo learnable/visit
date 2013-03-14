@@ -28,16 +28,6 @@ module Visit
         a_to_destroy
       end
 
-      def delete_visit_traits
-        Visit::Trait.delete_all
-        Visit::TraitValue.delete_all
-      end
-
-      def recreate_visit_traits
-        delete_visit_traits
-        run :create_visit_traits_batch
-      end
-
       def run *methods
         methods.each do |m|
           self.send m do |activity|
@@ -46,56 +36,6 @@ module Visit
             end
           end
         end
-      end
-
-      def create_visit_traits_batch
-        vav_cache = {}
-
-        Visit::Event.newer_than_visit_trait(Visit::Trait.last).find_in_batches do |a_ve|
-          activity = {}
-          a_insert_values = []
-
-          a_ve.each do |ve|
-            create_visit_traits_insert_values ve, a_insert_values, activity, vav_cache
-          end
-
-          if !a_insert_values.empty?
-            stmt = "INSERT INTO visit_traits (k_id, v_id, visit_event_id, created_at) values" + a_insert_values.join(',')
-            ActiveRecord::Base.connection.execute(stmt)
-          end
-
-          # batch insert like this is 10x faster than create!
-          # but it wouldn't hurt to now do a batch validation of the visit_traits just inserted
-
-          if block_given?
-            yield activity
-          end
-        end
-      end
-
-      def create_visit_traits_insert_values ve, a_insert_values, activity, vav_cache = nil
-        activity[ve.id] = {}
-
-        Visit::Event::Traits.new(ve).to_h.each do |k,v|
-          if !v.nil? && !v.empty?
-            k_id = visit_trait_value_id k, vav_cache
-            v_id = visit_trait_value_id v, vav_cache
-
-            # va = Visit::Trait.create! :k_id => k_id, :v_id => v_id, :visit_event_id => ve.id
-            a_insert_values << "(#{k_id}, #{v_id}, #{ve.id}, '#{Time.now}')"
-            activity[ve.id][k] = v
-          end
-        end
-      end
-
-      def visit_trait_value_id str, vav_cache
-        if vav_cache && vav_cache.has_key?(str)
-          ret = vav_cache[str]
-        else
-          ret = Visit::TraitValue.where(:v => str).first_or_create(:v => str).id
-          vav_cache[str] = ret if vav_cache
-        end
-        ret
       end
 
       def archive_visit_events_batch days=93

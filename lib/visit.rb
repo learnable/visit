@@ -10,8 +10,10 @@ Dir[File.join(File.dirname(__FILE__), 'visit', '*.rb')].each do |file|
   require file unless (file =~ /engine/)
 end
 
-Dir[File.join(File.dirname(__FILE__), 'visit', 'flow', '*.rb')].each do |file|
-  require file
+[ 'flow', 'manage' ].each do |subdir|
+  Dir[File.join(File.dirname(__FILE__), 'visit', subdir, '*.rb')].each do |file|
+    require file
+  end
 end
 
 require "visit/engine" if defined?(Rails)
