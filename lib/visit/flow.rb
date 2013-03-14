@@ -1,3 +1,5 @@
+# a Flow is a sequence of Events, close in time, for a particular user and vid
+#
 module Visit
   class Flow
     def initialize r

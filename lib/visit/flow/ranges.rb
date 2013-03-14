@@ -2,11 +2,11 @@ module Visit
   class Flow::Ranges
     class << self
 
-      # 1. for a given user, find all the visits that can be traced to them
-      # 2. organise the visits into 'ranges'
-      #    where a 'range' is a continuous stream of requests not separated by long gaps in time, and
-      #    each range uses one visit_id (ie. the visit cookie didn't get deleted)
-      # 3. return an array of (begin.id..end.id) for each range.
+      # 1. For all visits that can be traced to a particular user
+      # 2. Organise the visits into 'ranges'
+      #    A 'range' is the begin+end points of a collection of visits close to each other in time.
+      #    A range can only have one vid. ie. if the visit cookie got deleted, it's a new range.
+      # 3. Return an array of (begin.id..end.id) for each range.
       #
       def for_user user_id
         [].tap do |a|
