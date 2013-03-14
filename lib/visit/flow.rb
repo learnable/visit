@@ -36,19 +36,13 @@ module Visit
     end
 
     def vid
-      events.first.vid
+      @vid ||= Visit::Event.find(@range.begin).vid
     end
 
     def events
       @events ||= [].tap do |a|
-        vid = Visit::Event.find(@range.begin).vid
-
-        Visit::EventView.
-          where(vid: vid).
-          with_label.
-          where("id BETWEEN ? AND ?", @range.begin, @range.end).
-          find_each do |vev|
-            a.push vev
+        Visit::EventView.with_label.where(vid: vid).where(id: @range).find_each do |vev|
+          a << vev
         end
       end
     end
