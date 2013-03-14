@@ -3,7 +3,7 @@ module Visit
 
     self.table_name_prefix = 'visit_'
 
-    has_many :visit_traits, dependent: :destroy
+    has_many :visit_traits, class_name: "Visit::Trait", foreign_key: "visit_event_id", dependent: :destroy
     has_many :visit_source_values
 
     belongs_to :user
