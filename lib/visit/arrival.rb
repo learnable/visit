@@ -25,8 +25,6 @@ module Visit
       end
 
       def create_delegate o
-        # Visit::Manage::log "Visit::Arrival::create_delegate"
-
         ve = Visit::Event.new \
           vid:       o[:vid],
           user_id:   o[:user_id],
@@ -36,17 +34,16 @@ module Visit
         ve.user_agent_id = Visit::SourceValue.find_or_create_by_v(o[:user_agent]).id
         ve.referer_id    = Visit::SourceValue.find_or_create_by_v(o[:referer]).id
         ve.http_method   = o[:http_method]
-
-        # Visit::Manage::log "Visit::Arrival::create_delegator about to save ve: #{ve.to_yaml}"
-          
         ve.save!
 
+        # Visit::Manage::log "Visit::Arrival::create_delegator saved ve: #{ve.to_yaml}"
+
         o[:cookies].each do |k,v|
-          vt = Visit::Trait.new
-          vt.visit_event_id = ve.id
-          vt.k_id = Visit::TraitValue.find_or_create_by_v(k).id
-          vt.v_id = Visit::TraitValue.find_or_create_by_v(v).id
-          vt.save!
+          vs = Visit::Source.new
+          vs.visit_event_id = ve.id
+          vs.k_id = Visit::SourceValue.find_or_create_by_v(k).id
+          vs.v_id = Visit::SourceValue.find_or_create_by_v(v).id
+          vs.save!
         end
 
         ve
