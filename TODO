@@ -2,10 +2,10 @@ MAJOR
 - haven't figured out how to get rspec working yet
 
 MODERATE
-- Alex says that deleting a user in the app doesn't work ==> investigate
 - cache:
   - Visit::Event.url
   - Visit::Manage.create_visit_traits_batch
+  - Visit::Arrival.create_delegate
   - I reckon redis LRU is the way to go
 
 MINOR
