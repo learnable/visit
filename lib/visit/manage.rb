@@ -7,15 +7,6 @@ module Visit
         puts "AMHERE: puts: #{$0}: #{msg}"
       end
 
-      def irc_message vid
-        s = summary(vid)
-
-        message = "vid: #{vid}, time on site: #{s[:time_on_site_words]}"
-        message << ", coupon: #{s[:coupon]}" unless s[:coupon].nil?
-        message << ", nav: #{s[:nav]}"
-        message
-      end
-
       def destroy_ignored_rows
         a_to_destroy = []
         Visit::Event.find_end do |ve|
