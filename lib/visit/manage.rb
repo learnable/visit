@@ -7,19 +7,24 @@ module Visit
         puts "AMHERE: puts: #{$0}: #{msg}"
       end
 
-      def destroy_ignored_rows
-        a_to_destroy = []
-        Visit::Event.find_end do |ve|
-          a_to_destroy << ve.id if ve.ignore?
-        end
+      # destroy rows that match regexps in Visit::Configurable.ignorable
+      #
+      def destroy_ignorable
+        Visit::Event.find_in_batches do |a_ve|
+          activity = {} if block_given?
+          a_to_be_destroyed = []
 
-        a_to_destroy.each_slice(1000) do |a|
-          Visit::Event.destroy(a)
+          a_ve.each do |ve|
+            a_to_be_destroyed << ve.id if ve.ignore?
+          end
+
+          Visit::Event.destroy a_to_be_destroyed
+          yield activity if block_given?
         end
-        a_to_destroy
       end
 
-      def archive_visit_events_batch days=93
+
+      def archive_visit_events days=93
         age = days.days.ago.utc
         count = 1
         Visit::Event.select("id").where("created_at < ?", age).find_in_batches do |a_ve|
