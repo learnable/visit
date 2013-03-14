@@ -32,10 +32,12 @@ module Visit
     def path_matches? path
       if re =~ path
         @sublabel = $1
-        true
+        ret = true
       else
-        false
+        ret = false
       end
+      # puts "AMHERE: path_matches?: re: #{re} returns: #{ret}"
+      ret
     end
 
     def any_http_method?
