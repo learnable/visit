@@ -28,16 +28,6 @@ module Visit
         a_to_destroy
       end
 
-      def run *methods
-        methods.each do |m|
-          self.send m do |activity|
-            a = activity.keys.map do |k|
-              puts "#{k}: #{activity[k]}"
-            end
-          end
-        end
-      end
-
       def archive_visit_events_batch days=93
         age = days.days.ago.utc
         count = 1
