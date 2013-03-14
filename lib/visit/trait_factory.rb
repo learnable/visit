@@ -1,20 +1,22 @@
 module Visit
-  class Manage::Traits
+  class TraitFactory
     def initialize
       @cache = {}
     end
 
-    def delete_all
+    def self.delete_all
       Visit::Trait.delete_all
       Visit::TraitValue.delete_all
     end
 
-    def recreate_all
+    def self.recreate_all
       delete_all
-      create
+      self.new.create
     end
 
-    def create
+    # create Traits and TraitValues in batches
+    #
+    def run
       Visit::Event.newer_than_visit_trait(Visit::Trait.last).find_in_batches do |a_ve|
         activity = {} if block_given?
         a_insert_values = []
@@ -30,15 +32,18 @@ module Visit
 
         if !a_insert_values.empty?
           # batch insert like this is 10x faster than create!
-          # but it wouldn't hurt to now do a batch validation of the visit_traits just inserted
+          # but it wouldn't hurt to now validate the visit_traits just inserted
           #
-          stmt = "INSERT INTO visit_traits (k_id, v_id, visit_event_id, created_at) values" + a_insert_values.join(',')
-          ActiveRecord::Base.connection.execute(stmt)
+          ActiveRecord::Base.connection.execute \
+            "INSERT INTO visit_traits (k_id, v_id, visit_event_id, created_at) values" +
+            a_insert_values.join(',')
         end
 
         yield activity if block_given?
       end
     end
+
+    private
 
     def get_insert_values ve
       Visit::Event::Traits.new(ve).to_h.each do |k,v|
