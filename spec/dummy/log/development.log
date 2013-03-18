@@ -1,0 +1,587 @@
+Connecting to database specified by database.yml
+  [1m[36m (0.1ms)[0m  [1mselect sqlite_version(*)[0m
+  [1m[35m (1.6ms)[0m  CREATE TABLE "schema_migrations" ("version" varchar(255) NOT NULL) 
+  [1m[36m (1.2ms)[0m  [1mCREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")[0m
+  [1m[35m (1.4ms)[0m  SELECT "schema_migrations"."version" FROM "schema_migrations" 
+Migrating to CreateVisitSourceValues (20130318050035)
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+  [1m[35m (0.5ms)[0m  CREATE TABLE "visit_source_values" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "v" varchar(255) NOT NULL, "created_at" datetime) 
+  [1m[36m (0.4ms)[0m  [1mCREATE UNIQUE INDEX "index_visit_source_values_on_v" ON "visit_source_values" ("v")[0m
+  [1m[35m (0.1ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ('20130318050035')
+  [1m[36m (1.1ms)[0m  [1mcommit transaction[0m
+Migrating to CreateVisitEvents (20130318050036)
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.4ms)[0m  [1mCREATE TABLE "visit_events" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "http_method_enum" integer, "url_id" integer, "vid" integer(8), "user_id" integer, "user_agent_id" integer, "referer_id" integer, "remote_ip" integer(8), "created_at" datetime) [0m
+  [1m[35m (0.1ms)[0m  CREATE INDEX "index_visit_events_on_vid" ON "visit_events" ("vid")
+  [1m[36m (0.1ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES ('20130318050036')[0m
+  [1m[35m (0.9ms)[0m  commit transaction
+Migrating to CreateVisitEventArchives (20130318050037)
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+  [1m[35m (0.2ms)[0m  CREATE TABLE visit_event_archives LIKE visit_events
+SQLite3::SQLException: near "LIKE": syntax error: CREATE TABLE visit_event_archives LIKE visit_events
+  [1m[36m (0.0ms)[0m  [1mrollback transaction[0m
+Connecting to database specified by database.yml
+  [1m[36m (1.0ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations" [0m
+  [1m[35m (0.1ms)[0m  SELECT "schema_migrations"."version" FROM "schema_migrations" 
+Migrating to CreateVisitSourceValues (20130318050035)
+Migrating to CreateVisitEvents (20130318050036)
+Migrating to CreateVisitEventArchives (20130318050037)
+  [1m[36m (0.0ms)[0m  [1mselect sqlite_version(*)[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mCREATE TABLE visit_event_archives LIKE visit_events[0m
+SQLite3::SQLException: near "LIKE": syntax error: CREATE TABLE visit_event_archives LIKE visit_events
+  [1m[35m (0.0ms)[0m  rollback transaction
+Connecting to database specified by database.yml
+  [1m[36m (1.0ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations" [0m
+  [1m[35m (0.1ms)[0m  SELECT "schema_migrations"."version" FROM "schema_migrations" 
+Migrating to CreateVisitSourceValues (20130318050035)
+Migrating to CreateVisitEvents (20130318050036)
+Migrating to CreateVisitEventArchives (20130318050037)
+  [1m[36m (0.0ms)[0m  [1mselect sqlite_version(*)[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSELECT sql FROM sqlite_master WHERE type='table' AND name='visit_events';[0m
+  [1m[35m (0.3ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ('20130318050037')
+  [1m[36m (1.3ms)[0m  [1mcommit transaction[0m
+  [1m[35m (0.1ms)[0m  SELECT "schema_migrations"."version" FROM "schema_migrations" 
+Connecting to database specified by database.yml
+  [1m[36m (1.0ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations" [0m
+  [1m[35m (0.1ms)[0m  SELECT "schema_migrations"."version" FROM "schema_migrations" 
+Migrating to CreateVisitEventArchives (20130318050037)
+  [1m[36m (0.0ms)[0m  [1mselect sqlite_version(*)[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+  [1m[36m (0.2ms)[0m  [1mDROP TABLE "visit_event_archives"[0m
+SQLite3::SQLException: no such table: visit_event_archives: DROP TABLE "visit_event_archives"
+  [1m[35m (0.0ms)[0m  rollback transaction
+Connecting to database specified by database.yml
+  [1m[36m (1.0ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations" [0m
+  [1m[35m (0.1ms)[0m  SELECT "schema_migrations"."version" FROM "schema_migrations" 
+Migrating to CreateVisitEventArchives (20130318050037)
+  [1m[36m (0.0ms)[0m  [1mselect sqlite_version(*)[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+  [1m[36m (0.3ms)[0m  [1mDELETE FROM "schema_migrations" WHERE "schema_migrations"."version" = '20130318050037'[0m
+  [1m[35m (1.4ms)[0m  commit transaction
+  [1m[36m (0.1ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations" [0m
+Connecting to database specified by database.yml
+  [1m[36m (1.0ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations" [0m
+  [1m[35m (0.1ms)[0m  SELECT "schema_migrations"."version" FROM "schema_migrations" 
+Migrating to CreateVisitSourceValues (20130318050035)
+Migrating to CreateVisitEvents (20130318050036)
+Migrating to CreateVisitEventArchives (20130318050037)
+  [1m[36m (0.0ms)[0m  [1mselect sqlite_version(*)[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSELECT sql FROM sqlite_master WHERE type='table' AND name='visit_events';[0m
+  [1m[35m (0.1ms)[0m  CREATE TABLE "visit_events" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "http_method_enum" integer, "url_id" integer, "vid" integer(8), "user_id" integer, "user_agent_id" integer, "referer_id" integer, "remote_ip" integer(8), "created_at" datetime)
+SQLite3::SQLException: table "visit_events" already exists: CREATE TABLE "visit_events" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "http_method_enum" integer, "url_id" integer, "vid" integer(8), "user_id" integer, "user_agent_id" integer, "referer_id" integer, "remote_ip" integer(8), "created_at" datetime)
+  [1m[36m (0.0ms)[0m  [1mrollback transaction[0m
+Connecting to database specified by database.yml
+  [1m[36m (1.0ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations" [0m
+  [1m[35m (0.1ms)[0m  SELECT "schema_migrations"."version" FROM "schema_migrations" 
+Migrating to CreateVisitSourceValues (20130318050035)
+Migrating to CreateVisitEvents (20130318050036)
+Migrating to CreateVisitEventArchives (20130318050037)
+  [1m[36m (0.0ms)[0m  [1mselect sqlite_version(*)[0m
+  [1m[35m (0.0ms)[0m  begin transaction
+  [1m[36m (0.1ms)[0m  [1mSELECT sql FROM sqlite_master WHERE type='table' AND name='visit_events';[0m
+  [1m[35m (0.4ms)[0m  CREATE TABLE "visit_event_archives" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "http_method_enum" integer, "url_id" integer, "vid" integer(8), "user_id" integer, "user_agent_id" integer, "referer_id" integer, "remote_ip" integer(8), "created_at" datetime)
+  [1m[36m (0.1ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES ('20130318050037')[0m
+  [1m[35m (1.4ms)[0m  commit transaction
+  [1m[36m (0.1ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations" [0m
+Connecting to database specified by database.yml
+  [1m[36m (1.0ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations" [0m
+Migrating to CreateVisitSourceValues (20130318050035)
+Migrating to CreateVisitEvents (20130318050036)
+Migrating to CreateVisitEventArchives (20130318050037)
+Migrating to CreateVisitSources (20130318050038)
+  [1m[35m (0.0ms)[0m  select sqlite_version(*)
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+  [1m[35m (0.4ms)[0m  CREATE TABLE "visit_sources" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "k_id" integer NOT NULL, "v_id" integer NOT NULL, "visit_event_id" integer NOT NULL, "created_at" datetime) 
+  [1m[36m (0.1ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES ('20130318050038')[0m
+  [1m[35m (1.4ms)[0m  commit transaction
+Migrating to CreateVisitTraitValues (20130318050039)
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+  [1m[35m (0.4ms)[0m  CREATE TABLE "visit_trait_values" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "v" varchar(255) NOT NULL, "created_at" datetime) 
+  [1m[36m (0.4ms)[0m  [1mCREATE UNIQUE INDEX "index_visit_trait_values_on_v" ON "visit_trait_values" ("v")[0m
+  [1m[35m (0.1ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ('20130318050039')
+  [1m[36m (0.8ms)[0m  [1mcommit transaction[0m
+Migrating to CreateVisitTraits (20130318050040)
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36m (0.4ms)[0m  [1mCREATE TABLE "visit_traits" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "k_id" integer NOT NULL, "v_id" integer NOT NULL, "visit_event_id" integer NOT NULL, "created_at" datetime) [0m
+  [1m[35m (0.1ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ('20130318050040')
+  [1m[36m (2.9ms)[0m  [1mcommit transaction[0m
+Migrating to CreateVisitEventViews (20130318050041)
+  [1m[35m (0.0ms)[0m  begin transaction
+  [1m[36m (0.0ms)[0m  [1mrollback transaction[0m
+Connecting to database specified by database.yml
+  [1m[36m (1.0ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations" [0m
+Migrating to CreateVisitSourceValues (20130318050035)
+Migrating to CreateVisitEvents (20130318050036)
+Migrating to CreateVisitEventArchives (20130318050037)
+Migrating to CreateVisitSources (20130318050038)
+Migrating to CreateVisitTraitValues (20130318050039)
+Migrating to CreateVisitTraits (20130318050040)
+Migrating to CreateVisitEventViews (20130318050041)
+  [1m[35m (0.0ms)[0m  select sqlite_version(*)
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+  [1m[35m (0.0ms)[0m  rollback transaction
+Connecting to database specified by database.yml
+  [1m[36m (1.0ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations" [0m
+Migrating to CreateVisitSourceValues (20130318050035)
+Migrating to CreateVisitEvents (20130318050036)
+Migrating to CreateVisitEventArchives (20130318050037)
+Migrating to CreateVisitSources (20130318050038)
+Migrating to CreateVisitTraitValues (20130318050039)
+Migrating to CreateVisitTraits (20130318050040)
+Migrating to CreateVisitEventViews (20130318050041)
+  [1m[35m (0.0ms)[0m  select sqlite_version(*)
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+  [1m[35m (0.0ms)[0m  rollback transaction
+
+
+Started GET "/" for 127.0.0.1 at 2013-03-18 17:28:08 +1100
+Connecting to database specified by database.yml
+
+ActiveRecord::ConnectionNotEstablished (ActiveRecord::ConnectionNotEstablished):
+  activerecord (3.2.12) lib/active_record/connection_adapters/abstract/connection_pool.rb:410:in `retrieve_connection'
+  activerecord (3.2.12) lib/active_record/connection_adapters/abstract/connection_specification.rb:171:in `retrieve_connection'
+  activerecord (3.2.12) lib/active_record/connection_adapters/abstract/connection_specification.rb:145:in `connection'
+  activerecord (3.2.12) lib/active_record/query_cache.rb:67:in `rescue in call'
+  activerecord (3.2.12) lib/active_record/query_cache.rb:61:in `call'
+  activerecord (3.2.12) lib/active_record/connection_adapters/abstract/connection_pool.rb:479:in `call'
+  actionpack (3.2.12) lib/action_dispatch/middleware/callbacks.rb:28:in `block in call'
+  activesupport (3.2.12) lib/active_support/callbacks.rb:405:in `_run__4078700590688638326__call__4114701626128530398__callbacks'
+  activesupport (3.2.12) lib/active_support/callbacks.rb:405:in `__run_callback'
+  activesupport (3.2.12) lib/active_support/callbacks.rb:385:in `_run_call_callbacks'
+  activesupport (3.2.12) lib/active_support/callbacks.rb:81:in `run_callbacks'
+  actionpack (3.2.12) lib/action_dispatch/middleware/callbacks.rb:27:in `call'
+  actionpack (3.2.12) lib/action_dispatch/middleware/reloader.rb:65:in `call'
+  actionpack (3.2.12) lib/action_dispatch/middleware/remote_ip.rb:31:in `call'
+  actionpack (3.2.12) lib/action_dispatch/middleware/debug_exceptions.rb:16:in `call'
+  actionpack (3.2.12) lib/action_dispatch/middleware/show_exceptions.rb:56:in `call'
+  railties (3.2.12) lib/rails/rack/logger.rb:32:in `call_app'
+  railties (3.2.12) lib/rails/rack/logger.rb:16:in `block in call'
+  activesupport (3.2.12) lib/active_support/tagged_logging.rb:22:in `tagged'
+  railties (3.2.12) lib/rails/rack/logger.rb:16:in `call'
+  actionpack (3.2.12) lib/action_dispatch/middleware/request_id.rb:22:in `call'
+  rack (1.4.5) lib/rack/methodoverride.rb:21:in `call'
+  rack (1.4.5) lib/rack/runtime.rb:17:in `call'
+  activesupport (3.2.12) lib/active_support/cache/strategy/local_cache.rb:72:in `call'
+  rack (1.4.5) lib/rack/lock.rb:15:in `call'
+  actionpack (3.2.12) lib/action_dispatch/middleware/static.rb:62:in `call'
+  railties (3.2.12) lib/rails/engine.rb:479:in `call'
+  railties (3.2.12) lib/rails/application.rb:223:in `call'
+  rack (1.4.5) lib/rack/content_length.rb:14:in `call'
+  railties (3.2.12) lib/rails/rack/log_tailer.rb:17:in `call'
+  rack (1.4.5) lib/rack/handler/webrick.rb:59:in `service'
+  /Users/m/.rbenv/versions/1.9.3-p362/lib/ruby/1.9.1/webrick/httpserver.rb:138:in `service'
+  /Users/m/.rbenv/versions/1.9.3-p362/lib/ruby/1.9.1/webrick/httpserver.rb:94:in `run'
+  /Users/m/.rbenv/versions/1.9.3-p362/lib/ruby/1.9.1/webrick/server.rb:191:in `block in start_thread'
+
+
+  Rendered /Users/m/.rbenv/versions/1.9.3-p362/lib/ruby/gems/1.9.1/gems/actionpack-3.2.12/lib/action_dispatch/middleware/templates/rescues/_trace.erb (1.2ms)
+  Rendered /Users/m/.rbenv/versions/1.9.3-p362/lib/ruby/gems/1.9.1/gems/actionpack-3.2.12/lib/action_dispatch/middleware/templates/rescues/_request_and_response.erb (2.6ms)
+  Rendered /Users/m/.rbenv/versions/1.9.3-p362/lib/ruby/gems/1.9.1/gems/actionpack-3.2.12/lib/action_dispatch/middleware/templates/rescues/diagnostics.erb within rescues/layout (12.5ms)
+Connecting to database specified by database.yml
+Connecting to database specified by database.yml
+Connecting to database specified by database.yml
+Connecting to database specified by database.yml
+  [1m[36m (3.1ms)[0m  [1mCREATE TABLE "schema_migrations" ("version" character varying(255) NOT NULL) [0m
+  [1m[35m (1.7ms)[0m  CREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")
+  [1m[36m (0.3ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations" [0m
+Migrating to CreateVisitSourceValues (20130318050035)
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36m (3.5ms)[0m  [1mCREATE TABLE "visit_source_values" ("id" serial primary key, "v" character varying(255) NOT NULL, "created_at" timestamp) [0m
+  [1m[35m (0.8ms)[0m  CREATE UNIQUE INDEX "index_visit_source_values_on_v" ON "visit_source_values" ("v")
+  [1m[36m (0.3ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES ('20130318050035')[0m
+  [1m[35m (0.4ms)[0m  COMMIT
+Migrating to CreateVisitEvents (20130318050036)
+  [1m[36m (0.1ms)[0m  [1mBEGIN[0m
+  [1m[35m (2.4ms)[0m  CREATE TABLE "visit_events" ("id" serial primary key, "http_method_enum" integer, "url_id" integer, "vid" bigint, "user_id" integer, "user_agent_id" integer, "referer_id" integer, "remote_ip" bigint, "created_at" timestamp) 
+  [1m[36m (0.9ms)[0m  [1mCREATE INDEX "index_visit_events_on_vid" ON "visit_events" ("vid")[0m
+  [1m[35m (0.2ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ('20130318050036')
+  [1m[36m (0.4ms)[0m  [1mCOMMIT[0m
+Migrating to CreateVisitEventArchives (20130318050037)
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36m (1.4ms)[0m  [1mCREATE TABLE visit_event_archives ( LIKE visit_events INCLUDING DEFAULTS )[0m
+  [1m[35m (0.2ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ('20130318050037')
+  [1m[36m (0.5ms)[0m  [1mCOMMIT[0m
+Migrating to CreateVisitSources (20130318050038)
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36m (2.7ms)[0m  [1mCREATE TABLE "visit_sources" ("id" serial primary key, "k_id" integer NOT NULL, "v_id" integer NOT NULL, "visit_event_id" integer NOT NULL, "created_at" timestamp) [0m
+  [1m[35m (0.2ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ('20130318050038')
+  [1m[36m (0.5ms)[0m  [1mCOMMIT[0m
+Migrating to CreateVisitTraitValues (20130318050039)
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (2.3ms)[0m  [1mCREATE TABLE "visit_trait_values" ("id" serial primary key, "v" character varying(255) NOT NULL, "created_at" timestamp) [0m
+  [1m[35m (0.9ms)[0m  CREATE UNIQUE INDEX "index_visit_trait_values_on_v" ON "visit_trait_values" ("v")
+  [1m[36m (0.2ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES ('20130318050039')[0m
+  [1m[35m (0.5ms)[0m  COMMIT
+Migrating to CreateVisitTraits (20130318050040)
+  [1m[36m (0.1ms)[0m  [1mBEGIN[0m
+  [1m[35m (2.3ms)[0m  CREATE TABLE "visit_traits" ("id" serial primary key, "k_id" integer NOT NULL, "v_id" integer NOT NULL, "visit_event_id" integer NOT NULL, "created_at" timestamp) 
+  [1m[36m (0.2ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES ('20130318050040')[0m
+  [1m[35m (0.5ms)[0m  COMMIT
+Migrating to CreateVisitEventViews (20130318050041)
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35m (0.1ms)[0m  ROLLBACK
+Connecting to database specified by database.yml
+Connecting to database specified by database.yml
+Connecting to database specified by database.yml
+  [1m[36m (0.3ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations" [0m
+Migrating to CreateVisitSourceValues (20130318050035)
+Migrating to CreateVisitEvents (20130318050036)
+Migrating to CreateVisitEventArchives (20130318050037)
+Migrating to CreateVisitSources (20130318050038)
+Migrating to CreateVisitTraitValues (20130318050039)
+Migrating to CreateVisitTraits (20130318050040)
+Migrating to CreateVisitEventViews (20130318050041)
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36m (1.1ms)[0m  [1mCREATE VIEW "visit_event_views" ("id", "http_method_enum", "url", "user_id", "label", "sublabel", "vid", "user_agent", "remote_ip", "created_at") AS SELECT visit_events.id as id,
+ visit_events.http_method_enum as http_method_enum,
+ url_vsv.v as url,
+ user_id,
+ vid,
+ label_vtv.v as label,
+ sublabel_vtv.v as sublabel,
+ user_agent_vsv.v as user_agent,
+ visit_events.created_at as created_at
+FROM visit_events
+
+INNER JOIN visit_source_values url_vsv
+ ON visit_events.url_id = url_vsv.id
+
+INNER JOIN visit_source_values user_agent_vsv
+ ON visit_events.user_agent_id = user_agent_vsv.id
+
+LEFT OUTER JOIN visit_traits label_vt
+ON visit_events.id = label_vt.visit_event_id AND label_vt.k_id = (select id from visit_trait_values where v = 'label')
+LEFT OUTER JOIN visit_trait_values label_vtv
+ON label_vtv.id = label_vt.v_id
+
+LEFT OUTER JOIN visit_traits sublabel_vt
+ON visit_events.id = sublabel_vt.visit_event_id AND sublabel_vt.k_id = (select id from visit_trait_values where v = 'sublabel')
+LEFT OUTER JOIN visit_trait_values sublabel_vtv
+ON sublabel_vtv.id = sublabel_vt.v_id
+[0m
+PG::Error: ERROR:  CREATE VIEW specifies more column names than columns
+: CREATE VIEW "visit_event_views" ("id", "http_method_enum", "url", "user_id", "label", "sublabel", "vid", "user_agent", "remote_ip", "created_at") AS SELECT visit_events.id as id,
+  visit_events.http_method_enum as http_method_enum,
+  url_vsv.v as url,
+  user_id,
+  vid,
+  label_vtv.v as label,
+  sublabel_vtv.v as sublabel,
+  user_agent_vsv.v as user_agent,
+  visit_events.created_at as created_at
+FROM visit_events
+
+INNER JOIN visit_source_values url_vsv
+  ON visit_events.url_id = url_vsv.id
+
+INNER JOIN visit_source_values user_agent_vsv
+  ON visit_events.user_agent_id = user_agent_vsv.id
+
+LEFT OUTER JOIN visit_traits label_vt
+ON visit_events.id = label_vt.visit_event_id AND label_vt.k_id = (select id from visit_trait_values where v = 'label')
+LEFT OUTER JOIN visit_trait_values label_vtv
+ON label_vtv.id = label_vt.v_id
+
+LEFT OUTER JOIN visit_traits sublabel_vt
+ON visit_events.id = sublabel_vt.visit_event_id AND sublabel_vt.k_id = (select id from visit_trait_values where v = 'sublabel')
+LEFT OUTER JOIN visit_trait_values sublabel_vtv
+ON sublabel_vtv.id = sublabel_vt.v_id
+
+  [1m[35m (0.1ms)[0m  ROLLBACK
+Connecting to database specified by database.yml
+  [1m[36m (0.3ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations" [0m
+Migrating to CreateVisitSourceValues (20130318050035)
+Migrating to CreateVisitEvents (20130318050036)
+Migrating to CreateVisitEventArchives (20130318050037)
+Migrating to CreateVisitSources (20130318050038)
+Migrating to CreateVisitTraitValues (20130318050039)
+Migrating to CreateVisitTraits (20130318050040)
+Migrating to CreateVisitEventViews (20130318050041)
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36m (0.1ms)[0m  [1mROLLBACK[0m
+Connecting to database specified by database.yml
+  [1m[36m (0.3ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations" [0m
+Migrating to CreateVisitSourceValues (20130318050035)
+Migrating to CreateVisitEvents (20130318050036)
+Migrating to CreateVisitEventArchives (20130318050037)
+Migrating to CreateVisitSources (20130318050038)
+Migrating to CreateVisitTraitValues (20130318050039)
+Migrating to CreateVisitTraits (20130318050040)
+Migrating to CreateVisitEventViews (20130318050041)
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36m (1.2ms)[0m  [1mCREATE VIEW "visit_event_views" ("id", "http_method_enum", "url", "user_id", "label", "sublabel", "vid", "user_agent", "remote_ip", "created_at") AS SELECT visit_events.id as id,
+ visit_events.http_method_enum as http_method_enum,
+ url_vsv.v as url,
+ user_id,
+ vid,
+ label_vtv.v as label,
+ sublabel_vtv.v as sublabel,
+ user_agent_vsv.v as user_agent,
+ visit_events.created_at as created_at
+FROM visit_events
+
+INNER JOIN visit_source_values url_vsv
+ ON visit_events.url_id = url_vsv.id
+
+INNER JOIN visit_source_values user_agent_vsv
+ ON visit_events.user_agent_id = user_agent_vsv.id
+
+LEFT OUTER JOIN visit_traits label_vt
+ON visit_events.id = label_vt.visit_event_id AND label_vt.k_id = (select id from visit_trait_values where v = 'label')
+LEFT OUTER JOIN visit_trait_values label_vtv
+ON label_vtv.id = label_vt.v_id
+
+LEFT OUTER JOIN visit_traits sublabel_vt
+ON visit_events.id = sublabel_vt.visit_event_id AND sublabel_vt.k_id = (select id from visit_trait_values where v = 'sublabel')
+LEFT OUTER JOIN visit_trait_values sublabel_vtv
+ON sublabel_vtv.id = sublabel_vt.v_id
+[0m
+PG::Error: ERROR:  CREATE VIEW specifies more column names than columns
+: CREATE VIEW "visit_event_views" ("id", "http_method_enum", "url", "user_id", "label", "sublabel", "vid", "user_agent", "remote_ip", "created_at") AS SELECT visit_events.id as id,
+  visit_events.http_method_enum as http_method_enum,
+  url_vsv.v as url,
+  user_id,
+  vid,
+  label_vtv.v as label,
+  sublabel_vtv.v as sublabel,
+  user_agent_vsv.v as user_agent,
+  visit_events.created_at as created_at
+FROM visit_events
+
+INNER JOIN visit_source_values url_vsv
+  ON visit_events.url_id = url_vsv.id
+
+INNER JOIN visit_source_values user_agent_vsv
+  ON visit_events.user_agent_id = user_agent_vsv.id
+
+LEFT OUTER JOIN visit_traits label_vt
+ON visit_events.id = label_vt.visit_event_id AND label_vt.k_id = (select id from visit_trait_values where v = 'label')
+LEFT OUTER JOIN visit_trait_values label_vtv
+ON label_vtv.id = label_vt.v_id
+
+LEFT OUTER JOIN visit_traits sublabel_vt
+ON visit_events.id = sublabel_vt.visit_event_id AND sublabel_vt.k_id = (select id from visit_trait_values where v = 'sublabel')
+LEFT OUTER JOIN visit_trait_values sublabel_vtv
+ON sublabel_vtv.id = sublabel_vt.v_id
+
+  [1m[35m (0.1ms)[0m  ROLLBACK
+Connecting to database specified by database.yml
+  [1m[36m (0.3ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations" [0m
+Migrating to CreateVisitSourceValues (20130318050035)
+Migrating to CreateVisitEvents (20130318050036)
+Migrating to CreateVisitEventArchives (20130318050037)
+Migrating to CreateVisitSources (20130318050038)
+Migrating to CreateVisitTraitValues (20130318050039)
+Migrating to CreateVisitTraits (20130318050040)
+Migrating to CreateVisitEventViews (20130318050041)
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36m (4.2ms)[0m  [1mCREATE VIEW "visit_event_views" AS SELECT visit_events.id as id,
+ visit_events.http_method_enum as http_method_enum,
+ url_vsv.v as url,
+ user_id,
+ vid,
+ label_vtv.v as label,
+ sublabel_vtv.v as sublabel,
+ user_agent_vsv.v as user_agent,
+ visit_events.created_at as created_at
+FROM visit_events
+
+INNER JOIN visit_source_values url_vsv
+ ON visit_events.url_id = url_vsv.id
+
+INNER JOIN visit_source_values user_agent_vsv
+ ON visit_events.user_agent_id = user_agent_vsv.id
+
+LEFT OUTER JOIN visit_traits label_vt
+ON visit_events.id = label_vt.visit_event_id AND label_vt.k_id = (select id from visit_trait_values where v = 'label')
+LEFT OUTER JOIN visit_trait_values label_vtv
+ON label_vtv.id = label_vt.v_id
+
+LEFT OUTER JOIN visit_traits sublabel_vt
+ON visit_events.id = sublabel_vt.visit_event_id AND sublabel_vt.k_id = (select id from visit_trait_values where v = 'sublabel')
+LEFT OUTER JOIN visit_trait_values sublabel_vtv
+ON sublabel_vtv.id = sublabel_vt.v_id
+[0m
+  [1m[35m (0.3ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ('20130318050041')
+  [1m[36m (1.3ms)[0m  [1mCOMMIT[0m
+  [1m[35m (0.1ms)[0m  SELECT "schema_migrations"."version" FROM "schema_migrations" 
+  [1m[36m (0.6ms)[0m  [1m SELECT viewname
+ FROM pg_views
+ WHERE schemaname = ANY (current_schemas(false))
+[0m
+  [1m[35m (1.1ms)[0m   SELECT pg_get_viewdef(oid)
+ FROM pg_class
+ WHERE relkind = 'v'
+ AND relname = 'visit_event_views'
+
+  [1m[36m (0.4ms)[0m  [1m SELECT viewname
+ FROM pg_views
+ WHERE schemaname = ANY (current_schemas(false))
+[0m
+  [1m[35m (0.4ms)[0m   SELECT f.conname, pg_get_constraintdef(f.oid), t.relname
+ FROM pg_class t, pg_constraint f
+ WHERE f.conrelid = t.oid
+ AND f.contype = 'f'
+ AND t.relname = 'visit_event_archives'
+ AND t.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+
+  [1m[36m (0.3ms)[0m  [1m SELECT viewname
+ FROM pg_views
+ WHERE schemaname = ANY (current_schemas(false))
+[0m
+  [1m[35m (0.3ms)[0m   SELECT f.conname, pg_get_constraintdef(f.oid), t.relname
+ FROM pg_class t, pg_constraint f
+ WHERE f.conrelid = t.oid
+ AND f.contype = 'f'
+ AND t.relname = 'visit_events'
+ AND t.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+
+  [1m[36m (0.3ms)[0m  [1m SELECT viewname
+ FROM pg_views
+ WHERE schemaname = ANY (current_schemas(false))
+[0m
+  [1m[35m (0.3ms)[0m   SELECT f.conname, pg_get_constraintdef(f.oid), t.relname
+ FROM pg_class t, pg_constraint f
+ WHERE f.conrelid = t.oid
+ AND f.contype = 'f'
+ AND t.relname = 'visit_source_values'
+ AND t.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+
+  [1m[36m (0.3ms)[0m  [1m SELECT viewname
+ FROM pg_views
+ WHERE schemaname = ANY (current_schemas(false))
+[0m
+  [1m[35m (0.3ms)[0m   SELECT f.conname, pg_get_constraintdef(f.oid), t.relname
+ FROM pg_class t, pg_constraint f
+ WHERE f.conrelid = t.oid
+ AND f.contype = 'f'
+ AND t.relname = 'visit_sources'
+ AND t.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+
+  [1m[36m (0.3ms)[0m  [1m SELECT viewname
+ FROM pg_views
+ WHERE schemaname = ANY (current_schemas(false))
+[0m
+  [1m[35m (0.4ms)[0m   SELECT f.conname, pg_get_constraintdef(f.oid), t.relname
+ FROM pg_class t, pg_constraint f
+ WHERE f.conrelid = t.oid
+ AND f.contype = 'f'
+ AND t.relname = 'visit_trait_values'
+ AND t.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+
+  [1m[36m (0.3ms)[0m  [1m SELECT viewname
+ FROM pg_views
+ WHERE schemaname = ANY (current_schemas(false))
+[0m
+  [1m[35m (0.3ms)[0m   SELECT f.conname, pg_get_constraintdef(f.oid), t.relname
+ FROM pg_class t, pg_constraint f
+ WHERE f.conrelid = t.oid
+ AND f.contype = 'f'
+ AND t.relname = 'visit_traits'
+ AND t.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+
+  [1m[36m (0.3ms)[0m  [1m SELECT viewname
+ FROM pg_views
+ WHERE schemaname = ANY (current_schemas(false))
+[0m
+  [1m[35m (0.5ms)[0m   SELECT pg_get_viewdef(oid)
+ FROM pg_class
+ WHERE relkind = 'v'
+ AND relname = 'visit_event_views'
+
+  [1m[36m (1.7ms)[0m  [1m
+ SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid,
+ m.amname, pg_get_expr(d.indpred, t.oid), pg_get_expr(d.indexprs, t.oid)
+ FROM pg_class t
+ INNER JOIN pg_index d ON t.oid = d.indrelid
+ INNER JOIN pg_class i ON d.indexrelid = i.oid
+ INNER JOIN pg_am m ON i.relam = m.oid
+ WHERE i.relkind = 'i'
+ AND d.indisprimary = 'f'
+ AND t.relname = 'visit_event_archives'
+ AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+ ORDER BY i.relname
+[0m
+  [1m[35m (1.0ms)[0m  
+ SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid,
+ m.amname, pg_get_expr(d.indpred, t.oid), pg_get_expr(d.indexprs, t.oid)
+ FROM pg_class t
+ INNER JOIN pg_index d ON t.oid = d.indrelid
+ INNER JOIN pg_class i ON d.indexrelid = i.oid
+ INNER JOIN pg_am m ON i.relam = m.oid
+ WHERE i.relkind = 'i'
+ AND d.indisprimary = 'f'
+ AND t.relname = 'visit_events'
+ AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+ ORDER BY i.relname
+
+  [1m[36mColumns for index index_visit_events_on_vid on visit_events (0.3ms)[0m  [1m SELECT a.attnum, a.attname
+ FROM pg_attribute a
+ WHERE a.attrelid = 16402
+ AND a.attnum IN (4)
+[0m
+  [1m[35m (0.9ms)[0m  
+ SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid,
+ m.amname, pg_get_expr(d.indpred, t.oid), pg_get_expr(d.indexprs, t.oid)
+ FROM pg_class t
+ INNER JOIN pg_index d ON t.oid = d.indrelid
+ INNER JOIN pg_class i ON d.indexrelid = i.oid
+ INNER JOIN pg_am m ON i.relam = m.oid
+ WHERE i.relkind = 'i'
+ AND d.indisprimary = 'f'
+ AND t.relname = 'visit_source_values'
+ AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+ ORDER BY i.relname
+
+  [1m[36mColumns for index index_visit_source_values_on_v on visit_source_values (0.3ms)[0m  [1m SELECT a.attnum, a.attname
+ FROM pg_attribute a
+ WHERE a.attrelid = 16393
+ AND a.attnum IN (2)
+[0m
+  [1m[35m (0.9ms)[0m  
+ SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid,
+ m.amname, pg_get_expr(d.indpred, t.oid), pg_get_expr(d.indexprs, t.oid)
+ FROM pg_class t
+ INNER JOIN pg_index d ON t.oid = d.indrelid
+ INNER JOIN pg_class i ON d.indexrelid = i.oid
+ INNER JOIN pg_am m ON i.relam = m.oid
+ WHERE i.relkind = 'i'
+ AND d.indisprimary = 'f'
+ AND t.relname = 'visit_trait_values'
+ AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+ ORDER BY i.relname
+
+  [1m[36mColumns for index index_visit_trait_values_on_v on visit_trait_values (0.2ms)[0m  [1m SELECT a.attnum, a.attname
+ FROM pg_attribute a
+ WHERE a.attrelid = 16423
+ AND a.attnum IN (2)
+[0m
+  [1m[35m (0.8ms)[0m  
+ SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid,
+ m.amname, pg_get_expr(d.indpred, t.oid), pg_get_expr(d.indexprs, t.oid)
+ FROM pg_class t
+ INNER JOIN pg_index d ON t.oid = d.indrelid
+ INNER JOIN pg_class i ON d.indexrelid = i.oid
+ INNER JOIN pg_am m ON i.relam = m.oid
+ WHERE i.relkind = 'i'
+ AND d.indisprimary = 'f'
+ AND t.relname = 'visit_traits'
+ AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+ ORDER BY i.relname
+
+  [1m[36m (0.8ms)[0m  [1m
+ SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid,
+ m.amname, pg_get_expr(d.indpred, t.oid), pg_get_expr(d.indexprs, t.oid)
+ FROM pg_class t
+ INNER JOIN pg_index d ON t.oid = d.indrelid
+ INNER JOIN pg_class i ON d.indexrelid = i.oid
+ INNER JOIN pg_am m ON i.relam = m.oid
+ WHERE i.relkind = 'i'
+ AND d.indisprimary = 'f'
+ AND t.relname = 'visit_sources'
+ AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+ ORDER BY i.relname
+[0m
