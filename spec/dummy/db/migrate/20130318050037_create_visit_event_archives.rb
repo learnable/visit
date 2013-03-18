@@ -5,6 +5,7 @@ class CreateVisitEventArchives < ActiveRecord::Migration
     else
       # ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
       execute "CREATE TABLE visit_event_archives LIKE visit_events"
+    end
   end
 
   def down
