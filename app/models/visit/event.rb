@@ -7,6 +7,8 @@ module Visit
     has_many :visit_sources, class_name: "Visit::Source", foreign_key: "visit_event_id", dependent: :destroy
     has_many :visit_source_values
 
+    has_one :url, class_name: "Visit::SourceValue", foreign_key: "url_id"
+
     belongs_to :user
 
     validates :url_id,
@@ -61,6 +63,10 @@ module Visit
 
     def url
       Visit::SourceValue.find(url_id).v
+    end
+
+    def url=(s)
+      url = SourceValue.find_or_initialize_by_v(s)
     end
 
   end
