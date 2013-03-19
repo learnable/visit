@@ -2,7 +2,7 @@ FactoryGirl.define do
 
   factory :visit_event, class: Visit::Event do
     url { "https://learnable.com/" }
-    visit_id { 123 }
+    vid { 123 }
     factory :visit_event_success do
       url "/membership\/orders\/1234/success/"
     end
