@@ -12,8 +12,6 @@ module Visit
     has_many :visit_sources, class_name: "Visit::Source", foreign_key: "visit_event_id", dependent: :destroy
     has_many :visit_source_values
 
-    has_one :url, class_name: "Visit::SourceValue", foreign_key: "url_id"
-
     belongs_to :user
 
     validates :url_id,
@@ -75,7 +73,15 @@ module Visit
     end
 
     def url=(s)
-      url = SourceValue.find_or_initialize_by_v(s)
+      self.url_id = Visit::SourceValue.find_or_create_by_v(s).id
+    end
+
+    def user_agent
+      Visit::SourceValue.find(user_agent_id).v
+    end
+
+    def user_agent=(s)
+      self.user_agent_id = Visit::SourceValue.find_or_create_by_v(s).id
     end
 
   end
