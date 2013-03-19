@@ -3,6 +3,11 @@ visit
 
 Record visits to a site so that they're easy to analyse afterward
 
+Assumed Models
+--------------
+
+Visit assumes there is a table 'users' existing in the database.
+
 Development
 -----------
 
