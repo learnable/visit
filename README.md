@@ -22,4 +22,5 @@ bundle
 cd spec/dummy
 bundle exec rake db:create
 bundle exec rake db:migrate
+RACK_ENV=test bundle exec rake db:migrate
 ```
