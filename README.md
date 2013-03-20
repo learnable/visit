@@ -20,6 +20,7 @@ Then:
 ```bash
 bundle
 cd spec/dummy
+rails g visit:migration
 bundle exec rake db:create
 bundle exec rake db:migrate
 RACK_ENV=test bundle exec rake db:migrate
