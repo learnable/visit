@@ -16,4 +16,5 @@ end
   end
 end
 
+require 'schema_plus'
 require "visit/engine" if defined?(Rails)
