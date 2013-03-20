@@ -2,6 +2,11 @@ module Visit
   module ControllerFilters
     extend ActiveSupport::Concern
 
+    # TODO: take this out
+    class User
+      def id; 1; end
+    end
+
     included do
       before_filter :set_visit_vid
       before_filter :on_every_request
@@ -15,7 +20,7 @@ module Visit
         path: path,
         cookies: cookies,
         session: session,
-        current_user: current_user,
+        current_user: User.new,
         is_request_ignorable: false
     end
 
@@ -34,7 +39,7 @@ module Visit
         request: request,
         cookies: cookies,
         session: session,
-        current_user: current_user,
+        current_user: User.new,
         is_request_ignorable: true
     end
 

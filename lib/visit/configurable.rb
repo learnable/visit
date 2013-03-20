@@ -16,7 +16,9 @@ module Visit
         begin
           raise RuntimeError, "Visit::Configurable - expected this to be overridden by config/initializers'"
         rescue => e
-          CrashLog.notify e
+          # TODO: put this back in
+          #CrashLog.notify e
+          puts e.to_s
         end
       end
 

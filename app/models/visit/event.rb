@@ -46,6 +46,8 @@ module Visit
     end
 
     def self.ignore? path
+      # TODO: Fix this.
+      return false
       ret = nil
 
       Visit::Configurable.ignorable.each do |re|
