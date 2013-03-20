@@ -1,3 +1,4 @@
+require 'schema_plus'
 class CreateVisitEventViews < ActiveRecord::Migration
   def up
 
