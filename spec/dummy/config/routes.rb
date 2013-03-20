@@ -2,6 +2,7 @@ Rails.application.routes.draw do
 
   resources :articles
 
+  root :to => "articles#index"
 
   namespace :visit do; get "/pageviews", to: "pageviews#new", as: :pageviews end
 

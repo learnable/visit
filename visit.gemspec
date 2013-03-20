@@ -32,4 +32,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency("pg")
   s.add_development_dependency("jquery-rails")
   s.add_development_dependency("debugger")
+  s.add_development_dependency("devise")
 end
