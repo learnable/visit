@@ -1,2 +1,3 @@
 *.log
 schema.rb
+Gemfile.lock
