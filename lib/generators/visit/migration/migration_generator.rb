@@ -16,12 +16,15 @@ class Visit::MigrationGenerator < Rails::Generators::Base
       visit_event_views
     }.each do |name|
       migration_template "create_#{name}.rb", "db/migrate/create_#{name}.rb"
-      sleep 1
     end
   end
 
   def self.next_migration_number(dirname)
-    Time.now.utc.strftime("%Y%m%d%H%M%S")
+    if @prev_num
+      @prev_num += 1
+    else
+      @prev_num = Time.now.utc.strftime("%Y%m%d%H%M%S").to_i
+    end
   end
 
 end
