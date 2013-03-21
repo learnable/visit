@@ -1,8 +1,9 @@
 require 'spec_helper'
-describe ArticlesController do
+describe "Visit::ControllerFilters", type: :controller do
   # Get our example controller, which inherits from base controller, which our
   # gem has patched
   before do
+    @controller = ArticlesController.new
     @request.env["devise.mapping"] = Devise.mappings[:user]
   end
 
