@@ -6,7 +6,8 @@ Record visits to a site so that they're easy to analyse afterward
 Assumed Models
 --------------
 
-Visit assumes there is a table 'users' existing in the database.
+Visit assumes there is a table 'users' existing in the database, and the
+existence of a <code>current_user</code> controller helper
 
 Development
 -----------
