@@ -1,12 +1,9 @@
-class VisitControllerFilter
-end
-
-describe VisitControllerFilter, "Visit::ControllerFilter", :type => :controller do
-
-  controller(VisitControllerFilter) do
-    def index
-      head :ok
-    end
+require 'spec_helper'
+describe ArticlesController do
+  # Get our example controller, which inherits from base controller, which our
+  # gem has patched
+  before do
+    @request.env["devise.mapping"] = Devise.mappings[:user]
   end
 
   let(:visit_id) { 555 }
