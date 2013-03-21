@@ -26,11 +26,13 @@ Gem::Specification.new do |s|
   s.add_dependency("i18n")
   s.add_dependency("schema_plus")
 
+  # Dependencies for dev/testing of the actual gem
   s.add_development_dependency("rspec-rails")
   s.add_development_dependency("factory_girl_rails")
   s.add_development_dependency("sqlite3")
   s.add_development_dependency("pg")
   s.add_development_dependency("jquery-rails")
   s.add_development_dependency("debugger")
-  s.add_development_dependency("devise")
+
+  # NOTE dependencies for the dummy app are in the Gemfile
 end
