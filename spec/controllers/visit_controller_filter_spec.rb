@@ -1,10 +1,11 @@
 require 'spec_helper'
 describe "Visit::ControllerFilters", type: :controller do
-  # Get our example controller, which inherits from base controller, which our
-  # gem has patched
-  before do
-    @controller = ArticlesController.new
-    @request.env["devise.mapping"] = Devise.mappings[:user]
+  # Create an rspec anonymous controller, which by default inherits from
+  # ActionController::Base
+  controller do
+    def index
+      head :ok
+    end
   end
 
   let(:visit_id) { 555 }
@@ -12,21 +13,21 @@ describe "Visit::ControllerFilters", type: :controller do
   context "session[:visit_id]" do
     it "should be set when there's no visit_id cookie" do
       get :index
-      session.should have_key(:visit_id)
-      session[:visit_id].should > 0
+      session.should have_key(:vid)
+      session[:vid].should be > 0
     end
     it "should not be set when there's a visit_id cookie" do
-      @request.cookies["visit_id"] = visit_id
+      @request.cookies["vid"] = visit_id
       get :index
-      session.should_not have_key(:visit_id)
+      session.should_not have_key(:vid)
     end
   end
 
   context "#set_event" do
 
     before :each do
-      VisitTrait.delete_all
-      VisitEvent.delete_all
+      Visit::Trait.delete_all
+      Visit::Event.delete_all
     end
 
     let(:visit_id_next) { 556 }
@@ -34,10 +35,10 @@ describe "Visit::ControllerFilters", type: :controller do
 
     def do_visit(path, vid = visit_id, uid = user_id)
       @request.stub(:path) { path }
-      @request.cookies["visit_id"] = vid
+      @request.cookies["vid"] = vid
       if user_id
         create :user, id: user_id if !User.exists?(user_id)
-        o = Object.new
+        o = double
         o.stub(:id) { uid }
         o.stub(:_agreement_version) { 2 }
         o.stub("has_broken_payment_device?") { false }
@@ -57,16 +58,16 @@ describe "Visit::ControllerFilters", type: :controller do
 
     it "should create exactly one VisitEvent when a visit_id visits exactly once" do
       do_some_visits
-      a_ve = VisitEvent.find_all_by_visit_id(visit_id_next)
+      a_ve = Visit::Event.find_all_by_vid(visit_id_next)
       a_ve.should have(1).records
-      a_ve.first.visit_id.should == visit_id_next
+      a_ve.first.vid.should == visit_id_next
       a_ve.first.user_id.should == user_id
-      a_ve.first.http_method.should == request.method
+      a_ve.first.http_method.to_s.should == request.method.downcase
     end
 
     it "should create multiple VisitEvents when a visit_id visits multiple times" do
       do_some_visits
-      VisitEvent.find_all_by_visit_id(visit_id).should have(3).records
+      Visit::Event.find_all_by_vid(visit_id).should have(3).records
     end
 
   end
