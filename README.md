@@ -3,6 +3,12 @@ visit
 
 Record visits to a site so that they're easy to analyse afterward
 
+Usage
+-----
+
+Parent app must override the 'labels' and 'ignorable' class methods of
+Visit::Configurable
+
 Assumed Models
 --------------
 

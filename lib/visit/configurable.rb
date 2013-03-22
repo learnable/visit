@@ -4,10 +4,15 @@ module Visit
     class << self
 
       # Parent app should override this to return an array of label-matchers,
-      # where each label-matcher has format
-      # [ :http_method, /path_reg_exp/, :label_name, has_sublabel_bool]
+      # where each label-matcher is a hash with keys
+      # :http_method, :re, :label, :has_sublabel
       # For example, for an 'alpha_signups' label:
-      # [ :post, /^\/alpha_signups/, :alpha_signups, false ]
+      # {
+      #   :http_method  => :post,
+      #   :re           => /^\/alpha_signups/,
+      #   :label        => :alpha_signups,
+      #   :has_sublabel => false
+      # }
       def labels
         raise_exception_delegator
       end
