@@ -11,7 +11,7 @@ module Visit
 
     def self.recreate_all
       delete_all
-      self.new.create
+      self.new.run
     end
 
     # create Traits and TraitValues in batches
