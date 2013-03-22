@@ -8,6 +8,18 @@ describe "Visit::ControllerFilters", type: :controller do
     end
   end
 
+  # Configure the gem by overriding this class
+  before :all do
+    Visit::Configurable.instance_eval do
+      def ignorable
+        [
+          /\/courses\/blah.js/,
+          /\/system\/blah/,
+        ]
+      end
+    end
+  end
+
   let(:visit_id) { 555 }
 
   context "session[:visit_id]" do
