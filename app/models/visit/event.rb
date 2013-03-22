@@ -1,3 +1,5 @@
+require 'addressable/uri'
+
 module Visit
   # A model representing a HTTP request. The various HTTP headers are stored as references into
   # the visit_source_values table. For example, the User Agent for a particular request may be
