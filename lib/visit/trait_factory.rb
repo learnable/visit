@@ -1,7 +1,7 @@
 module Visit
   class TraitFactory
     def initialize
-      @cache = {}
+      @tuplet_factory = TupletFactory.new
     end
 
     def self.delete_all
@@ -18,51 +18,71 @@ module Visit
     #
     def run
       Visit::Event.newer_than_visit_trait(Visit::Trait.last).find_in_batches do |a_ve|
-        activity = {} if block_given?
-        a_insert_values = []
+        tuplets = @tuplet_factory.tuplets_from_ve_batch a_ve
 
-        a_ve.each do |ve|
-          activity[ve.id] = {} if block_given?
-
-          get_insert_values ve do |k, k_id, v, v_id|
-            a_insert_values << "(#{k_id}, #{v_id}, #{ve.id}, '#{Time.now}')"
-            activity[ve.id][k] = v if block_given?
-          end
-        end
-
-        if !a_insert_values.empty?
+        if !tuplets.empty?
           # batch insert like this is 10x faster than create!
           # but it wouldn't hurt to now validate the visit_traits just inserted
           #
           ActiveRecord::Base.connection.execute \
             "INSERT INTO visit_traits (k_id, v_id, visit_event_id, created_at) values" +
-            a_insert_values.join(',')
+            tuplets.map { |t| t.to_s }.join(',')
         end
 
-        yield activity if block_given?
+        yield get_activity(tuplets) if block_given?
       end
     end
 
     private
 
-    def get_insert_values ve
-      Visit::Event::Traits.new(ve).to_h.each do |k,v|
-        if !v.nil? && !v.empty?
-          k_id = get_trait_value_id k
-          v_id = get_trait_value_id v
-
-          yield k, k_id, v, v_id
+    def get_activity(tuplets)
+      {}.tap do |activity|
+        tuplets.each do |t|
+          activity[t.ve_id] = {} if !activity.has_key?(t.ve_id)
+          activity[t.ve_id][t.k] = t.v
         end
       end
     end
+  end
+end
 
-    def get_trait_value_id str
-      if @cache.has_key?(str)
-        @cache[str]
-      else
-        @cache[str] = Visit::TraitValue.where(:v => str).first_or_create(:v => str).id
-      end
+class Visit::TraitFactory::Tuplet < Struct.new(:k_id, :v_id, :k, :v, :ve_id, :timestamp)
+  def to_s
+    "(#{k_id}, #{v_id}, #{ve_id}, '#{timestamp}')"
+  end
+end
+
+class Visit::TraitFactory::TupletFactory
+  def initialize
+    @cache = {}
+  end
+
+  def tuplets_from_ve_batch(a_ve)
+    a_ve.each.flat_map do |ve|
+      tuplets_from_ve ve
     end
+  end
 
+  private
+
+  def tuplets_from_ve(ve)
+    Visit::Event::Traits.new(ve).to_h.each.map do |k,v|
+      if v.nil? || v.empty?
+        nil
+      else
+        k_id = get_trait_value_id k
+        v_id = get_trait_value_id v
+
+        Tuplet.new k_id, v_id, k, v, ve.id, Time.now
+      end
+    end.select{ |tuplet| !tuplet.nil? }
+  end
+
+  def get_trait_value_id str
+    if @cache.has_key?(str)
+      @cache[str]
+    else
+      @cache[str] = Visit::TraitValue.where(:v => str).first_or_create(:v => str).id
+    end
   end
 end
