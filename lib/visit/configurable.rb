@@ -26,7 +26,7 @@ module Visit
         begin
           raise RuntimeError, "Visit::Configurable - expected a configurable method to be overridden by config/initializers"
         rescue => e
-          catch_execption_delegate(e)
+          catch_exception_delegate(e)
         end
       end
 
