@@ -1,9 +1,9 @@
 module Visit
   class Event::Traits
 
-    def initialize(ve)
-      @ve = ve
-      @path = Visit::Event.path_from_url(ve.url)
+    def initialize(visit_event)
+      @ve = visit_event
+      @path = Visit::Event.path_from_url(visit_event.url)
     end
 
     def to_h
