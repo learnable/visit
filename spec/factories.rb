@@ -4,6 +4,7 @@ FactoryGirl.define do
     sequence(:url) { |n| "https://example#{n}.com/" }
     sequence(:user_agent) { |n| "Chrome #{n}.0" }
     sequence :vid
+    http_method :get
   end
 
 end
