@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    visit (0.0.12)
+    visit (0.0.13)
       activesupport (~> 3.0)
       i18n
 
