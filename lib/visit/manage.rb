@@ -2,7 +2,7 @@ module Visit
   class Manage
     class << self
 
-      def log msg
+      def log(msg)
         Rails.logger.debug "AMHERE: Rails: #{$0}: #{msg}"
         puts "AMHERE: puts: #{$0}: #{msg}"
       end
@@ -24,7 +24,7 @@ module Visit
       end
 
 
-      def archive_visit_events days=93
+      def archive_visit_events(days=93)
         age = days.days.ago.utc
         count = 1
         Visit::Event.select("id").where("created_at < ?", age).find_in_batches do |a_ve|

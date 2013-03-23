@@ -8,6 +8,5 @@ class CreateVisitTraits < ActiveRecord::Migration
 
       t.timestamp :created_at
     end
-    
   end
 end

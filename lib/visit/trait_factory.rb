@@ -78,7 +78,7 @@ class Visit::TraitFactory::TupletFactory
     end.select{ |tuplet| !tuplet.nil? }
   end
 
-  def get_trait_value_id str
+  def get_trait_value_id(str)
     if @cache.has_key?(str)
       @cache[str]
     else

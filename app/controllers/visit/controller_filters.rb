@@ -9,7 +9,7 @@ module Visit
 
     protected
 
-    def create_visit_event path = nil
+    def create_visit_event(path = nil)
       Visit::Arrival::create_if_interesting \
         Visit::RequestPayload.new \
           request,

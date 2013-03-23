@@ -2,7 +2,7 @@ module Visit
   class Arrival
     class << self
 
-      def create_if_interesting rp
+      def create_if_interesting(rp)
 
         o = get_visit_event_hash rp
 
@@ -15,12 +15,12 @@ module Visit
         end
       end
 
-      def create_delegator o
+      def create_delegator(o)
         # Visit::Manage::log "Visit::Arrival::create_delegator"
         create_delegate o
       end
 
-      def create_delegate o
+      def create_delegate(o)
         ve = Visit::Event.new \
           vid:       o[:vid],
           user_id:   o[:user_id],
@@ -47,7 +47,7 @@ module Visit
 
       private
 
-      def get_visit_event_hash rp
+      def get_visit_event_hash(rp)
         if !rp.is_ignorable || !Visit::Event.ignore?(rp.get_path)
           {}.tap do |o|
             o[:http_method] = rp.request.method
@@ -64,7 +64,7 @@ module Visit
         end
       end
 
-      def get_visit_event_cookies cookies
+      def get_visit_event_cookies(cookies)
         {}.tap do |h|
           features = {}
           cookies.each do |k,v|

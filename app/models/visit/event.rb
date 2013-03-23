@@ -27,16 +27,16 @@ module Visit
 
     ## Scopes
     #
-    def self.newer_than_visit_trait row
+    def self.newer_than_visit_trait(row)
       row.nil? ? self : where("id > ?", row.visit_event_id)
     end
 
-    def self.path_from_url url
+    def self.path_from_url(url)
       uri = Addressable::URI.parse(url)
       uri.host ? url.gsub(%r(^.*?#{uri.host}), "") : url # strip scheme and host
     end
 
-    def self.ignore? path
+    def self.ignore?(path)
       ret = nil
 
       Visit::Configurable.ignorable.each do |re|

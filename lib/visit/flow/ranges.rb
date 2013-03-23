@@ -8,7 +8,7 @@ module Visit
       #    A range can only have one vid. ie. if the visit cookie got deleted, it's a new range.
       # 3. Return an array of (begin.id..end.id) for each range.
       #
-      def for_user user_id
+      def for_user(user_id)
         [].tap do |a|
           for_each_range(user_id) do |r|
             a << r
@@ -18,7 +18,7 @@ module Visit
 
       private
 
-      def for_each_range user_id
+      def for_each_range(user_id)
         previous = nil
         begin_range_id = nil
 
@@ -36,15 +36,15 @@ module Visit
         yield (begin_range_id..previous.id) unless begin_range_id.nil?
       end
 
-      def range_breakpoint? current, previous
+      def range_breakpoint?(current, previous)
         !previous.nil? && (vid_change?(current, previous) || time_gap?(current, previous))
       end
 
-      def vid_change? a, b
+      def vid_change?(a, b)
         a.vid != b.vid
       end
 
-      def time_gap? a, b
+      def time_gap?(a, b)
         (a.created_at - b.created_at).abs > 2.hours
       end
 

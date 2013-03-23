@@ -13,7 +13,7 @@ module Visit
 
     scope :traceable_to_user, ->(user_id) { where(vid: with_distinct_vids_for_user(user_id)) }
 
-    def self.newer_than_row row
+    def self.newer_than_row(row)
       row.nil? ? self : where("created_at > ?", row.created_at)
     end
 

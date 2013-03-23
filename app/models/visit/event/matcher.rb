@@ -4,11 +4,11 @@ module Visit
       Visit::Configurable.labels.map { |h| Visit::Event::Matcher.new *h.values_at(*Visit::Event::Matcher.members) }
     end
 
-    def self.from_hash h
+    def self.from_hash(h)
       self.new *h.values_at(*Visit::Event::Matcher.members)
     end
 
-    def self.first_match other_http_method, path
+    def self.first_match(other_http_method, path)
       all.detect { |m| m.matches? other_http_method, path }
     end
 
@@ -19,17 +19,17 @@ module Visit
       end
     end
 
-    def matches? other_http_method, path
+    def matches?(other_http_method, path)
       http_method_matches?(other_http_method) && path_matches?(path)
     end
 
     private
 
-    def http_method_matches? other
+    def http_method_matches?(other)
       any_http_method? || !other || same_http_method?(other)
     end
 
-    def path_matches? path
+    def path_matches?(path)
       if re =~ path
         @sublabel = $1
         ret = true
@@ -44,7 +44,7 @@ module Visit
       !http_method
     end
 
-    def same_http_method? other
+    def same_http_method?(other)
       String(http_method).casecmp(other.to_s) == 0
     end
 
