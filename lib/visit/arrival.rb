@@ -2,9 +2,9 @@ module Visit
   class Arrival
     class << self
 
-      def create_if_interesting h
+      def create_if_interesting rp
 
-        o = get_visit_event_hash h
+        o = get_visit_event_hash rp
 
         if o
           begin
@@ -51,25 +51,21 @@ module Visit
 
       private
 
-      def get_visit_event_hash h
-        path = h[:path] || h[:request].path
-        url  = h[:path] ? (h[:request].scheme + "://" + h[:request].host + "/" + h[:path]) : h[:request].url
-        ret    = nil
-
-        if !h[:is_request_ignorable] || !Visit::Event.ignore?(path)
-          ret = {}.tap do |o|
-            o[:http_method] = h[:request].method
-            o[:url]         = url
-            o[:vid]         = get_vid(h[:cookies], h[:session])
-            o[:user_id]     = h[:current_user] ? h[:current_user].id : nil
-            o[:user_agent]  = h[:request].env["HTTP_USER_AGENT"]
-            o[:remote_ip]   = h[:request].remote_ip
-            o[:referer]     = h[:request].referer
-            o[:cookies]     = get_visit_event_cookies h[:cookies]
+      def get_visit_event_hash rp
+        if !rp.is_ignorable || !Visit::Event.ignore?(rp.get_path)
+          {}.tap do |o|
+            o[:http_method] = rp.request.method
+            o[:url]         = rp.get_url
+            o[:vid]         = get_vid(rp.cookies, rp.session)
+            o[:user_id]     = rp.current_user ? rp.current_user.id : nil
+            o[:user_agent]  = rp.request.env["HTTP_USER_AGENT"]
+            o[:remote_ip]   = rp.request.remote_ip
+            o[:referer]     = rp.request.referer
+            o[:cookies]     = get_visit_event_cookies rp.cookies
           end
+        else
+          nil
         end
-
-        ret
       end
 
       def get_visit_event_cookies cookies

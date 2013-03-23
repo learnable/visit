@@ -11,12 +11,13 @@ module Visit
 
     def create_visit_event path = nil
       Visit::Arrival::create_if_interesting \
-        request: request,
-        path: path,
-        cookies: cookies,
-        session: session,
-        current_user: current_user,
-        is_request_ignorable: false
+        Visit::RequestPayload.new \
+          request,
+          cookies,
+          session,
+          current_user,
+          false,
+          path
     end
 
     private
@@ -31,11 +32,13 @@ module Visit
 
     def on_every_request
       Visit::Arrival::create_if_interesting \
-        request: request,
-        cookies: cookies,
-        session: session,
-        current_user: current_user,
-        is_request_ignorable: true
+        Visit::RequestPayload.new \
+          request,
+          cookies,
+          session,
+          current_user,
+          true,
+          nil
     end
 
   end
