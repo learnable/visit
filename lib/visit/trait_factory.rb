@@ -73,7 +73,7 @@ class Visit::TraitFactory::TupletFactory
         k_id = get_trait_value_id k
         v_id = get_trait_value_id v
 
-        Tuplet.new k_id, v_id, k, v, ve.id, Time.now
+        Visit::TraitFactory::Tuplet.new k_id, v_id, k, v, ve.id, Time.now
       end
     end.select{ |tuplet| !tuplet.nil? }
   end
