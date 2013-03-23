@@ -25,7 +25,7 @@ module Visit
     MAX = 9223372036854775807 # see: http://dev.mysql.com/doc/refman/5.1/en/numeric-types.html
 
     def set_visit_vid
-      if !Visit::Arrival::get_vid cookies, session
+      if !Visit::RequestPayload::get_vid cookies, session
         session[:vid] = rand(MAX)
       end
     end

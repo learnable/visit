@@ -15,10 +15,6 @@ module Visit
         end
       end
 
-      def get_vid cookies, session
-        cookies["vid"] || session[:vid]
-      end
-
       def create_delegator o
         # Visit::Manage::log "Visit::Arrival::create_delegator"
         create_delegate o
@@ -56,7 +52,7 @@ module Visit
           {}.tap do |o|
             o[:http_method] = rp.request.method
             o[:url]         = rp.get_url
-            o[:vid]         = get_vid(rp.cookies, rp.session)
+            o[:vid]         = rp.get_vid
             o[:user_id]     = rp.current_user ? rp.current_user.id : nil
             o[:user_agent]  = rp.request.env["HTTP_USER_AGENT"]
             o[:remote_ip]   = rp.request.remote_ip
