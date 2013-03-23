@@ -30,9 +30,9 @@ module Visit
           user_id:   o[:user_id],
           remote_ip: o[:remote_ip]
 
-        ve.url_id        = Visit::SourceValue.find_or_create_by_v(o[:url]).id
-        ve.user_agent_id = Visit::SourceValue.find_or_create_by_v(o[:user_agent]).id
-        ve.referer_id    = Visit::SourceValue.find_or_create_by_v(o[:referer]).id
+        ve.url_id        = Visit::SourceValue.optimistic_find_or_create_by_v(o[:url]).id
+        ve.user_agent_id = Visit::SourceValue.optimistic_find_or_create_by_v(o[:user_agent]).id
+        ve.referer_id    = Visit::SourceValue.optimistic_find_or_create_by_v(o[:referer]).id
         ve.http_method   = o[:http_method]
         ve.save!
 
@@ -41,8 +41,8 @@ module Visit
         o[:cookies].each do |k,v|
           vs = Visit::Source.new
           vs.visit_event_id = ve.id
-          vs.k_id = Visit::SourceValue.find_or_create_by_v(k).id
-          vs.v_id = Visit::SourceValue.find_or_create_by_v(v).id
+          vs.k_id = Visit::SourceValue.optimistic_find_or_create_by_v(k).id
+          vs.v_id = Visit::SourceValue.optimistic_find_or_create_by_v(v).id
           vs.save!
         end
 
