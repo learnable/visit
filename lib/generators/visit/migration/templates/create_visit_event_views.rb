@@ -28,6 +28,8 @@ LEFT OUTER JOIN visit_traits sublabel_vt
 ON visit_events.id = sublabel_vt.visit_event_id AND sublabel_vt.k_id = (select id from visit_trait_values where v = 'sublabel')
 LEFT OUTER JOIN visit_trait_values sublabel_vtv
 ON sublabel_vtv.id = sublabel_vt.v_id
+
+ORDER BY id ASC
 EOS
 
       create_view :visit_event_views, stmt do |t|
