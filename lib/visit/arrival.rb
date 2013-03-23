@@ -53,7 +53,7 @@ module Visit
 
       def get_visit_event_hash h
         path = h[:path] || h[:request].path
-        url  = h[:path] ? (h[:request].host + "/" + h[:path]) : h[:request].url
+        url  = h[:path] ? (h[:request].scheme + "://" + h[:request].host + "/" + h[:path]) : h[:request].url
         ret    = nil
 
         if !h[:is_request_ignorable] || !Visit::Event.ignore?(path)
