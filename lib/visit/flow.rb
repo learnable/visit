@@ -43,7 +43,7 @@ module Visit
 
     def events
       @events ||= [].tap do |a|
-        Visit::EventView.with_label.where(vid: vid).where(id: @range).find_each do |vev|
+        Visit::EventView.with_label.where(vid: vid).where(id: @range).uniq.find_each do |vev|
           a << vev
         end
       end
