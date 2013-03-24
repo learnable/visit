@@ -1,5 +1,6 @@
 MAJOR
 - haven't figured out how to get rspec working yet
+- Visit::Manage.archive_visit_events is broken - archives of Visit::Source and Visit::SourceValues are needed
 
 MODERATE
 - cache:

@@ -2,12 +2,12 @@ module Visit
   class Event::HttpMethod
     include Singleton
 
-    def to_enum x
+    def to_enum(x)
       @forward ||= get_hash
       @forward[x.to_s.downcase.to_sym]
     end
 
-    def from_enum x
+    def from_enum(x)
       @reverse ||= get_hash.invert
       @reverse[x]
     end

@@ -13,7 +13,7 @@ module Visit
         h.merge! get_gclid
       end
     end
-    
+
     private
 
     def get_utm

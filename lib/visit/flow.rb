@@ -2,11 +2,11 @@
 #
 module Visit
   class Flow
-    def initialize r
+    def initialize(r)
       @range = r
     end
 
-    def self.new_from_ranges ranges
+    def self.new_from_ranges(ranges)
       [].tap do |a|
         ranges.each do |r|
           a << self.new(r)
@@ -14,7 +14,7 @@ module Visit
       end.reverse
     end
 
-    def has_label? label
+    def has_label?(label)
       !events_with_label(label).empty?
     end
 
@@ -43,7 +43,7 @@ module Visit
 
     def events
       @events ||= [].tap do |a|
-        Visit::EventView.with_label.where(vid: vid).where(id: @range).find_each do |vev|
+        Visit::EventView.with_label.where(vid: vid).where(id: @range).uniq.find_each do |vev|
           a << vev
         end
       end
@@ -51,11 +51,11 @@ module Visit
 
     protected
 
-    def present_step vev
+    def present_step(vev)
       vev.sublabel.nil? ? vev.label : "#{vev.label}(#{vev.sublabel})"
     end
 
-    def events_with_label label
+    def events_with_label(label)
       label = label.to_s
       events.select { |vev| vev.label == label }
     end

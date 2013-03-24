@@ -9,14 +9,15 @@ module Visit
 
     protected
 
-    def create_visit_event path = nil
+    def create_visit_event(path = nil)
       Visit::Arrival::create_if_interesting \
-        request: request,
-        path: path,
-        cookies: cookies,
-        session: session,
-        current_user: current_user,
-        is_request_ignorable: false
+        Visit::RequestPayload.new \
+          request,
+          cookies,
+          session,
+          current_user,
+          false,
+          path
     end
 
     private
@@ -24,18 +25,20 @@ module Visit
     MAX = 9223372036854775807 # see: http://dev.mysql.com/doc/refman/5.1/en/numeric-types.html
 
     def set_visit_vid
-      if !Visit::Arrival::get_vid cookies, session
+      if !Visit::RequestPayload::get_vid cookies, session
         session[:vid] = rand(MAX)
       end
     end
 
     def on_every_request
       Visit::Arrival::create_if_interesting \
-        request: request,
-        cookies: cookies,
-        session: session,
-        current_user: current_user,
-        is_request_ignorable: true
+        Visit::RequestPayload.new \
+          request,
+          cookies,
+          session,
+          current_user,
+          true,
+          nil
     end
 
   end
