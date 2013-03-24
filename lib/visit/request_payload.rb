@@ -10,7 +10,7 @@ module Visit
     end
 
     def get_url
-      path ? (request.scheme + "://" + request.host + "/" + path) : request.url
+      path ? "#{request.scheme}://#{request.host}/#{path}" : request.url
     end
 
     def get_vid

@@ -3,7 +3,6 @@ module Visit
     class << self
 
       def create_if_interesting(rp)
-
         o = get_visit_event_hash rp
 
         if o
