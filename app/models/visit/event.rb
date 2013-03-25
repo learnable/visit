@@ -74,16 +74,8 @@ module Visit
       Visit::SourceValue.find(url_id).v
     end
 
-    def url=(s)
-      self.url_id = Visit::SourceValue.find_or_create_by_v(s).id
-    end
-
     def user_agent
       Visit::SourceValue.find(user_agent_id).v
-    end
-
-    def user_agent=(s)
-      self.user_agent_id = Visit::SourceValue.find_or_create_by_v(s).id
     end
 
   end
