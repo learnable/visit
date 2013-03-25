@@ -1,5 +1,4 @@
 module Visit
-  # ApplicationController is part of a normal rails app.
   class TagController < ::ApplicationController
 
     def create
