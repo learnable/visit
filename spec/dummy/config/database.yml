@@ -1,6 +1,7 @@
 # Use postgresql
 development:
   adapter: postgresql
+  host: localhost
   encoding: unicode
   database: visit
   pool: 5
