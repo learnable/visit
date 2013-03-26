@@ -1,10 +1,9 @@
 require 'spec_helper'
+require 'shared_gem_config'
 
 describe Visit::Event::Matcher do
   let(:klass) { Visit::Event::Matcher }
   let(:path) { "/articles" }
-
-  include_context "gem_config"
 
   describe ".first_match" do
     it "returns a matcher" do

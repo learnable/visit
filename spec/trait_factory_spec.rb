@@ -1,9 +1,8 @@
 require 'spec_helper'
+require 'shared_gem_config'
 
 describe Visit::TraitFactory do
   let(:user) { create :user }
-
-  include_context "gem_config"
 
   before do
     create :visit_event, url: "http://e.org/articles", user: user, vid: 100

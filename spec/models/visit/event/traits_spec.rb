@@ -1,10 +1,9 @@
 require 'spec_helper'
+require 'shared_gem_config'
 
 describe Visit::Event::Traits do
   let(:ve) { create(:visit_event, url: "http://thishost.org/articles") }
   let(:traits) { Visit::Event::Traits.new(ve) }
-
-  include_context "gem_config"
 
   ##### Finally, the tests:
 

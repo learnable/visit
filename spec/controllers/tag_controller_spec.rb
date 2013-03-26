@@ -1,8 +1,8 @@
 require "spec_helper"
+require 'shared_gem_config'
 
 describe Visit::TagController do
 
-  include_context "gem_config"
 
   it "sets a visit_id cookie" do
     get :create

@@ -1,4 +1,6 @@
 require 'spec_helper'
+require 'shared_gem_config'
+
 describe "Visit::ControllerFilters", type: :controller do
   # Create an rspec anonymous controller, which by default inherits from
   # ActionController::Base
@@ -7,8 +9,6 @@ describe "Visit::ControllerFilters", type: :controller do
       head :ok
     end
   end
-
-  include_context "gem_config"
 
   let(:visit_id) { 555 }
 

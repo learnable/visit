@@ -1,11 +1,10 @@
 require 'spec_helper'
+require 'shared_gem_config'
 
 describe Visit::Flow do
   let(:user) { create :user }
   let(:range) { Visit::Flow::Ranges.for_user(user.id).first }
   let(:flow) { Visit::Flow.new(range) }
-
-  include_context "gem_config"
 
   before do
     create :visit_event, url: "http://e.org/articles", user: user, vid: 100
