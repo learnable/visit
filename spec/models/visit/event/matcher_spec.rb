@@ -3,30 +3,8 @@ require 'spec_helper'
 describe Visit::Event::Matcher do
   let(:klass) { Visit::Event::Matcher }
   let(:path) { "/articles" }
-  def labels
-    [{
-      :http_method  => :get,
-      :re           => /^\/articles/,
-      :label        => :articles_index,
-      :has_sublabel => false
-    }]
-  end
 
-  # Configure the gem
-  before :all do
-    Visit::Configurable.instance_exec(labels) do |_labels|
-      @_labels = _labels
-      def labels
-        @_labels
-      end
-      def ignorable
-        [
-          /\/courses\/blah.js/,
-          /\/system\/blah/,
-        ]
-      end
-    end
-  end
+  include_context "gem_config"
 
   describe ".first_match" do
     it "returns a matcher" do
@@ -36,7 +14,7 @@ describe Visit::Event::Matcher do
 
   describe ".all" do
     it "returns the right number of matches" do
-      klass.all.count.should == 1
+      klass.all.count.should == 2
       klass.all.each do |matcher|
         matcher.class.should == klass;
       end

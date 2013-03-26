@@ -2,14 +2,7 @@ require "spec_helper"
 
 describe Visit::TagController do
 
-  # Configure the gem by overriding this class
-  before :all do
-    Visit::Configurable.instance_eval do
-      def ignorable
-        []
-      end
-    end
-  end
+  include_context "gem_config"
 
   it "sets a visit_id cookie" do
     get :create
