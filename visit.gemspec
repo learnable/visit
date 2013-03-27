@@ -24,7 +24,6 @@ Gem::Specification.new do |s|
   s.add_dependency("rails", "= 3.2.12")
   #s.add_dependency("activesupport", "~> 3.0")
   s.add_dependency("i18n")
-  s.add_dependency("schema_plus")
   s.add_dependency("addressable")
 
   # Dependencies for dev/testing of the actual gem. Test gems are required

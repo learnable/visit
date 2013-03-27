@@ -16,5 +16,8 @@ end
   end
 end
 
-require 'schema_plus'
 require "visit/engine" if defined?(Rails)
+
+# Add methods to abstract adapter.
+require 'visit/abstract_adapter.rb'
+::ActiveRecord::ConnectionAdapters::AbstractAdapter.send(:include, Visit::AbstractAdapter)
