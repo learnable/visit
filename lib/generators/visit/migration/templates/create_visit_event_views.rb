@@ -2,7 +2,8 @@ class CreateVisitEventViews < ActiveRecord::Migration
   def up
 
     stmt = <<-EOS
-SELECT visit_events.id as id,
+SELECT
+  DISTINCT visit_events.id as id,
   visit_events.http_method_enum as http_method_enum,
   url_vsv.v as url,
   user_id,
