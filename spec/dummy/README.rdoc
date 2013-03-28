@@ -1,0 +1,4 @@
+This dummy app was generated as part of a new Gem using the
+rails plugin generator. Command was
+
+    rails plugin new visit --mountable --skip-test-unit --dummy-path=spec/dummy
