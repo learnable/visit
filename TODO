@@ -1,6 +1,7 @@
 MAJOR
 - haven't figured out how to get rspec working yet
 - Visit::Manage.archive_visit_events is broken - archives of Visit::Source and Visit::SourceValues are needed
+- Now that schema_plus dependency has been removed, the Visit gem nees to explicitly express foreign key constraints.
 
 MODERATE
 - cache:
