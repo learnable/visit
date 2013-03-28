@@ -21,8 +21,15 @@ Gem::Specification.new do |s|
   # specify any dependencies here; for example:
   # s.add_runtime_dependency "rest-client"
 
-  s.add_dependency("activesupport", "~> 3.0")
+  s.add_dependency("rails", "= 3.2.12")
+  #s.add_dependency("activesupport", "~> 3.0")
   s.add_dependency("i18n")
+  s.add_dependency("addressable")
 
-  s.add_development_dependency "rspec"
+  # Dependencies for dev/testing of the actual gem. Test gems are required
+  # manually in spec_helper.
+  s.add_development_dependency("rspec-rails")
+  s.add_development_dependency("factory_girl_rails")
+
+  # NOTE dependencies for the dummy app are in the Gemfile
 end

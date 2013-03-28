@@ -10,7 +10,9 @@ module Visit
           begin
             ve = create_delegator o
           rescue
-            CrashLog.notify $!
+            # TODO: Put this back in.
+            #CrashLog.notify $!
+            puts $!
           end
         end
       end

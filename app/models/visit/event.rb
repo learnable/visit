@@ -1,3 +1,5 @@
+require 'addressable/uri'
+
 module Visit
   class Event < ActiveRecord::Base
 
@@ -61,6 +63,10 @@ module Visit
 
     def url
       Visit::SourceValue.find(url_id).v
+    end
+
+    def user_agent
+      Visit::SourceValue.find(user_agent_id).v
     end
 
   end
