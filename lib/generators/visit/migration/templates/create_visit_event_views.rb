@@ -47,6 +47,8 @@ EOS
   end
 
   def down
-    drop_view :visit_event_views
+    if ActiveRecord::Base.connection.views.include?("visit_event_views")
+      drop_view :visit_event_views
+    end
   end
 end
