@@ -5,9 +5,19 @@ module Visit
 
     self.table_name_prefix = 'visit_'
 
-    has_many :visit_traits, class_name: "Visit::Trait", foreign_key: "visit_event_id", dependent: :destroy
+    has_many :visit_traits,  class_name: "Visit::Trait",  foreign_key: "visit_event_id", dependent: :destroy
     has_many :visit_sources, class_name: "Visit::Source", foreign_key: "visit_event_id", dependent: :destroy
-    has_many :visit_source_values
+
+    has_many :visit_source_keys,   class_name: "::Visit::Source", :through => :visit_sources, :source => :key,   dependent: :destroy
+    has_many :visit_source_values, class_name: "::Visit::Source", :through => :visit_sources, :source => :value, dependent: :destroy
+
+    has_many :visit_trait_keys,   class_name: "::Visit::Trait", :through => :visit_traits, :source => :key,   dependent: :destroy
+    has_many :visit_trait_values, class_name: "::Visit::Trait", :through => :visit_traits, :source => :value, dependent: :destroy
+
+    has_many :labels, :through => :visit_traits, :source => :value,
+      :conditions => "visit_traits.k_id = (select id from visit_trait_values where v = 'label')"
+    has_many :sublabels, :through => :visit_traits, :source => :value,
+      :conditions => "visit_traits.k_id = (select id from visit_trait_values where v = 'sublabel')"
 
     belongs_to :user
 
@@ -29,6 +39,12 @@ module Visit
 
     ## Scopes
     #
+    scope :with_label, joins(:labels)
+
+    scope :with_distinct_vids_for_user , ->(user_id) { select("distinct vid").where(user_id: user_id) }
+
+    scope :traceable_to_user, ->(user_id) { where(vid: with_distinct_vids_for_user(user_id)) }
+
     def self.newer_than_visit_trait(row)
       row.nil? ? self : where("id > ?", row.visit_event_id)
     end
@@ -67,6 +83,16 @@ module Visit
 
     def user_agent
       Visit::SourceValue.find(user_agent_id).v
+    end
+
+    def label
+      vtv = self.labels.first
+      vtv.nil? ? nil : vtv.v
+    end
+
+    def sublabel
+      vtv = self.sublabels.first
+      vtv.nil? ? nil : vtv.v
     end
 
   end
