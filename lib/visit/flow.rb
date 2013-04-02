@@ -43,7 +43,8 @@ module Visit
 
     def events
       @events ||= [].tap do |a|
-        Visit::EventView.with_label.where(vid: vid).where(id: @range).uniq.find_each do |vev|
+        # ideally we'd includes(:sublabel) here ... but it makes the query fail and I don't know why
+        Visit::Event.with_label.includes(:labels, :sublabels).where(vid: vid).where(id: @range).find_each do |vev|
           a << vev
         end
       end
