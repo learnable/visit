@@ -43,9 +43,12 @@ module Visit
 
     def events
       @events ||= [].tap do |a|
-        # ideally we'd includes(:sublabel) here ... but it makes the query fail and I don't know why
-        Visit::Event.with_label.includes(:labels, :sublabels).where(vid: vid).where(id: @range).find_each do |vev|
-          a << vev
+        Visit::LabelledEventQuery.new.scoped.
+          includes(:visit_trait_keys, :visit_trait_values).
+          where(vid: vid).
+          where(id: @range).
+          find_each do |vev|
+            a << vev
         end
       end
     end

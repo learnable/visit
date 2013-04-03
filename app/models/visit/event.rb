@@ -14,11 +14,6 @@ module Visit
     has_many :visit_trait_keys,   class_name: "::Visit::Trait", :through => :visit_traits, :source => :key,   dependent: :destroy
     has_many :visit_trait_values, class_name: "::Visit::Trait", :through => :visit_traits, :source => :value, dependent: :destroy
 
-    has_many :labels, :through => :visit_traits, :source => :value,
-      :conditions => "visit_traits.k_id = (select id from visit_trait_values where v = 'label')"
-    has_many :sublabels, :through => :visit_traits, :source => :value,
-      :conditions => "visit_traits.k_id = (select id from visit_trait_values where v = 'sublabel')"
-
     belongs_to :user
 
     validates :url_id,
@@ -83,16 +78,6 @@ module Visit
 
     def user_agent
       Visit::SourceValue.find(user_agent_id).v
-    end
-
-    def label
-      vtv = self.labels.first
-      vtv.nil? ? nil : vtv.v
-    end
-
-    def sublabel
-      vtv = self.sublabels.first
-      vtv.nil? ? nil : vtv.v
     end
 
   end
