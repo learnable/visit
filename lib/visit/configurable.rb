@@ -17,6 +17,20 @@ module Visit
         raise_exception_delegator
       end
 
+      def user_agent_robots
+        [
+          'Googlebot',
+          'Twitterbot',
+          'TweetmemeBot',
+          'rogerbot',
+          'YandexBot',
+          'msnbot',
+          'bingbot',
+          'QuerySeekerSpider',
+          'WormlyBot'
+        ]
+      end
+
       # Parent app should override this to return an array of ruby reg-exps,
       # specifing a black-list of paths to be ignored, for example,
       # to ignore requests to the /api/* path:

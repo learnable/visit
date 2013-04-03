@@ -11,6 +11,7 @@ module Visit
         h.merge! get_label_sublabel
         h.merge! get_utm
         h.merge! get_gclid
+        h.merge! get_user_agent_robot
       end
     end
 
@@ -33,6 +34,17 @@ module Visit
 
     def get_label_sublabel
        (m = Visit::Event::Matcher.first_match(@ve.http_method, @path)) ? { label: m.label, sublabel: m.sublabel } : {}
+    end
+
+    def get_user_agent_robot
+      {}.tap do |h|
+        Visit::Configurable.user_agent_robots.each do |str|
+          if @ve.user_agent =~ Regexp.new(str, true)
+            h[:robot] = str
+            break
+          end
+        end
+      end
     end
   end
 end
