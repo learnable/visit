@@ -17,7 +17,10 @@ module Visit
     # create Traits and TraitValues in batches
     #
     def run
-      Visit::Event.newer_than_visit_trait(Visit::Trait.last).find_in_batches do |a_ve|
+      Visit::Event.
+        newer_than_visit_trait(Visit::Trait.last).
+        includes(:visit_source_values_url, :visit_source_values_user_agent).
+        find_in_batches do |a_ve|
         tuplets = @tuplet_factory.tuplets_from_ve_batch a_ve
 
         if !tuplets.empty?
