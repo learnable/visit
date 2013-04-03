@@ -42,15 +42,7 @@ module Visit
     end
 
     def events
-      @events ||= [].tap do |a|
-        Visit::LabelledEventQuery.new.scoped.
-          includes(:visit_trait_keys, :visit_trait_values).
-          where(vid: vid).
-          where(id: @range).
-          find_each do |vev|
-            a << vev
-        end
-      end
+      @events ||= Visit::LabelledEventQuery.new.scoped.where(vid: vid).where(id: @range).all
     end
 
     protected
