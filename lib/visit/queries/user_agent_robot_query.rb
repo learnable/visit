@@ -13,7 +13,6 @@ module Visit
           ON user_agent_robot_vtv.id = user_agent_robot_vt.v_id
       }
       @relation.
-        select("visit_events.*, user_agent_robot_vtv.v as user_agent_robot").
         joins(stmt)
     end
 
