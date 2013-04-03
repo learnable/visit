@@ -34,8 +34,6 @@ module Visit
 
     ## Scopes
     #
-    scope :with_label, joins(:labels)
-
     scope :with_distinct_vids_for_user , ->(user_id) { select("distinct vid").where(user_id: user_id) }
 
     scope :traceable_to_user, ->(user_id) { where(vid: with_distinct_vids_for_user(user_id)) }
