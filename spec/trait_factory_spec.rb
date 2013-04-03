@@ -12,6 +12,6 @@ describe Visit::TraitFactory do
   it "creates new traits" do
     expect {
       Visit::TraitFactory.new.run
-    }.to change { Visit::Trait.count }.by(2)
+    }.to change { Visit::Trait.count }.by(3)
   end
 end

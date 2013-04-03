@@ -10,9 +10,9 @@ class Visit::Configurable
     },
       {
       :http_method  => :get,
-      :re           => /^\/articles\/\d/,
+      :re           => /^\/articles\/(\d)/,
       :label        => :article,
-      :has_sublabel => false
+      :has_sublabel => true
     }
     ]
   end

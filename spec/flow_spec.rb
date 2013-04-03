@@ -15,6 +15,6 @@ describe Visit::Flow do
   end
 
   it "shows flow steps" do
-    flow.steps.should == "articles_index -> article"
+    flow.steps.should == "articles_index -> article(1)"
   end
 end
