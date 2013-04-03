@@ -50,7 +50,7 @@ RACK_ENV=test bundle exec rake db:migrate
 visit_event_view
 ----------------
 
-    CREATE VIEW visit_event_views
+    CREATE VIEW visit_event_views AS
     SELECT
       DISTINCT visit_events.id as id,
       visit_events.http_method_enum as http_method_enum,
