@@ -16,6 +16,7 @@ module Visit
 
     belongs_to :visit_source_values_url,        class_name: "Visit::SourceValue", foreign_key: "url_id"
     belongs_to :visit_source_values_user_agent, class_name: "Visit::SourceValue", foreign_key: "user_agent_id"
+
     belongs_to :user
 
     validates :url_id,        presence: true
@@ -68,11 +69,17 @@ module Visit
     end
 
     def url
-      visit_source_values_url.v
+      nil_or_value visit_source_values_url
     end
 
     def user_agent
-      visit_source_values_user_agent.v
+      nil_or_value visit_source_values_user_agent
+    end
+
+    private
+
+    def nil_or_value(vsv)
+      vsv.nil? ? nil : vsv.v
     end
 
   end
