@@ -16,6 +16,7 @@ module Visit
 
     belongs_to :visit_source_values_url,        class_name: "Visit::SourceValue", foreign_key: "url_id"
     belongs_to :visit_source_values_user_agent, class_name: "Visit::SourceValue", foreign_key: "user_agent_id"
+    belongs_to :visit_source_values_referer,    class_name: "Visit::SourceValue", foreign_key: "referer_id"
 
     belongs_to :user
 
@@ -74,6 +75,10 @@ module Visit
 
     def user_agent
       nil_or_value visit_source_values_user_agent
+    end
+
+    def referer
+      nil_or_value visit_source_values_referer
     end
 
     private
