@@ -27,7 +27,17 @@ module Visit
           'msnbot',
           'bingbot',
           'QuerySeekerSpider',
-          'WormlyBot'
+          'WormlyBot',
+          "Ruby",
+          "Pingdom.com_bot",
+          "InsieveBot",
+          "undrip",
+          "EventMachine HttpClient",
+          "ShowyouBot",
+          "Python-urllib",
+          "Kimengi/nineconnections.com",
+          "AppEngine-Google",
+          "PaperLiBot"
         ]
       end
 
