@@ -7,22 +7,15 @@ module Visit
         puts "AMHERE: puts: #{$0}: #{msg}"
       end
 
-      # destroy rows that match regexps in Visit::Configurable.ignorable
-      #
       def destroy_ignorable
-        Visit::Event.find_in_batches do |a_ve|
-          activity = {} if block_given?
-          a_to_be_destroyed = []
-
-          a_ve.each do |ve|
-            a_to_be_destroyed << ve.id if ve.ignore?
-          end
+        Visit::Event.includes(:visit_source_values_url).find_in_batches do |a_ve|
+          a_to_be_destroyed = a_ve.map { |ve| ve.ignore? ? ve.id : nil }.select{ |id| !id.nil? }
 
           Visit::Event.destroy a_to_be_destroyed
-          yield activity if block_given?
+
+          yield a_to_be_destroyed if block_given?
         end
       end
-
 
       def archive_visit_events(days=93)
         age = days.days.ago.utc
