@@ -4,7 +4,7 @@ class Visit::Configurable
   def self.labels
     [{
       :http_method  => :get,
-      :re           => /^\/articles$/,
+      :re           => /^\/articles(\?.*|)$/,
       :label        => :articles_index,
       :has_sublabel => false
     },
