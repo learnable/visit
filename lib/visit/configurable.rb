@@ -3,17 +3,18 @@ module Visit
   class Configurable
     class << self
 
-      # Parent app should override this to return an array of label-matchers,
-      # where each label-matcher is a hash with keys
-      # :http_method, :re, :label, :has_sublabel
-      # For example, for an 'alpha_signups' label:
-      # {
-      #   :http_method  => :post,
-      #   :re           => /^\/alpha_signups/,
-      #   :label        => :alpha_signups,
-      #   :has_sublabel => false
-      # }
       def labels
+
+        # The app should override this method and return an array whose elements are ultimately
+        # passed to the Visit::Event::Matcher constructor.
+        # eg:
+        # [
+        #   [ :post, /^\/contact\/deliver/,       :contact_deliver,       false ],
+        #   [ :get,  /^\/contact/,                :contact_prompt,        false ],
+        #   [ :get,  /^\/login?.*intended=(.*)$/, :login_prompt,          true  ],
+        #   [ :any,  /^\/assessment\/url\/(.*)/,  :url_assessment,        true  ]
+        # ]
+
         raise_exception_delegator
       end
 

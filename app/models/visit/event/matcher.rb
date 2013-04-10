@@ -1,7 +1,7 @@
 module Visit
   class Event::Matcher < Struct.new(:http_method, :re, :label, :has_sublabel)
     def self.all
-      Visit::Configurable.labels.map { |h| Visit::Event::Matcher.new *h.values_at(*Visit::Event::Matcher.members) }
+      Visit::Configurable.labels.map { |a| Visit::Event::Matcher.new *a }
     end
 
     def self.first_match(other_http_method, path)
