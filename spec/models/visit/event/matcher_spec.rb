@@ -20,15 +20,18 @@ describe Visit::Event::Matcher do
     end
   end
 
-  context "that should match /articles index" do
+  context "a matcher with http_method :get" do
+
     let(:matcher) do
       klass.first_match(:get, path)
     end
 
     describe "matches?" do
-      it "matches" do
+
+      it "matches http_method and path" do
         matcher.matches?("get", path).should be_true
       end
+
       it 'does not match garbage' do
         matcher.matches?("blah", "/art").should be_false
         matcher.matches?("post", "aldkcjka").should be_false
@@ -36,5 +39,18 @@ describe Visit::Event::Matcher do
       end
     end
 
+  end
+
+  context "a matcher with http_method :any" do
+    let(:matcher) do
+      Visit::Event::Matcher.new :any, /^\/articles\/(\d)/, :articles, true
+    end
+
+    it "matches? :get" do
+      matcher.matches?("get", "/articles/123").should be_true
+    end
+    it "matches? :post" do
+      matcher.matches?("post", "/articles/123").should be_true
+    end
   end
 end
