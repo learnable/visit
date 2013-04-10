@@ -1,5 +1,4 @@
 module Visit
-  # This class is designed to be opened and overriden by the parent app.
   class Configurable
     class << self
 
@@ -48,20 +47,6 @@ module Visit
           "AppEngine-Google",
           "PaperLiBot"
         ]
-      end
-
-      private
-
-      def raise_exception_delegator
-        begin
-          raise RuntimeError, "Visit::Configurable - expected a configurable method to be overridden by config/initializers"
-        rescue => e
-          catch_exception_delegate(e)
-        end
-      end
-
-      def catch_exception_delegate(e)
-        raise e
       end
 
     end
