@@ -26,26 +26,31 @@ module Visit
       end
 
       def user_agent_robots
+        # The http request User-Agent is matched against the regexps in this Array.
+        # A Visit::Trait is created if there's a match.
+        # Also see Visit::UserAgentRobotQuery.
+        # Handy for distinguishing (some) robot traffic from human traffic.
+
         [
-          "Googlebot",
-          "Twitterbot",
-          "TweetmemeBot",
-          "rogerbot",
-          "YandexBot",
-          "msnbot",
-          "bingbot",
-          "QuerySeekerSpider",
-          "WormlyBot",
-          "Ruby",
-          "Pingdom.com_bot",
-          "InsieveBot",
-          "undrip",
-          "EventMachine HttpClient",
-          "ShowyouBot",
-          "Python-urllib",
-          "Kimengi/nineconnections.com",
-          "AppEngine-Google",
-          "PaperLiBot"
+          /Googlebot/i,
+          /Twitterbot/i,
+          /TweetmemeBot/i,
+          /rogerbot/i,
+          /YandexBot/i,
+          /msnbot/i,
+          /bingbot/i,
+          /QuerySeekerSpider/i,
+          /WormlyBot/i,
+          /^Ruby$/i,
+          /Pingdom.com_bot/i,
+          /InsieveBot/i,
+          /undrip/i,
+          /EventMachine HttpClient/i,
+          /ShowyouBot/i,
+          /Python-urllib/i,
+          /Kimengi\/nineconnections.com/i,
+          /AppEngine-Google/i,
+          /PaperLiBot/i
         ]
       end
 

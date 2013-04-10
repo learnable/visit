@@ -36,9 +36,9 @@ module Visit
 
     def get_user_agent_robot
       {}.tap do |h|
-        Visit::Configurable.user_agent_robots.each do |str|
-          if @ve.user_agent =~ Regexp.new(str, true)
-            h[:robot] = str
+        Visit::Configurable.user_agent_robots.each do |re|
+          if @ve.user_agent =~ re
+            h[:robot] = re.to_s
             break
           end
         end
