@@ -4,10 +4,6 @@ module Visit
       Visit::Configurable.labels.map { |h| Visit::Event::Matcher.new *h.values_at(*Visit::Event::Matcher.members) }
     end
 
-    def self.from_hash(h)
-      self.new *h.values_at(*Visit::Event::Matcher.members)
-    end
-
     def self.first_match(other_http_method, path)
       all.detect { |m| m.matches? other_http_method, path }
     end

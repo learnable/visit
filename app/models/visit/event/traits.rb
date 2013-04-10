@@ -19,16 +19,14 @@ module Visit
 
     def get_utm
       str = [ :utm_term, :utm_source, :utm_medium, :utm_content, :utm_campaign ].map do |k|
-        h = { http_method: :get, re: Regexp.new("[&|?]#{k.to_s}=(.*?)(&.*|)$"), label: :utm, has_sublabel: true }
-        m = Visit::Event::Matcher.from_hash h
+        m = Visit::Event::Matcher.new :get, Regexp.new("[&|?]#{k.to_s}=(.*?)(&.*|)$"), :utm, true
         m.matches?(@ve.http_method, @path) ? m.sublabel : ""
       end.join("_")
       str =~ /^_*$/ ? {} : { utm: str }
     end
 
     def get_gclid
-      h = { http_method: :get, re: /[&|?]gclid=(.*?)(&.*|)$/, label: :gclid, has_sublabel: true }
-      m = Visit::Event::Matcher.from_hash h
+      m = Visit::Event::Matcher.new :get, /[&|?]gclid=(.*?)(&.*|)$/, :gclid, true
       m.matches?(@ve.http_method, @path) ?  { gclid: m.sublabel } : {}
     end
 
