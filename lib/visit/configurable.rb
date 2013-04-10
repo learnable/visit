@@ -4,9 +4,9 @@ module Visit
     class << self
 
       def labels
-
-        # The app should override this method and return an array whose elements are ultimately
-        # passed to the Visit::Event::Matcher constructor.
+        # The app can override this method to identify requests that are of specific interest.
+        #
+        # The elements of this array are passed to the Visit::Event::Matcher constructor.
         # eg:
         # [
         #   [ :post, /^\/contact\/deliver/,       :contact_deliver,       false ],
@@ -14,8 +14,16 @@ module Visit
         #   [ :get,  /^\/login?.*intended=(.*)$/, :login_prompt,          true  ],
         #   [ :any,  /^\/assessment\/url\/(.*)/,  :url_assessment,        true  ]
         # ]
+      end
 
-        raise_exception_delegator
+      def ignorable
+        # Before storing an event, the gem matches the http request path against the regexps returned by this method.
+        # If there's a match, the request is ignored.
+        # Helps avoid filling up the database with requests to polling endpoints.
+        #
+        # [
+        #   /^\/api/
+        # ]
       end
 
       def user_agent_robots
@@ -40,14 +48,6 @@ module Visit
           "AppEngine-Google",
           "PaperLiBot"
         ]
-      end
-
-      # Parent app should override this to return an array of ruby reg-exps,
-      # specifing a black-list of paths to be ignored, for example,
-      # to ignore requests to the /api/* path:
-      # /^\/api/
-      def ignorable
-        raise_exception_delegator
       end
 
       private
