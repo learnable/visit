@@ -32,12 +32,12 @@ module Visit
       else
         ret = false
       end
-      # puts "AMHERE: path_matches?: re: #{re} returns: #{ret}"
+      # Visit::Manage.log "AMHERE: path_matches?: re: #{re} path: #{path} returns: #{ret}"
       ret
     end
 
     def any_http_method?
-      !http_method
+      http_method == :any
     end
 
     def same_http_method?(other)
