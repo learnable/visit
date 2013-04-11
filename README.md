@@ -108,3 +108,20 @@ Look at this view through SequelPro to get a sense of what is being stored.
     
     ORDER BY id ASC
 
+TODO
+----
+MAJOR
+* the Visit gem needs to explicitly express foreign key constraints because the schema_plus dependency has been removed
+  - leni note: is this true?
+
+MODERATE
+* create Traits and TraitValues at the same time as Source and SourceValues
+* cache:
+  - Visit::Event.url
+  - Visit::TraitFactory
+  - Visit::Arrival.create_visit
+  - leni note: redis LRU vs memcache? configurable by the app?
+* Visit::Manage.archive_visit_events is broken
+
+MINOR
+* don't hardcode 'users' as the 'users' table in the application - make it configurable
