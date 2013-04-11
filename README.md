@@ -1,13 +1,38 @@
 visit
 =====
 
-Record visits to a site so that they're easy to analyse afterward
+Store some subset (or all) of an app's http requests in a database.
 
-Usage
------
+Get the data out using Active Record Query Interface.
 
-Parent app must override the 'labels' and 'ignorable' class methods of
-Visit::Configurable
+Install the gem into your app
+-----------------------------
+
+    # add to Gemfile
+    bundle
+    rails generate visit:install
+    rake db:migrate
+
+Customise
+---------
+
+To customise, create a config/initializers/visit.rb, eg:
+
+    class Visit::Configurable
+      def self.ignorable
+        [
+          /^\/api/, # don't store requests to /api
+        ]
+      end
+      def self.labels
+        [
+          [ :get, /^\/contact/, :contact_prompt, false ]
+        ]
+      end
+      def self.create_visit o
+        MySidekiqWorker.perform_async o # write to the db in a worker (don't slow down the Rails request cycle)
+      end
+    end
 
 Assumed Models
 --------------
@@ -15,22 +40,21 @@ Assumed Models
 Visit assumes there is a table 'users' existing in the database, and the
 existence of a <code>current_user</code> controller helper.
 
-Development
------------
+Label and sublabels
+-------------------
+Visit::Configurable.labels allows the app to associate labels (and sublabels) with URL paths.
 
-The main model is the model Visit::Event, which represents an HTTP request. The
-various HTTP headers are stored as references into the visit_source_values
-table. For example, the User Agent for a particular request may be
-<code>"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en) AppleWebKit/125.2 (KHTML,
-like Gecko) Safari/125.8"</code>. This string is stored at the 'v' attribute in
-a visit_source_values row, and the user_agent_id attribute of this model stores
-the id of that row.
+Which in turn supports queries like this:
 
-The vid attribute is the 'visit id', or can be thought of as the 'visitor id'.
-It aims to be a basic identification method, linking together requests by the
-same user.
+    Visit::LabelledEventQuery.new.scoped.
+      where("label_vtv.v = 'contact_prompt'").
+      where(:created_at => (1.day.ago..Time.now)).
+      count
 
-The vid is persisted across requests via a cookie.
+Developing the gem
+------------------
+
+    git clone git@github.com:learnable/visit.git
 
 Via <code>psql</code>
 ```psql
@@ -49,6 +73,9 @@ RACK_ENV=test bundle exec rake db:migrate
 
 visit_event_view
 ----------------
+
+This sql query creates a database view that denormalises (some of) the data that the gem is storing.
+Look at this view through SequelPro to get a sense of what is being stored.
 
     CREATE VIEW visit_event_views AS
     SELECT
@@ -80,3 +107,4 @@ visit_event_view
       ON sublabel_vtv.id = sublabel_vt.v_id
     
     ORDER BY id ASC
+
