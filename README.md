@@ -110,6 +110,8 @@ This sql query creates a database view for that purpose.
 
 TODO
 ----
+MAJOR
+
 MODERATE
 * support the visit_* tables living in separate db from the app
 * create Traits and TraitValues at the same time as Sources and SourceValues
