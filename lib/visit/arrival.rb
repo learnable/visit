@@ -7,7 +7,7 @@ module Visit
 
         if o
           begin
-            ve = create_delegator o
+            ve = Visit::Configurable.create_visit o
           rescue
             # TODO: Put this back in.
             #CrashLog.notify $!
@@ -16,12 +16,7 @@ module Visit
         end
       end
 
-      def create_delegator(o)
-        # Visit::Manage::log "Visit::Arrival::create_delegator"
-        create_delegate o
-      end
-
-      def create_delegate(o)
+      def create_visit(o)
         ve = Visit::Event.new \
           vid:       o[:vid],
           user_id:   o[:user_id],
@@ -33,7 +28,7 @@ module Visit
         ve.http_method   = o[:http_method]
         ve.save!
 
-        # Visit::Manage::log "Visit::Arrival::create_delegator saved ve: #{ve.to_yaml}"
+        # Visit::Manage::log "Visit::Arrival::create_visit saved ve: #{ve.to_yaml}"
 
         o[:cookies].each do |k,v|
           vs = Visit::Source.new
