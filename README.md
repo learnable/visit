@@ -48,7 +48,7 @@ Which in turn supports queries like this:
 
     Visit::LabelledEventQuery.new.scoped.
       where("label_vtv.v = 'contact_prompt'").
-      where(:created_at => (1.day.ago..Time.now)).
+      where(created_at: (1.day.ago..Time.now)).
       count
 
 Developing the gem
@@ -71,11 +71,11 @@ bundle exec rake db:migrate
 RACK_ENV=test bundle exec rake db:migrate
 ```
 
-visit_event_view
-----------------
+visit_event_views
+-----------------
+For debugging or ad-hoc sql queries it's sometimes nice to have a denormalised view of the data that the gem is storing.
 
-This sql query creates a database view that denormalises (some of) the data that the gem is storing.
-Look at this view through SequelPro to get a sense of what is being stored.
+This sql query creates a database view for that purpose.
 
     CREATE VIEW visit_event_views AS
     SELECT
@@ -110,12 +110,9 @@ Look at this view through SequelPro to get a sense of what is being stored.
 
 TODO
 ----
-MAJOR
-* the Visit gem needs to explicitly express foreign key constraints because the schema_plus dependency has been removed
-  - leni note: is this true?
-
 MODERATE
-* create Traits and TraitValues at the same time as Source and SourceValues
+* support the visit_* tables living in separate db from the app
+* create Traits and TraitValues at the same time as Sources and SourceValues
 * cache:
   - Visit::Event.url
   - Visit::TraitFactory
