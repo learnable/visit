@@ -33,9 +33,9 @@ module Visit
 
     ## Scopes
     #
-    scope :with_distinct_vids_for_user , ->(user_id) { select("distinct vid").where(user_id: user_id) }
-
-    scope :traceable_to_user, ->(user_id) { where(vid: with_distinct_vids_for_user(user_id)) }
+    def self.traceable_to_user(user_id)
+      joins("INNER JOIN visit_events ve_vid ON ve_vid.vid = visit_events.vid AND ve_vid.user_id = '#{user_id}'")
+    end
 
     def self.newer_than_visit_trait(row)
       row.nil? ? self : where("id > ?", row.visit_event_id)
