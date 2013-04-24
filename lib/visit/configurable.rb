@@ -2,10 +2,11 @@ module Visit
   class Configurable
     class << self
 
-      def labels
+      def labels_match_first
         # The app can override this method to identify requests that are of specific interest.
+        # The first match results in a Visit::Trait.
+        # Also see Visit::Event::MatcherCollection.
         #
-        # The elements of this array are passed to the Visit::Event::Matcher constructor.
         # eg:
         # [
         #   [ :post, /^\/contact\/deliver/,       :contact_deliver,       false ],
@@ -13,6 +14,13 @@ module Visit
         #   [ :get,  /^\/login?.*intended=(.*)$/, :login_prompt,          true  ],
         #   [ :any,  /^\/assessment\/url\/(.*)/,  :url_assessment,        true  ]
         # ]
+        #
+      end
+
+      def labels_match_all
+        [ :gclid, :utm_term, :utm_source, :utm_medium, :utm_content, :utm_campaign ].map do |k|
+          [ :get, Regexp.new("[&|?]#{k.to_s}=(.*?)(&.*|)$"), k, true ]
+        end
       end
 
       def ignorable
