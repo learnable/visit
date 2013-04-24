@@ -13,5 +13,6 @@ class CreateVisitEvents < ActiveRecord::Migration
     end
 
     add_index :visit_events, :vid
+    add_index :visit_events, :created_at
   end
 end
