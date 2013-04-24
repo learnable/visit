@@ -1,12 +1,18 @@
 module Visit
   class Event::Matcher < Struct.new(:http_method, :re, :label, :has_sublabel)
-    def self.all
-      Visit::Configurable.labels.map { |a| Visit::Event::Matcher.new *a }
+    def matches?(other_http_method, path)
+      http_method_matches?(other_http_method) && path_matches?(path)
     end
 
-    def self.first_match(other_http_method, path)
-      all.detect { |m| m.matches? other_http_method, path }
+    def result_to_label_h
+      has_sublabel ? { label: label, sublabel: sublabel } : { label: label }
     end
+
+    def result_to_value_h
+      { label => sublabel }
+    end
+
+    private
 
     def sublabel
       if has_sublabel
@@ -14,12 +20,6 @@ module Visit
         @sublabel
       end
     end
-
-    def matches?(other_http_method, path)
-      http_method_matches?(other_http_method) && path_matches?(path)
-    end
-
-    private
 
     def http_method_matches?(other)
       any_http_method? || !other || same_http_method?(other)

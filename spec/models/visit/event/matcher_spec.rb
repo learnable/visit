@@ -2,32 +2,11 @@ require 'spec_helper'
 require 'shared_gem_config'
 
 describe Visit::Event::Matcher do
-  let(:klass) { Visit::Event::Matcher }
-  let(:path) { "/articles" }
-
-  describe ".first_match" do
-    it "returns a matcher" do
-      klass.first_match(:get, path).class.should == klass
-    end
-  end
-
-  describe ".all" do
-    it "returns the right number of matches" do
-      klass.all.count.should == 2
-      klass.all.each do |matcher|
-        matcher.class.should == klass;
-      end
-    end
-  end
-
   context "a matcher with http_method :get" do
-
-    let(:matcher) do
-      klass.first_match(:get, path)
-    end
+    let(:matcher) { Visit::Event::Matcher.new :get, %r{^/articles(\?.*|)$}, :articles_index, false }
+    let(:path) { "/articles" }
 
     describe "matches?" do
-
       it "matches http_method and path" do
         matcher.matches?("get", path).should be_true
       end
@@ -38,19 +17,69 @@ describe Visit::Event::Matcher do
         matcher.matches?("get", "/article").should be_false
       end
     end
-
   end
 
   context "a matcher with http_method :any" do
-    let(:matcher) do
-      Visit::Event::Matcher.new :any, /^\/articles\/(\d)/, :articles, true
-    end
+    let(:matcher) { Visit::Event::Matcher.new :any, /^\/articles\/(\d+)/, :article, true }
+    let(:path) { "/articles/123" }
 
     it "matches? :get" do
-      matcher.matches?("get", "/articles/123").should be_true
+      matcher.matches?("get", path).should be_true
     end
     it "matches? :post" do
-      matcher.matches?("post", "/articles/123").should be_true
+      matcher.matches?("post", path).should be_true
+    end
+  end
+
+  context "result_to_label_h" do
+    context "after matches? to a :label" do
+      let(:matcher) { Visit::Event::Matcher.new :get, %r{^/articles(\?.*|)$}, :articles_index, false }
+      let(:path) { "/articles" }
+
+      before do
+        matcher.matches?("get", path).should be_true
+      end
+
+      it "returns a hash with :label" do
+        h = matcher.result_to_label_h
+
+        h.has_key?(:label).should be_true
+        h[:label].should == :articles_index
+      end
+    end
+
+    context "after matches? to a :label and :sublabel" do
+      let(:matcher) { Visit::Event::Matcher.new :any, /^\/articles\/(\d+)/, :article, true }
+      let(:path) { "/articles/123" }
+
+      before do
+        matcher.matches?("get", path).should be_true
+      end
+
+      it "returns a hash with :label and :sublabel" do
+        h = matcher.result_to_label_h
+
+        h.has_key?(:label).should be_true
+        h.has_key?(:sublabel).should be_true
+        h[:label].should == :article
+        h[:sublabel].should == "123"
+      end
+    end
+  end
+
+  context "result_to_value_h" do
+    context "after matches?" do
+      let(:matcher) { Visit::Event::Matcher.new :any, /^\/articles\/(\d+)/, :article, true }
+      let(:path) { "/articles/123" }
+
+      before { matcher.matches?("get", path) }
+
+      it "returns a hash whose key is label and value is sublabel" do
+        h = matcher.result_to_value_h
+
+        h.has_key?(:article).should be_true
+        h[:article].should == "123"
+      end
     end
   end
 end
