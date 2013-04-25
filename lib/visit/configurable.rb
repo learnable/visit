@@ -71,6 +71,10 @@ module Visit
         Visit::Arrival.create o
       end
 
+      def notify(e)
+        Rails.logger.error "ERROR IN VISIT GEM: #{e.to_s}"
+      end
+
     end
   end
 end

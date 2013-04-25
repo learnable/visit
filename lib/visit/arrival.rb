@@ -9,9 +9,7 @@ module Visit
           begin
             ve = Visit::Configurable.create o
           rescue
-            # TODO: Put this back in.
-            #CrashLog.notify $!
-            puts $!
+            Visit::Configurable.notify $!
           end
         end
       end
