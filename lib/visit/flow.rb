@@ -54,8 +54,10 @@ module Visit
     def present_capture(vev)
       if vev.capture1.nil?
         ""
-      else
+      elsif vev.capture2.nil?
       "(#{vev.capture1})"
+      else
+      "(#{vev.capture1}/#{vev.capture2})"
       end
     end
 
