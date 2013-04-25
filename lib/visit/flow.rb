@@ -48,7 +48,15 @@ module Visit
     protected
 
     def present_step(vev)
-      vev.sublabel.nil? ? vev.label : "#{vev.label}(#{vev.sublabel})"
+      "#{vev.label}#{present_capture(vev)}"
+    end
+
+    def present_capture(vev)
+      if vev.capture1.nil?
+        ""
+      else
+      "(#{vev.capture1})"
+      end
     end
 
     def events_with_label(label)

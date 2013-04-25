@@ -43,9 +43,9 @@ Assumed Models
 Visit assumes there is a table 'users' existing in the database, and the
 existence of a <code>current_user</code> controller helper.
 
-Label and sublabels
--------------------
-Visit::Configurable.labels allows the app to associate labels (and sublabels) with URL paths.
+Label and captures
+------------------
+Visit::Configurable.labels allows the app to associate labels (and regexp captures) with URL paths.
 
 Which in turn supports queries like this:
 
@@ -88,7 +88,7 @@ This sql query creates a database view for that purpose.
       user_id,
       vid,
       label_vtv.v as label,
-      sublabel_vtv.v as sublabel,
+      capture1_vtv.v as capture1,
       user_agent_vsv.v as user_agent,
       visit_events.created_at as created_at
     FROM visit_events
@@ -104,10 +104,10 @@ This sql query creates a database view for that purpose.
     LEFT OUTER JOIN visit_trait_values label_vtv
       ON label_vtv.id = label_vt.v_id
     
-    LEFT OUTER JOIN visit_traits sublabel_vt
-      ON visit_events.id = sublabel_vt.visit_event_id AND sublabel_vt.k_id = (select id from visit_trait_values where v = 'sublabel')
-    LEFT OUTER JOIN visit_trait_values sublabel_vtv
-      ON sublabel_vtv.id = sublabel_vt.v_id
+    LEFT OUTER JOIN visit_traits capture1_vt
+      ON visit_events.id = capture1_vt.visit_event_id AND capture1_vt.k_id = (select id from visit_trait_values where v = 'capture1')
+    LEFT OUTER JOIN visit_trait_values capture1_vtv
+      ON capture1_vtv.id = capture1_vt.v_id
     
     ORDER BY id ASC
 

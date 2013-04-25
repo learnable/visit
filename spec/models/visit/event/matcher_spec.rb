@@ -48,7 +48,7 @@ describe Visit::Event::Matcher do
       end
     end
 
-    context "after matches? to a :label and :sublabel" do
+    context "after matches? to a :label and a capture" do
       let(:matcher) { Visit::Event::Matcher.new :any, /^\/articles\/(\d+)/, :article }
       let(:path) { "/articles/123" }
 
@@ -56,13 +56,13 @@ describe Visit::Event::Matcher do
         matcher.matches?("get", path).should be_true
       end
 
-      it "returns a hash with :label and :sublabel" do
+      it "returns a hash with :label and :capture1" do
         h = matcher.matchdata_to_label_h
 
         h.has_key?(:label).should be_true
-        h.has_key?(:sublabel).should be_true
+        h.has_key?(:capture1).should be_true
         h[:label].should == :article
-        h[:sublabel].should == "123"
+        h[:capture1].should == "123"
       end
     end
   end
@@ -74,7 +74,7 @@ describe Visit::Event::Matcher do
 
       before { matcher.matches?("get", path) }
 
-      it "returns a hash whose key is label and value is sublabel" do
+      it "returns a hash whose key is label and value is capture1" do
         h = matcher.matchdata_to_value_h
 
         h.has_key?(:article).should be_true

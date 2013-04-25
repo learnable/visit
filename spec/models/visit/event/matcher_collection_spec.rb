@@ -14,14 +14,14 @@ describe Visit::Event::MatcherCollection do
       h[:label].should == :articles_index
     end
 
-    it "returns hash with a :label and :sublabel when appropriate" do
+    it "returns hash with a :label and :capture1 when appropriate" do
       h = matcher_collection.match_first_to_h(:get, "/articles/123")
 
       h.class.should == Hash
       h.has_key?(:label).should be_true
-      h.has_key?(:sublabel).should be_true
+      h.has_key?(:capture1).should be_true
       h[:label].should == :article
-      h[:sublabel].should == "123"
+      h[:capture1].should == "123"
     end
 
     it "returns an empty hash when there's no match'" do

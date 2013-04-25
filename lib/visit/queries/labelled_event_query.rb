@@ -12,14 +12,14 @@ module Visit
         INNER JOIN visit_trait_values label_vtv
           ON label_vtv.id = label_vt.v_id
 
-        LEFT OUTER JOIN visit_traits sublabel_vt
-          ON visit_events.id = sublabel_vt.visit_event_id AND sublabel_vt.k_id =
-            (select id from visit_trait_values where v = 'sublabel')
-        LEFT OUTER JOIN visit_trait_values sublabel_vtv
-          ON sublabel_vtv.id = sublabel_vt.v_id
+        LEFT OUTER JOIN visit_traits capture1_vt
+          ON visit_events.id = capture1_vt.visit_event_id AND capture1_vt.k_id =
+            (select id from visit_trait_values where v = 'capture1')
+        LEFT OUTER JOIN visit_trait_values capture1_vtv
+          ON capture1_vtv.id = capture1_vt.v_id
       }
       @relation.
-        select("visit_events.*, label_vtv.v as label, sublabel_vtv.v as sublabel").
+        select("visit_events.*, label_vtv.v as label, capture1_vtv.v as capture1").
         joins(stmt)
     end
 

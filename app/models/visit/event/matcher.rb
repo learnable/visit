@@ -5,18 +5,16 @@ module Visit
     end
 
     def matchdata_to_label_h
-      (@matchdata.size > 1) ? { label: label, sublabel: sublabel } : { label: label }
+      { label: label }.tap do |h|
+        (1..(@matchdata.size-1)).each { |i| h["capture#{i}".to_sym] = @matchdata[i] }
+      end
     end
 
     def matchdata_to_value_h
-      { label => sublabel }
+      { label => @matchdata[1] }
     end
 
     private
-
-    def sublabel
-      @matchdata[1]
-    end
 
     def http_method_matches?(other)
       any_http_method? || !other || same_http_method?(other)
