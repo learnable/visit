@@ -9,10 +9,10 @@ module Visit
         #
         # eg:
         # [
-        #   [ :post, /^\/contact\/deliver/,       :contact_deliver,       false ],
-        #   [ :get,  /^\/contact/,                :contact_prompt,        false ],
-        #   [ :get,  /^\/login?.*intended=(.*)$/, :login_prompt,          true  ],
-        #   [ :any,  /^\/assessment\/url\/(.*)/,  :url_assessment,        true  ]
+        #   [ :get,  /^\/contact/,                :contact_prompt  ],
+        #   [ :post, /^\/contact\/deliver/,       :contact_deliver ],
+        #   [ :get,  /^\/login?.*intended=(.*)$/, :login_prompt    ],
+        #   [ :any,  /^\/assessment\/url\/(.*)/,  :url_assessment  ]
         # ]
         #
         []
@@ -20,7 +20,7 @@ module Visit
 
       def labels_match_all
         [ :gclid, :utm_term, :utm_source, :utm_medium, :utm_content, :utm_campaign ].map do |k|
-          [ :get, Regexp.new("[&|?]#{k.to_s}=(.*?)(&.*|)$"), k, true ]
+          [ :get, Regexp.new("[&|?]#{k.to_s}=(.*?)(&.*|)$"), k ]
         end
       end
 

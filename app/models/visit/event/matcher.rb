@@ -1,5 +1,5 @@
 module Visit
-  class Event::Matcher < Struct.new(:http_method, :re, :label, :has_sublabel)
+  class Event::Matcher < Struct.new(:http_method, :re, :label)
     def matches?(other_http_method, path)
       http_method_matches?(other_http_method) && path_matches?(path)
     end

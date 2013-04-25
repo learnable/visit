@@ -3,7 +3,7 @@ require 'shared_gem_config'
 
 describe Visit::Event::Matcher do
   context "a matcher with http_method :get" do
-    let(:matcher) { Visit::Event::Matcher.new :get, %r{^/articles(\?.*|)$}, :articles_index, false }
+    let(:matcher) { Visit::Event::Matcher.new :get, %r{^/articles(\?.*|)$}, :articles_index }
     let(:path) { "/articles" }
 
     describe "matches?" do
@@ -20,7 +20,7 @@ describe Visit::Event::Matcher do
   end
 
   context "a matcher with http_method :any" do
-    let(:matcher) { Visit::Event::Matcher.new :any, /^\/articles\/(\d+)/, :article, true }
+    let(:matcher) { Visit::Event::Matcher.new :any, /^\/articles\/(\d+)/, :article }
     let(:path) { "/articles/123" }
 
     it "matches? :get" do
@@ -33,7 +33,7 @@ describe Visit::Event::Matcher do
 
   context "result_to_label_h" do
     context "after matches? to a :label" do
-      let(:matcher) { Visit::Event::Matcher.new :get, %r{^/articles(\?.*|)$}, :articles_index, false }
+      let(:matcher) { Visit::Event::Matcher.new :get, %r{^/articles(\?.*|)$}, :articles_index }
       let(:path) { "/articles" }
 
       before do
@@ -49,7 +49,7 @@ describe Visit::Event::Matcher do
     end
 
     context "after matches? to a :label and :sublabel" do
-      let(:matcher) { Visit::Event::Matcher.new :any, /^\/articles\/(\d+)/, :article, true }
+      let(:matcher) { Visit::Event::Matcher.new :any, /^\/articles\/(\d+)/, :article }
       let(:path) { "/articles/123" }
 
       before do
@@ -69,7 +69,7 @@ describe Visit::Event::Matcher do
 
   context "result_to_value_h" do
     context "after matches?" do
-      let(:matcher) { Visit::Event::Matcher.new :any, /^\/articles\/(\d+)/, :article, true }
+      let(:matcher) { Visit::Event::Matcher.new :any, /^\/articles\/(\d+)/, :article }
       let(:path) { "/articles/123" }
 
       before { matcher.matches?("get", path) }
