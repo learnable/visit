@@ -62,12 +62,12 @@ module Visit
         ]
       end
 
-      def create_visit(o)
+      def create(o)
         # This method writes the visit to the database.
         # The app can choose to override this method and delegate to a worker -
         # desirable because this method is called during the Rails request cycle.
 
-        Visit::Arrival.create_visit o
+        Visit::Arrival.create o
       end
 
     end

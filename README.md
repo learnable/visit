@@ -29,7 +29,7 @@ To customise, create a config/initializers/visit.rb, eg:
           [ :get, /^\/contact/, :contact_prompt, false ]
         ]
       end
-      def self.create_visit o
+      def self.create(o)
         MySidekiqWorker.perform_async o # write to the db in a worker (don't slow down the Rails request cycle)
       end
     end

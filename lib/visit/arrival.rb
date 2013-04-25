@@ -7,7 +7,7 @@ module Visit
 
         if o
           begin
-            ve = Visit::Configurable.create_visit o
+            ve = Visit::Configurable.create o
           rescue
             # TODO: Put this back in.
             #CrashLog.notify $!
@@ -15,6 +15,16 @@ module Visit
           end
         end
       end
+
+      def create(o)
+        ve = create_visit(o)
+
+        Visit::TraitFactory.new.create_traits_for_visit_events [ ve ]
+
+        ve
+      end
+
+      private
 
       def create_visit(o)
         ve = Visit::Event.new \
@@ -40,8 +50,6 @@ module Visit
 
         ve
       end
-
-      private
 
       def get_visit_event_hash(rp)
         if !rp.is_ignorable || !Visit::Event.ignore?(rp.get_path)
