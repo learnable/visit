@@ -114,7 +114,6 @@ MAJOR
 
 MODERATE
 * support the visit_* tables living in separate db from the app
-* create Traits and TraitValues at the same time as Sources and SourceValues
 * cache:
   - Visit::Event.url
   - Visit::TraitFactory
