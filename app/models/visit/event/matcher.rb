@@ -5,7 +5,7 @@ module Visit
     end
 
     def result_to_label_h
-      has_sublabel ? { label: label, sublabel: sublabel } : { label: label }
+      (@matchdata.size > 1) ? { label: label, sublabel: sublabel } : { label: label }
     end
 
     def result_to_value_h
@@ -15,10 +15,7 @@ module Visit
     private
 
     def sublabel
-      if has_sublabel
-        raise "Sublabel not extracted" unless instance_variable_defined?(:@sublabel)
-        @sublabel
-      end
+      @matchdata[1]
     end
 
     def http_method_matches?(other)
@@ -26,14 +23,9 @@ module Visit
     end
 
     def path_matches?(path)
-      if re =~ path
-        @sublabel = $1
-        ret = true
-      else
-        ret = false
-      end
-      # Visit::Manage.log "AMHERE: path_matches?: re: #{re} path: #{path} returns: #{ret}"
-      ret
+      @matchdata = re.match(path)
+      # Visit::Manage.log "AMHERE: path_matches?: re: #{re} path: #{path} matchdata: #{@matchdata}"
+      ! @matchdata.nil?
     end
 
     def any_http_method?
