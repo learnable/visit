@@ -2,8 +2,9 @@ class Visit::Configurable
 
   def self.labels_match_first
     [
-      [  :get, %r{^/articles(\?.*|)$}, :articles_index ],
-      [  :get, %r{^/articles\/(\d+)},  :article        ]
+      [  :get, %r{^/articles(?:\?.*|)$},   :articles_index ],
+      [  :get, %r{^/articles/(\d+)/(\d+)}, :subarticle     ],
+      [  :get, %r{^/articles/(\d+)},       :article        ],
     ]
   end
 
