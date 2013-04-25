@@ -32,37 +32,53 @@ describe Visit::Event::Matcher do
   end
 
   context "matchdata_to_label_h" do
-    context "after matches? to a :label" do
-      let(:matcher) { Visit::Event::Matcher.new :get, %r{^/articles(\?.*|)$}, :articles_index }
-      let(:path) { "/articles" }
+    context "after matches?" do
+      context "to a regexp with no captures" do
+        let(:matcher) { Visit::Event::Matcher.new :get, %r{^/articles(\?.*|)$}, :articles_index }
+        let(:path) { "/articles" }
 
-      before do
-        matcher.matches?("get", path).should be_true
+        before { matcher.matches?("get", path).should be_true }
+
+        it "returns a hash with :label" do
+          h = matcher.matchdata_to_label_h
+
+          h.has_key?(:label).should be_true
+          h[:label].should == :articles_index
+        end
       end
 
-      it "returns a hash with :label" do
-        h = matcher.matchdata_to_label_h
+      context "to a regexp with one capture" do
+        let(:matcher) { Visit::Event::Matcher.new :any, /^\/articles\/(\d+)/, :article }
+        let(:path) { "/articles/123" }
 
-        h.has_key?(:label).should be_true
-        h[:label].should == :articles_index
+        before { matcher.matches?("get", path).should be_true }
+
+        it "returns a hash with :label and :capture1" do
+          h = matcher.matchdata_to_label_h
+
+          h.has_key?(:label).should be_true
+          h.has_key?(:capture1).should be_true
+          h[:label].should == :article
+          h[:capture1].should == "123"
+        end
       end
-    end
+      
+      context "to a regexp with two captures" do
+        let(:matcher) { Visit::Event::Matcher.new :any, %r{^/articles/(\d+)/(\d+)}, :article }
+        let(:path) { "/articles/123/456" }
 
-    context "after matches? to a :label and a capture" do
-      let(:matcher) { Visit::Event::Matcher.new :any, /^\/articles\/(\d+)/, :article }
-      let(:path) { "/articles/123" }
+        before { matcher.matches?("get", path).should be_true }
 
-      before do
-        matcher.matches?("get", path).should be_true
-      end
+        it "returns a hash with :label, :capture1 and :capture2" do
+          h = matcher.matchdata_to_label_h
 
-      it "returns a hash with :label and :capture1" do
-        h = matcher.matchdata_to_label_h
-
-        h.has_key?(:label).should be_true
-        h.has_key?(:capture1).should be_true
-        h[:label].should == :article
-        h[:capture1].should == "123"
+          h.has_key?(:label).should be_true
+          h.has_key?(:capture1).should be_true
+          h.has_key?(:capture2).should be_true
+          h[:label].should == :article
+          h[:capture1].should == "123"
+          h[:capture2].should == "456"
+        end
       end
     end
   end
