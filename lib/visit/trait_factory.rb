@@ -21,19 +21,26 @@ module Visit
         newer_than_visit_trait(Visit::Trait.last).
         includes(:visit_source_values_url, :visit_source_values_user_agent).
         find_in_batches do |a_ve|
-        tuplets = @tuplet_factory.tuplets_from_ve_batch a_ve
 
-        if !tuplets.empty?
-          # batch insert like this is 10x faster than create!
-          # but it wouldn't hurt to now validate the visit_traits just inserted
-          #
-          ActiveRecord::Base.connection.execute \
-            "INSERT INTO visit_traits (k_id, v_id, visit_event_id, created_at) values" +
-            tuplets.map { |t| t.to_s }.join(',')
-        end
+        tuplets = create_traits_for_visit_events a_ve
 
         yield get_activity(tuplets) if block_given?
       end
+    end
+
+    def create_traits_for_visit_events(a_ve)
+      tuplets = @tuplet_factory.tuplets_from_ve_batch a_ve
+
+      if !tuplets.empty?
+        # batch insert like this is 10x faster than create!
+        # which really matters when recreating all the traits from scratch
+        # TODO: validate the visit_traits just inserted
+        #
+        ActiveRecord::Base.connection.execute \
+          "INSERT INTO visit_traits (k_id, v_id, visit_event_id, created_at) values" +
+          tuplets.map { |t| t.to_s }.join(',')
+      end
+      tuplets
     end
 
     private
