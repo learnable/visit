@@ -15,6 +15,7 @@ module Visit
         #   [ :any,  /^\/assessment\/url\/(.*)/,  :url_assessment,        true  ]
         # ]
         #
+        []
       end
 
       def labels_match_all
