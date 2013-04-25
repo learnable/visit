@@ -4,11 +4,11 @@ module Visit
       http_method_matches?(other_http_method) && path_matches?(path)
     end
 
-    def result_to_label_h
+    def matchdata_to_label_h
       (@matchdata.size > 1) ? { label: label, sublabel: sublabel } : { label: label }
     end
 
-    def result_to_value_h
+    def matchdata_to_value_h
       { label => sublabel }
     end
 

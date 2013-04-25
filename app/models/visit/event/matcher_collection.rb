@@ -6,13 +6,13 @@ module Visit
 
     def match_first_to_h(other_http_method, path)
       m = @matchers.detect { |m| m.matches? other_http_method, path }
-      m ? m.result_to_label_h : {}
+      m ? m.matchdata_to_label_h : {}
     end
 
     def match_all_to_a(other_http_method, path)
       [{}].tap do |a|
         @matchers.each do |m|
-          a << m.result_to_value_h if m.matches?(other_http_method, path)
+          a << m.matchdata_to_value_h if m.matches?(other_http_method, path)
         end
       end
     end
