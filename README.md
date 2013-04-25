@@ -24,13 +24,16 @@ To customise, create a config/initializers/visit.rb, eg:
           /^\/api/, # don't store requests to /api
         ]
       end
-      def self.labels
+      def self.labels_match_first
         [
-          [ :get, /^\/contact/, :contact_prompt, false ]
+          [ :get, /^\/contact/, :contact_prompt ]
         ]
       end
       def self.create(o)
         MySidekiqWorker.perform_async o # write to the db in a worker (don't slow down the Rails request cycle)
+      end
+      def notify(e)
+        Airbrake.notify e # our app uses Airbrake for exception handling
       end
     end
 
