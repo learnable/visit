@@ -89,6 +89,7 @@ This sql query creates a database view for that purpose.
       vid,
       label_vtv.v as label,
       capture1_vtv.v as capture1,
+      capture2_vtv.v as capture2,
       user_agent_vsv.v as user_agent,
       visit_events.created_at as created_at
     FROM visit_events
@@ -109,6 +110,11 @@ This sql query creates a database view for that purpose.
     LEFT OUTER JOIN visit_trait_values capture1_vtv
       ON capture1_vtv.id = capture1_vt.v_id
     
+    LEFT OUTER JOIN visit_traits capture2_vt
+      ON visit_events.id = capture2_vt.visit_event_id AND capture2_vt.k_id = (select id from visit_trait_values where v = 'capture2')
+    LEFT OUTER JOIN visit_trait_values capture2_vtv
+      ON capture2_vtv.id = capture2_vt.v_id
+
     ORDER BY id ASC
 
 TODO
