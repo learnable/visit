@@ -55,7 +55,7 @@ module Visit
             o[:http_method] = rp.request.method
             o[:url]         = rp.get_url
             o[:vid]         = rp.get_vid
-            o[:user_id]     = rp.current_user ? rp.current_user.id : nil
+            o[:user_id]     = rp.user_id
             o[:user_agent]  = rp.request.env["HTTP_USER_AGENT"]
             o[:remote_ip]   = rp.request.remote_ip
             o[:referer]     = rp.request.referer

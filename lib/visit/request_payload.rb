@@ -1,5 +1,5 @@
 module Visit
-  class RequestPayload < Struct.new(:request, :cookies, :session, :current_user, :is_ignorable, :path)
+  class RequestPayload < Struct.new(:request, :cookies, :session, :user_id, :is_ignorable, :path)
 
     def self.get_vid(cookies, session)
       cookies["vid"] || session[:vid]
