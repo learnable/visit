@@ -1,4 +1,4 @@
-module Visit 
+module Visit
   class RoutesGenerator < Rails::Generators::Base
 
     def add_route
