@@ -1,6 +1,16 @@
 module Visit
   class Configurable
+
     class << self
+      attr_accessor :creation_wrapper, :notifier, :current_user_alias, :ignorable, :labels_match_first, :labels_match_all, :user_agent_robots
+      
+      def configure
+        yield(self)
+      end
+
+      def current_user_alias
+        @current_user_alias ||= :current_user
+      end
 
       def labels_match_first
         # The app can override this method to identify requests that are of specific interest.
@@ -15,13 +25,14 @@ module Visit
         #   [ :any,  /^\/assessment\/url\/(.*)/,  :url_assessment  ]
         # ]
         #
-        []
+        @labels_match_first ||= []
       end
 
       def labels_match_all
-        [ :gclid, :utm_term, :utm_source, :utm_medium, :utm_content, :utm_campaign ].map do |k|
-          [ :get, Regexp.new("[&|?]#{k.to_s}=(.*?)(&.*|)$"), k ]
-        end
+        @labels_match_all ||= 
+          [ :gclid, :utm_term, :utm_source, :utm_medium, :utm_content, :utm_campaign ].map do |k|
+            [ :get, Regexp.new("[&|?]#{k.to_s}=(.*?)(&.*|)$"), k ]
+          end
       end
 
       def ignorable
@@ -32,6 +43,7 @@ module Visit
         # [
         #   /^\/api/
         # ]
+        @ignorable ||= []
       end
 
       def user_agent_robots
@@ -40,6 +52,7 @@ module Visit
         # Also see Visit::UserAgentRobotQuery.
         # Handy for distinguishing (some) robot traffic from human traffic.
 
+        @user_agent_robots ||= 
         [
           /Googlebot/i,
           /Twitterbot/i,
@@ -64,15 +77,23 @@ module Visit
       end
 
       def create(o)
-        # This method writes the visit to the database.
-        # The app can choose to override this method and delegate to a worker -
+        # If a creation_wrapper block exists, delegate the actual creation to it
+        # The client can they choose to run the creation process in a worker
         # desirable because this method is called during the Rails request cycle.
-
-        Visit::Arrival.create o
+        creation_block = ->() { Visit::Arrival.create(o) }
+        if @creation_wrapper.present? && (@creation_wrapper.is_a? Proc)
+          @creation_wrapper.call(creation_block)
+        else
+          creation_block.call
+        end
       end
 
       def notify(e)
-        Rails.logger.error "ERROR IN VISIT GEM: #{e.to_s}"
+        if @notifier.present? && (@notifier.is_a? Proc)
+          @notifier.call(e)
+        else
+          Rails.logger.error "ERROR IN VISIT GEM: #{e.to_s}"
+        end
       end
 
     end

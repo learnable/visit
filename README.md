@@ -17,25 +17,14 @@ Customise
 ---------
 
 To customise, create a config/initializers/visit.rb, eg:
-
-    class Visit::Configurable
-      def self.ignorable
-        [
-          /^\/api/, # don't store requests to /api
-        ]
-      end
-      def self.labels_match_first
-        [
-          [ :get, /^\/contact/, :contact_prompt ]
-        ]
-      end
-      def self.create(o)
-        MySidekiqWorker.perform_async o # write to the db in a worker (don't slow down the Rails request cycle)
-      end
-      def notify(e)
-        Airbrake.notify e # our app uses Airbrake for exception handling
-      end
-    end
+Visit::Configurable.configure do |c|
+  c.current_user_alias = :active_user
+  c.creation_wrapper = ->(visit_arrival_creation) { 
+    MySidekiqWorker.perform_async(visit_arrival_creation)
+  }
+  c.notifier = ->(e) { Airbrake.notify e }
+  c.ignorable = [/^\/api/]
+end
 
 Assumed Models
 --------------
