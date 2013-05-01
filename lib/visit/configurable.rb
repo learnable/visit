@@ -75,6 +75,10 @@ module Visit
         Rails.logger.error "ERROR IN VISIT GEM: #{e.to_s}"
       end
 
+      def current_user_for_request(controller)
+        controller.instance_eval { current_user }
+      end
+
     end
   end
 end
