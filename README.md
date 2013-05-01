@@ -35,6 +35,9 @@ To customise, create a config/initializers/visit.rb, eg:
       def notify(e)
         Airbrake.notify e # our app uses Airbrake for exception handling
       end
+      def current_user_id(controller)
+        controller.instance_eval { current_user ? current_user.id : nil }
+      end
     end
 
 Assumed Models
