@@ -17,14 +17,14 @@ Customise
 ---------
 
 To customise, create a config/initializers/visit.rb, eg:
-Visit::Configurable.configure do |c|
-  c.current_user_alias = :active_user
-  c.creation_wrapper = ->(visit_arrival_creation) { 
-    MySidekiqWorker.perform_async(visit_arrival_creation)
-  }
-  c.notifier = ->(e) { Airbrake.notify e }
-  c.ignorable = [/^\/api/]
-end
+
+    Visit::Configurable.configure do |c|
+      c.current_user_alias = :active_user
+      c.notifier = ->(e) { Airbrake.notify e }
+      c.ignorable = [/^\/api/]
+      c.async_library = :resque # Can be :resque or :sidekiq
+      c.async_queue_name = :visit # Optional Queue name
+    end
 
 Assumed Models
 --------------

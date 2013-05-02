@@ -1,8 +1,9 @@
 module Visit
   class Configurable
-
     class << self
-      attr_accessor :creation_wrapper, :notifier, :current_user_alias, :ignorable, :labels_match_first, :labels_match_all, :user_agent_robots
+      attr_accessor :notifier, :current_user_alias, 
+        :ignorable, :labels_match_first, :labels_match_all, 
+        :user_agent_robots, :async_library, :async_queue_name
       
       def configure
         yield(self)
@@ -76,15 +77,28 @@ module Visit
         ]
       end
 
-      def create(o)
-        # If a creation_wrapper block exists, delegate the actual creation to it
-        # The client can they choose to run the creation process in a worker
-        # desirable because this method is called during the Rails request cycle.
-        creation_block = ->() { Visit::Arrival.create(o) }
-        if @creation_wrapper.present? && (@creation_wrapper.is_a? Proc)
-          @creation_wrapper.call(creation_block)
+      def async_library
+        unless Async::LIBS_SUPPORTED.include?(@async_library)
+          @async_library = nil
         else
-          creation_block.call
+          @async_library
+        end
+      end
+
+      def async_queue_name
+        @async_queue_name ||= :visit
+      end
+
+      def create(obj)
+        case async_library
+        when :resque
+          Resque.enqueue_to(async_queue_name, Async::ArrivalWorker, obj)
+        when :sidekiq
+          arrival_worker = Async::ArrivalWorker
+          arrival_worker.send(:include, Sidekiq::Worker)
+          Sidekiq::Client.enqueue_to(async_queue_name, arrival_worker, obj)
+        else
+          Arrival.create(obj)
         end
       end
 
@@ -94,6 +108,12 @@ module Visit
         else
           Rails.logger.error "ERROR IN VISIT GEM: #{e.to_s}"
         end
+      end
+
+      private
+
+      def async_mode?
+        async_library.present?
       end
 
     end

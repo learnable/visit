@@ -10,7 +10,7 @@ Dir[File.join(File.dirname(__FILE__), 'visit', '*.rb')].each do |file|
   require file unless (file =~ /engine/)
 end
 
-%w( flow queries ).each do |subdir|
+%w( flow queries async).each do |subdir|
   Dir[File.join(File.dirname(__FILE__), 'visit', subdir, '*.rb')].each do |file|
     require file
   end

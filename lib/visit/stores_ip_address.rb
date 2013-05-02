@@ -14,7 +14,7 @@ module Visit
 
         define_method(:"#{attr}=") do |ip|
           require "ipaddr"
-          write_attribute :remote_ip, IPAddr.new(ip).to_i
+          write_attribute :remote_ip, IPAddr.new(ip, Socket::AF_INET).to_i
         end
 
       end

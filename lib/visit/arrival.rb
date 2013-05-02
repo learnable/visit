@@ -15,6 +15,7 @@ module Visit
       end
 
       def create(o)
+        o.symbolize_keys! # In case it's coming back from Redis after being unmarshalled
         ve = create_visit(o)
 
         Visit::TraitFactory.new.create_traits_for_visit_events [ ve ]
