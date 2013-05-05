@@ -2,85 +2,50 @@ module Visit
   class Arrival
     class << self
 
-      def create_if_interesting(rp)
-        o = get_visit_event_hash rp
-
-        if o
+      def create_if_interesting(request_payload)
+        unless request_payload.is_ignorable && Visit::Event.ignore?(request_payload.path)
+          event_hash = request_payload.get_formatted_hash
           begin
-            ve = Visit::Configurable.create o
+            visit_event = Visit::Configurable.create(event_hash)
           rescue
             Visit::Configurable.notify $!
           end
         end
       end
 
-      def create(o)
-        o.symbolize_keys! # In case it's coming back from Redis after being unmarshalled
-        ve = create_visit(o)
-
-        Visit::TraitFactory.new.create_traits_for_visit_events [ ve ]
-
-        ve
+      def create(visit_event_hash)
+        visit_event_hash.symbolize_keys! # In case it's coming back from Redis after being unmarshalled
+        visit_event = create_visit(visit_event_hash)
+        Visit::TraitFactory.new.create_traits_for_visit_events [ visit_event ]
+        visit_event
       end
 
       private
 
-      def create_visit(o)
-        ve = Visit::Event.new \
-          vid:       o[:vid],
-          user_id:   o[:user_id],
-          remote_ip: o[:remote_ip]
+      def create_visit(visit_event_hash)
+        visit_event = Visit::Event.new \
+          vid:       visit_event_hash[:vid],
+          user_id:   visit_event_hash[:user_id],
+          remote_ip: visit_event_hash[:remote_ip]
 
-        ve.url_id        = Visit::SourceValue.optimistic_find_or_create_by_v(o[:url]).id
-        ve.user_agent_id = Visit::SourceValue.optimistic_find_or_create_by_v(o[:user_agent]).id
-        ve.referer_id    = Visit::SourceValue.optimistic_find_or_create_by_v(o[:referer]).id
-        ve.http_method   = o[:http_method]
-        ve.save!
+        visit_event.url_id        = Visit::SourceValue.optimistic_find_or_create_by_v(visit_event_hash[:url]).id
+        visit_event.user_agent_id = Visit::SourceValue.optimistic_find_or_create_by_v(visit_event_hash[:user_agent]).id
+        visit_event.referer_id    = Visit::SourceValue.optimistic_find_or_create_by_v(visit_event_hash[:referer]).id
+        visit_event.http_method   = visit_event_hash[:http_method]
+        visit_event.save!
 
         # Visit::Manage::log "Visit::Arrival::create_visit saved ve: #{ve.to_yaml}"
 
-        o[:cookies].each do |k,v|
-          vs = Visit::Source.new
-          vs.visit_event_id = ve.id
-          vs.k_id = Visit::SourceValue.optimistic_find_or_create_by_v(k).id
-          vs.v_id = Visit::SourceValue.optimistic_find_or_create_by_v(v).id
-          vs.save!
+        visit_event_hash[:cookies].each do |k,v|
+          visit_source = Visit::Source.new
+          visit_source.visit_event_id = visit_event.id
+          visit_source.k_id = Visit::SourceValue.optimistic_find_or_create_by_v(k).id
+          visit_source.v_id = Visit::SourceValue.optimistic_find_or_create_by_v(v).id
+          visit_source.save!
         end
 
-        ve
+        visit_event
       end
-
-      def get_visit_event_hash(rp)
-        if !rp.is_ignorable || !Visit::Event.ignore?(rp.get_path)
-          {}.tap do |o|
-            o[:http_method] = rp.request.method
-            o[:url]         = rp.get_url
-            o[:vid]         = rp.get_vid
-            o[:user_id]     = rp.current_user ? rp.current_user.id : nil
-            o[:user_agent]  = rp.request.env["HTTP_USER_AGENT"]
-            o[:remote_ip]   = rp.request.remote_ip
-            o[:referer]     = rp.request.referer
-            o[:cookies]     = get_visit_event_cookies rp.cookies
-          end
-        else
-          nil
-        end
-      end
-
-      def get_visit_event_cookies(cookies)
-        {}.tap do |h|
-          features = {}
-          cookies.each do |k,v|
-            if k == :coupon
-              h[:coupon] = v
-            elsif k =~ /flip_(.*?)_(.*$)/
-              features[$2] = v
-            end
-          end
-          h[:features] = features.to_json unless features.empty?
-        end
-      end
-
     end
   end
 end

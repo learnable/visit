@@ -3,9 +3,8 @@ module Visit
     LIBS_SUPPORTED = [:resque, :sidekiq]
 
     class ArrivalWorker
-      def self.perform(obj)
-        a = Visit::Arrival.create(obj)
-        p a.errors.full_messages
+      def self.perform(visit_event_hash)
+        Visit::Arrival.create(visit_event_hash)
       end
     end
   end

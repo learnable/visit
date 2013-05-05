@@ -2,8 +2,8 @@ module Visit
   class TagController < ::ApplicationController
 
     def create
-      if !cookies["vid"]
-        cookies["vid"] = session[:vid]
+      unless cookies["vid"]
+        cookies["vid"] = session["vid"]
         session["vid"] = nil
       end
 

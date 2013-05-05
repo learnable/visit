@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency("rails", "= 3.2.12")
   s.add_dependency("i18n")
   s.add_dependency("addressable")
+  s.add_dependency("resque")
 
   # Dependencies for dev/testing of the actual gem. Test gems are required
   # manually in spec_helper.

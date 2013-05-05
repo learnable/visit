@@ -3,10 +3,21 @@ module Visit
     class << self
       attr_accessor :notifier, :current_user_alias, 
         :ignorable, :labels_match_first, :labels_match_all, 
-        :user_agent_robots, :async_library, :async_queue_name
+        :user_agent_robots, :async_library, :async_queue_name, 
+        :requests_interceptor_enabled, :process_unintercepted_data
       
       def configure
         yield(self)
+      end
+
+      # Should requests in the application be intercepted by the gem?
+      def requests_interceptor_enabled
+        @requests_interceptor_enabled ||= true
+      end
+
+      # Should the gem process data that was collected by other means (not by interception)
+      def process_unintercepted_data
+        @process_unintercepted_data ||= true
       end
 
       def current_user_alias
@@ -30,10 +41,15 @@ module Visit
       end
 
       def labels_match_all
-        @labels_match_all ||= 
-          [ :gclid, :utm_term, :utm_source, :utm_medium, :utm_content, :utm_campaign ].map do |k|
-            [ :get, Regexp.new("[&|?]#{k.to_s}=(.*?)(&.*|)$"), k ]
-          end
+        @labels_match_all ||=
+          [
+            [:get, /[&|?]gclid=(.*?)(&.*|)$/, :gclid], 
+            [:get, /[&|?]utm_term=(.*?)(&.*|)$/, :utm_term], 
+            [:get, /[&|?]utm_source=(.*?)(&.*|)$/, :utm_source], 
+            [:get, /[&|?]utm_medium=(.*?)(&.*|)$/, :utm_medium], 
+            [:get, /[&|?]utm_content=(.*?)(&.*|)$/, :utm_content], 
+            [:get, /[&|?]utm_campaign=(.*?)(&.*|)$/, :utm_campaign]
+          ]
       end
 
       def ignorable
@@ -86,19 +102,19 @@ module Visit
       end
 
       def async_queue_name
-        @async_queue_name ||= :visit
+        @async_queue_name ||= "visit-data-collection"
       end
 
-      def create(obj)
+      def create(visit_event_hash)
         case async_library
         when :resque
-          Resque.enqueue_to(async_queue_name, Async::ArrivalWorker, obj)
+          Resque.enqueue_to(async_queue_name, Async::ArrivalWorker, visit_event_hash)
         when :sidekiq
           arrival_worker = Async::ArrivalWorker
           arrival_worker.send(:include, Sidekiq::Worker)
-          Sidekiq::Client.enqueue_to(async_queue_name, arrival_worker, obj)
+          Sidekiq::Client.enqueue_to(async_queue_name, arrival_worker, visit_event_hash)
         else
-          Arrival.create(obj)
+          Arrival.create(visit_event_hash)
         end
       end
 
@@ -109,13 +125,7 @@ module Visit
           Rails.logger.error "ERROR IN VISIT GEM: #{e.to_s}"
         end
       end
-
-      private
-
-      def async_mode?
-        async_library.present?
-      end
-
+      
     end
   end
 end
