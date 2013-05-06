@@ -12,24 +12,25 @@ module Visit
     MAX = 9223372036854775807 # see: http://dev.mysql.com/doc/refman/5.1/en/numeric-types.html
 
     def set_visit_vid
-      unless Visit::RequestPayload.extract_vid(cookies, session)
+      unless RequestPayload.extract_vid(cookies, session)
         session["vid"] = rand(MAX)
       end
     end
 
     def on_every_request
-      Visit::Arrival::create_if_interesting \
-        Visit::RequestPayload.new \
+      Arrival.create_with_async(
+        RequestPayload.new(
           request,
           cookies,
           session,
-          current_user,
-          true,
-          nil
+          visit_current_user,
+          true
+        ).formatted_hash
+      )
     end
 
-    def current_user
-      eval(Configurable.current_user_alias.to_s)
+    def visit_current_user
+      send(Configurable.current_user_alias)
     end
   end
 end

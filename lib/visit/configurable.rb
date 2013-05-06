@@ -105,19 +105,6 @@ module Visit
         @async_queue_name ||= "visit-data-collection"
       end
 
-      def create(visit_event_hash)
-        case async_library
-        when :resque
-          Resque.enqueue_to(async_queue_name, Async::ArrivalWorker, visit_event_hash)
-        when :sidekiq
-          arrival_worker = Async::ArrivalWorker
-          arrival_worker.send(:include, Sidekiq::Worker)
-          Sidekiq::Client.enqueue_to(async_queue_name, arrival_worker, visit_event_hash)
-        else
-          Arrival.create(visit_event_hash)
-        end
-      end
-
       def notify(e)
         if @notifier.present? && (@notifier.is_a? Proc)
           @notifier.call(e)

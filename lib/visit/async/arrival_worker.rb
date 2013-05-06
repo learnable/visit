@@ -4,7 +4,7 @@ module Visit
 
     class ArrivalWorker
       def self.perform(visit_event_hash)
-        Visit::Arrival.create(visit_event_hash)
+        Visit::Arrival.create_if_interesting(visit_event_hash)
       end
     end
   end

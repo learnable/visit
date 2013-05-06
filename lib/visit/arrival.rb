@@ -2,25 +2,37 @@ module Visit
   class Arrival
     class << self
 
-      def create_if_interesting(request_payload)
-        unless request_payload.is_ignorable && Visit::Event.ignore?(request_payload.path)
-          event_hash = request_payload.get_formatted_hash
+      def create_with_async(visit_event_hash)
+        case Configurable.async_library
+        when :resque
+          Resque.enqueue_to(Configurable.async_queue_name, Async::ArrivalWorker, visit_event_hash)
+        when :sidekiq
+          arrival_worker = Async::ArrivalWorker
+          arrival_worker.send(:include, Sidekiq::Worker)
+          Sidekiq::Client.enqueue_to(Configurable.async_queue_name, arrival_worker, visit_event_hash)
+        else
+          create_if_interesting(visit_event_hash)
+        end
+      end      
+
+      def create_if_interesting(visit_event_hash)
+        visit_event_hash.symbolize_keys! # In case it's coming back unmarshalled from Redis
+        unless Visit::Event.ignore?(visit_event_hash[:url])
           begin
-            visit_event = Visit::Configurable.create(event_hash)
+            visit_event = create(visit_event_hash)
           rescue
             Visit::Configurable.notify $!
           end
         end
       end
 
-      def create(visit_event_hash)
-        visit_event_hash.symbolize_keys! # In case it's coming back from Redis after being unmarshalled
-        visit_event = create_visit(visit_event_hash)
-        Visit::TraitFactory.new.create_traits_for_visit_events [ visit_event ]
-        visit_event
-      end
-
       private
+
+      def create(visit_event_hash)
+        visit_event = create_visit(visit_event_hash)
+        Visit::TraitFactory.new.create_traits_for_visit_events([visit_event])
+        visit_event
+      end      
 
       def create_visit(visit_event_hash)
         visit_event = Visit::Event.new \

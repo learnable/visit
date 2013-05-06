@@ -31,7 +31,7 @@ module Visit
     def create_traits_for_visit_events(a_ve)
       tuplets = @tuplet_factory.tuplets_from_ve_batch a_ve
 
-      if !tuplets.empty?
+      if tuplets.present?
         # batch insert like this is 10x faster than create!
         # which really matters when recreating all the traits from scratch
         # TODO: validate the visit_traits just inserted
@@ -77,15 +77,12 @@ class Visit::TraitFactory::TupletFactory
 
   def tuplets_from_ve(ve)
     Visit::Event::Traits.new(ve).to_h.each.map do |k,v|
-      if v.nil? || v.empty?
-        nil
-      else
+      if v.present?
         k_id = get_trait_value_id k
         v_id = get_trait_value_id v
-
         Visit::TraitFactory::Tuplet.new k_id, v_id, k, v, ve.id, Time.now
       end
-    end.select{ |tuplet| !tuplet.nil? }
+    end.compact
   end
 
   def get_trait_value_id(str)

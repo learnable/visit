@@ -1,5 +1,5 @@
 module Visit
-  class RequestPayload < Struct.new(:request, :cookies, :session, :current_user, :is_ignorable, :path)
+  class RequestPayload < Struct.new(:request, :cookies, :session, :current_user, :is_ignorable)
 
     class << self
 
@@ -9,14 +9,14 @@ module Visit
     end
 
     def url
-      url = request.url || "#{request.scheme}://#{request.host}/#{path}"
+      url = request.url || "#{request.scheme}://#{request.host}/#{request.path}"
     end
 
     def vid
       self.class.extract_vid(cookies, session)
     end
 
-    def get_formatted_hash
+    def formatted_hash
       {
         http_method: request.method,
         url:         url,
@@ -29,9 +29,9 @@ module Visit
       }
     end
 
-    def get_path
-      path || request.path
-    end    
+    def path
+      request.path
+    end
 
     private
 

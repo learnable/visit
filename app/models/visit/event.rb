@@ -31,34 +31,27 @@ module Visit
     attr_accessible :user_id
     attr_accessible :remote_ip
 
-    ## Scopes
-    #
-    def self.traceable_to_user(user_id)
-      joins("INNER JOIN visit_events ve_vid ON ve_vid.vid = visit_events.vid AND ve_vid.user_id = '#{user_id}'")
-    end
-
-    def self.newer_than_visit_trait(row)
-      row.nil? ? self : where("id > ?", row.visit_event_id)
-    end
-
-    def self.path_from_url(url)
-      uri = Addressable::URI.parse(url)
-      uri.host ? url.gsub(%r(^.*?#{uri.host}), "") : url # strip scheme and host
-    end
-
-    def self.ignore?(path)
-      ret = nil
-
-      Visit::Configurable.ignorable.each do |re|
-        ret = path =~ re
-        break if ret
+    class << self 
+      def traceable_to_user(user_id)
+        joins("INNER JOIN visit_events ve_vid ON ve_vid.vid = visit_events.vid AND ve_vid.user_id = '#{user_id}'")
       end
 
-      !ret.nil?
+      def newer_than_visit_trait(row)
+        row.nil? ? self : where("id > ?", row.visit_event_id)
+      end
+
+      def path_from_url(url)
+        uri = Addressable::URI.parse(url)
+        uri.host ? url.gsub(%r(^.*?#{uri.host}), "") : url # strip scheme and host
+      end
+
+      def ignore?(path)
+        Visit::Configurable.ignorable.any? { |ignore_pattern| path =~ ignore_pattern }
+      end
     end
 
     def ignore?
-      Visit::Event.ignore? Visit::Event.path_from_url(url)
+      self.class.ignore? self.class.path_from_url(url)
     end
 
     def http_method
