@@ -32,11 +32,19 @@ To customise, create a config/initializers/visit.rb, eg:
       def self.create(o)
         MySidekiqWorker.perform_async o # write to the db in a worker (don't slow down the Rails request cycle)
       end
-      def notify(e)
+      def self.notify(e)
         Airbrake.notify e # our app uses Airbrake for exception handling
       end
-      def current_user_id(controller)
+      def self.current_user_id(controller)
         controller.instance_eval { current_user ? current_user.id : nil }
+      end
+      def self.cache
+        # lighten the load on the db (far fewer SELECTs)
+        @cache ||= Visit::Cache::Dalli.new \
+          ActiveSupport::Cache.lookup_store \
+            :dalli_store,
+            "127.0.0.1:11211",
+            { :namespace => "#{@app_name}::visit", :expires_in => 28.days }
       end
     end
 
