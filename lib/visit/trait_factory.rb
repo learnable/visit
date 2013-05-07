@@ -10,6 +10,7 @@ module Visit
     end
 
     def self.recreate_all
+      Visit::Configurable.cache.clear
       delete_all
       self.new.run
     end
@@ -63,10 +64,6 @@ class Visit::TraitFactory::Tuplet < Struct.new(:k_id, :v_id, :k, :v, :ve_id, :ti
 end
 
 class Visit::TraitFactory::TupletFactory
-  def initialize
-    @cache = {}
-  end
-
   def tuplets_from_ve_batch(a_ve)
     a_ve.each.flat_map do |ve|
       tuplets_from_ve ve
@@ -89,10 +86,6 @@ class Visit::TraitFactory::TupletFactory
   end
 
   def get_trait_value_id(str)
-    if @cache.has_key?(str)
-      @cache[str]
-    else
-      @cache[str] = Visit::TraitValue.where(:v => str).first_or_create(:v => str).id
-    end
+    Visit::TraitValue.optimistic_find_or_create_by_v_id(str)
   end
 end

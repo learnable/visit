@@ -79,6 +79,9 @@ module Visit
         controller.instance_eval { current_user ? current_user.id : nil }
       end
 
+      def cache
+        @cache ||= Visit::Cache::Null.new
+      end
     end
   end
 end

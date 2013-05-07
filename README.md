@@ -126,11 +126,6 @@ MAJOR
 
 MODERATE
 * support the visit_* tables living in separate db from the app
-* cache:
-  - Visit::Event.url
-  - Visit::TraitFactory
-  - Visit::Arrival.create_visit
-  - leni note: redis LRU vs memcache? configurable by the app?
 * Visit::Manage.archive_visit_events is broken
 
 MINOR

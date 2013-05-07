@@ -70,15 +70,21 @@ module Visit
     end
 
     def url
-      nil_or_value visit_source_values_url
+      Visit::Configurable.cache.fetch_prefix_value("SourceValue.find", url_id) do
+        nil_or_value visit_source_values_url
+      end
     end
 
     def user_agent
-      nil_or_value visit_source_values_user_agent
+      Visit::Configurable.cache.fetch_prefix_value("SourceValue.find", user_agent_id) do
+        nil_or_value visit_source_values_user_agent
+      end
     end
 
     def referer
-      nil_or_value visit_source_values_referer
+      Visit::Configurable.cache.fetch_prefix_value("SourceValue.find", referer_id) do
+        nil_or_value visit_source_values_referer
+      end
     end
 
     private
