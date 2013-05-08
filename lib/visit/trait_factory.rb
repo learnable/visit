@@ -86,6 +86,6 @@ class Visit::TraitFactory::TupletFactory
   end
 
   def get_trait_value_id(str)
-    Visit::TraitValue.optimistic_find_or_create_by_v_id(str)
+    Visit::TraitValue.get_id_from_optimistic_find_or_create_by_v(str)
   end
 end

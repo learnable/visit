@@ -1,5 +1,5 @@
 module HasOptimisticFindOrCreate
-  def optimistic_find_or_create_by_v_id(v)
+  def get_id_from_optimistic_find_or_create_by_v(v)
     key = Visit::Cache::Key.new(cache_key_prefix, v)
 
     Visit::Configurable.cache.fetch(key) do
