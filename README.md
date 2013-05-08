@@ -135,6 +135,7 @@ MAJOR
 MODERATE
 * support the visit_* tables living in separate db from the app
 * Visit::Manage.archive_visit_events is broken
+* created_at should correspond to Time.now in the Rails request cycle, not Time.now in the worker
 
 MINOR
 * don't hardcode 'users' as the 'users' table in the application - make it configurable
