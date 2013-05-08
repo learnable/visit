@@ -34,6 +34,7 @@ module Visit
         ve.user_agent_id = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(o[:user_agent])
         ve.referer_id    = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(o[:referer])
         ve.http_method   = o[:http_method]
+        ve.created_at    = o[:created_at] # prem reminder re: flippa PHP app
         ve.save!
 
         # Visit::Manage::log "Visit::Arrival::create_visit saved ve: #{ve.to_yaml}"
@@ -43,6 +44,7 @@ module Visit
           vs.visit_event_id = ve.id
           vs.k_id = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(k)
           vs.v_id = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(v)
+          vs.created_at = o[:created_at] # prem reminder re: flippa PHP app
           vs.save!
         end
 
@@ -60,6 +62,7 @@ module Visit
             o[:remote_ip]   = rp.request.remote_ip
             o[:referer]     = rp.request.referer
             o[:cookies]     = get_visit_event_cookies rp.cookies
+            o[:created_at]  = Time.now
           end
         else
           nil
