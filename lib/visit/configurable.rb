@@ -59,7 +59,12 @@ module Visit
           /Python-urllib/i,
           /Kimengi\/nineconnections.com/i,
           /AppEngine-Google/i,
-          /PaperLiBot/i
+          /PaperLiBot/i,
+          /Apache-HttpClient/i,
+          /PyCrawler/i,
+          /TweetedTimes Bot/i,
+          /AdsBot-Google/i,
+          /Mechanize/i,
         ]
       end
 
