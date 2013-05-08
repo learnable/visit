@@ -70,24 +70,32 @@ module Visit
     end
 
     def url
-      Visit::Configurable.cache.fetch_prefix_value("SourceValue.find", url_id) do
+      fetch_from_cache(url_id) do
         nil_or_value visit_source_values_url
       end
     end
 
     def user_agent
-      Visit::Configurable.cache.fetch_prefix_value("SourceValue.find", user_agent_id) do
+      fetch_from_cache(user_agent_id) do
         nil_or_value visit_source_values_user_agent
       end
     end
 
     def referer
-      Visit::Configurable.cache.fetch_prefix_value("SourceValue.find", referer_id) do
+      fetch_from_cache(referer_id) do
         nil_or_value visit_source_values_referer
       end
     end
 
     private
+
+    def fetch_from_cache(id)
+      key = Visit::Cache::Key.new("SourceValue.find", id)
+
+      Visit::Configurable.cache.fetch(key) do
+        yield
+      end
+    end
 
     def nil_or_value(vsv)
       vsv.nil? ? nil : vsv.v

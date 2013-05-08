@@ -2,8 +2,7 @@ module Visit
   class Cache
     class Memory < Cache
       def initialize
-        @memory_cache = {}
-        super @memory_cache
+        @cache = {}
       end
 
       def fetch(key, options = {})
@@ -14,7 +13,7 @@ module Visit
       end
 
       def clear
-        @memory_cache = {}
+        @cache = {}
       end
     end
   end

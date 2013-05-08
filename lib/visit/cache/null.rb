@@ -9,10 +9,7 @@ module Visit
         yield
       end
 
-      protected
-
-      def key(prefix, value)
-        nil
+      def clear
       end
     end
   end
