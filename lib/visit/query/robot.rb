@@ -1,5 +1,5 @@
 module Visit
-  class Query::UserAgentRobot < Query
+  class Query::Robot < Query
     protected
 
     def stmt

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Visit::Query::UserAgentRobot do
+describe Visit::Query::Robot do
   before do
     ve1 = create(:visit_event, url: "http://is-goog/1", user_agent: "googlebot")
     ve2 = create(:visit_event, url: "http://is-moz/2", user_agent: "mozilla")
@@ -8,7 +8,7 @@ describe Visit::Query::UserAgentRobot do
     Visit::TraitFactory.new.create_traits_for_visit_events [ ve1, ve2 ]
   end
 
-  let(:query) { Visit::Query::UserAgentRobot.new }
+  let(:query) { Visit::Query::Robot.new }
 
   context "#scoped" do
     it "returns an ActiveRecord::Relation" do
