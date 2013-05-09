@@ -37,7 +37,7 @@ module Visit
       def user_agent_robots
         # The http request User-Agent is matched against the regexps in this Array.
         # A Visit::Trait is created if there's a match.
-        # Also see Visit::UserAgentRobotQuery.
+        # Also see Visit::Query::UserAgentRobot.
         # Handy for distinguishing (some) robot traffic from human traffic.
 
         [

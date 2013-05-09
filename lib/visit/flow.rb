@@ -42,7 +42,7 @@ module Visit
     end
 
     def events
-      @events ||= Visit::LabelledEventQuery.new.scoped.where(vid: vid).where(id: @range).all
+      @events ||= Visit::Query::LabelledEvent.new.scoped.where(vid: vid).where(id: @range).all
     end
 
     protected

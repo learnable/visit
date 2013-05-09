@@ -60,8 +60,8 @@ Visit::Configurable.labels allows the app to associate labels (and regexp captur
 
 Which in turn supports queries like this:
 
-    Visit::LabelledEventQuery.new.scoped.
-      where("label_vtv.v = 'contact_prompt'").
+    Visit::Query::LabelledEvent.new.scoped.
+      where("label = 'contact_prompt'").
       where(created_at: (1.day.ago..Time.now)).
       count
 
