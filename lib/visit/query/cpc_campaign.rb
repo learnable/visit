@@ -3,7 +3,7 @@ module Visit
     class CpcCampaign < Query
       def scoped
         super.
-          where("utm_medium_vtv.v = 'cpc'").
+          where("utm_medium_vtv.v = 'cpc'")
       end
 
       protected
