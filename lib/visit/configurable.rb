@@ -19,7 +19,7 @@ module Visit
       end
 
       def labels_match_all
-        [ :gclid, :utm_term, :utm_source, :utm_medium, :utm_content, :utm_campaign ].map do |k|
+        [ :gclid, :utm_term, :utm_source, :utm_medium, :utm_content, :utm_campaign, :placement ].map do |k|
           [ :get, Regexp.new("[&|?]#{k.to_s}=(.*?)(&.*|)$"), k ]
         end
       end
