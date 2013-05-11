@@ -1,0 +1,35 @@
+%font(size="-2")
+  %table.table.table-striped.table-condensed.table-hover
+    %thead
+      %tr
+        %td url
+        %td id
+        %td created_at
+        %td method
+        %td vid
+        %td user_id
+        %td utm_medium
+        %td utm_campaign
+        %td utm_term
+        %td placement
+
+    %tbody
+      -events.each do |event|
+        %tr
+          %td(title="#{event.url}")
+            %strong
+              =event.url.slice(0, 60)
+          %td= event.id
+          %td= event.created_at.to_formatted_s(:ymd)
+          %td= event.http_method
+          %td
+            %font(size="-3")
+              = event.vid
+          %td= event.user_id
+          %td= event.utm_medium
+          %td= event.utm_campaign
+          %td= event.utm_term
+          %td= event.placement
+
+
+
