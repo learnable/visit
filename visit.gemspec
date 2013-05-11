@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     = Visit::VERSION
   s.authors     = ["Leni Mayo"]
   s.email       = ["leni@learnable.com"]
-  s.homepage    = ""
+  s.homepage    = "https://github.com/learnable/visit"
   s.summary     = %q{Record visits to a site so that they're easy to analyse afterward.}
   s.description = %q{Based on Learnable visit events}
 
