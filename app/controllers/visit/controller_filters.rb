@@ -15,7 +15,7 @@ module Visit
           request,
           cookies,
           session,
-          Visit::Configurable.current_user_id(self),
+          Visit::Configurable.current_user_id.call(self),
           false,
           path
     end
@@ -36,7 +36,7 @@ module Visit
           request,
           cookies,
           session,
-          Visit::Configurable.current_user_id(self),
+          Visit::Configurable.current_user_id.call(self),
           true,
           nil
     end

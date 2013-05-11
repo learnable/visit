@@ -1,21 +1,32 @@
 module Visit
   class Configurable
     class << self
+      attr_accessor :cache, :create, :current_user_id, :ignorable,
+        :labels_match_all, :labels_match_first, :notify,
+        :user_agent_robots
 
       def cache
         @cache ||= Visit::Cache::Null.new
       end
 
-      def create(o)
-        # This method writes the visit to the database.
+      def configure
+        yield(self)
+      end
+
+      def create
+        # Writes the visit to the database.
         # The app can choose to override this method and delegate to a worker -
         # desirable because this method is called during the Rails request cycle.
 
-        Visit::Arrival.create o
+        @create ||= -> (o) do
+          Visit::Arrival.create o
+        end
       end
 
-      def current_user_id(controller)
-        controller.instance_eval { current_user ? current_user.id : nil }
+      def current_user_id
+        @current_user_id ||= -> (controller) do
+          controller.instance_eval { current_user ? current_user.id : nil }
+        end
       end
 
       def ignorable
@@ -26,12 +37,14 @@ module Visit
         # [
         #   /^\/api/
         # ]
+        @ignorable ||= []
       end
 
       def labels_match_all
-        [ :gclid, :utm_term, :utm_source, :utm_medium, :utm_content, :utm_campaign, :placement ].map do |k|
-          [ :get, Regexp.new("[&|?]#{k.to_s}=(.*?)(&.*|)$"), k ]
-        end
+        @labels_match_all ||=
+          [ :gclid, :utm_term, :utm_source, :utm_medium, :utm_content, :utm_campaign, :placement ].map do |k|
+            [ :get, Regexp.new("[&|?]#{k.to_s}=(.*?)(&.*|)$"), k ]
+          end
       end
 
       def labels_match_first
@@ -47,11 +60,13 @@ module Visit
         #   [ :any,  /^\/assessment\/url\/(.*)/,  :url_assessment  ]
         # ]
         #
-        []
+        @labels_match_first ||= []
       end
 
       def notify(e)
-        Rails.logger.error "ERROR IN VISIT GEM: #{e.to_s}"
+        @notify ||= -> (e) do
+          Rails.logger.error "ERROR IN VISIT GEM: #{e.to_s}"
+        end
       end
 
       def user_agent_robots
@@ -60,7 +75,7 @@ module Visit
         # Also see Visit::Query::Robot.
         # Handy for distinguishing (some) robot traffic from human traffic.
 
-        [
+        @user_agent_robots ||= [
           /Googlebot/i,
           /Twitterbot/i,
           /TweetmemeBot/i,

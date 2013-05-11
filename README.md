@@ -18,34 +18,38 @@ Customise
 
 To customise, create a config/initializers/visit.rb, eg:
 
-    class Visit::Configurable
-      def self.ignorable
-        [
-          /^\/api/, # don't store requests to /api
-        ]
-      end
-      def self.labels_match_first
-        [
-          [ :get, /^\/contact/, :contact_prompt ]
-        ]
-      end
-      def self.create(o)
+    class Visit::Configurable.configure do |c|
+
+      c.create = ->(o) do
         MySidekiqWorker.perform_async o # write to the db in a worker (don't slow down the Rails request cycle)
       end
-      def self.notify(e)
-        Airbrake.notify e # our app uses Airbrake for exception handling
-      end
-      def self.current_user_id(controller)
+
+      c.current_user_id = -> (controller) do
         controller.instance_eval { current_user ? current_user.id : nil }
       end
-      def self.cache
-        # lighten the load on the db (far fewer SELECTs)
-        @cache ||= Visit::Cache::Dalli.new \
-          ActiveSupport::Cache.lookup_store \
-            :dalli_store,
-            "127.0.0.1:11211",
-            { :namespace => "#{@app_name}::visit", :expires_in => 28.days }
+
+      c.ignorable = [
+          /^\/api/, # don't store requests to /api
+        ]
+
+      c.labels_match_first = [
+          [ :get, /^\/contact/, :contact_prompt ]
+        ]
+
+      c.notify = ->(e) do
+        Airbrake.notify e # our app uses Airbrake for exception handling
       end
+
+      c.current_user_id = ->(controller) do
+        controller.instance_eval { current_user ? current_user.id : nil }
+      end
+
+      # lighten the load on the db (far fewer SELECTs)
+      c.cache = Visit::Cache::Dalli.new \
+        ActiveSupport::Cache.lookup_store \
+          :dalli_store,
+          "127.0.0.1:11211",
+          { :namespace => "#{@app_name}::visit", :expires_in => 28.days }
     end
 
 Assumed Models

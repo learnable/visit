@@ -7,9 +7,9 @@ module Visit
 
         if o
           begin
-            ve = Visit::Configurable.create o
+            ve = Visit::Configurable.create.call o
           rescue
-            Visit::Configurable.notify $!
+            Visit::Configurable.notify.call $!
           end
         end
       end
