@@ -3,3 +3,4 @@ schema.rb
 Gemfile.lock
 spec/dummy/db/migrate/*create_visit*
 pkg
+.DS_Store
