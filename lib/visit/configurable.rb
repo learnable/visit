@@ -2,6 +2,38 @@ module Visit
   class Configurable
     class << self
 
+      def cache
+        @cache ||= Visit::Cache::Null.new
+      end
+
+      def create(o)
+        # This method writes the visit to the database.
+        # The app can choose to override this method and delegate to a worker -
+        # desirable because this method is called during the Rails request cycle.
+
+        Visit::Arrival.create o
+      end
+
+      def current_user_id(controller)
+        controller.instance_eval { current_user ? current_user.id : nil }
+      end
+
+      def ignorable
+        # Before storing an event, the gem matches the http request path against the regexps returned by this method.
+        # If there's a match, the request is ignored.
+        # Helps avoid filling up the database with requests to polling endpoints.
+        #
+        # [
+        #   /^\/api/
+        # ]
+      end
+
+      def labels_match_all
+        [ :gclid, :utm_term, :utm_source, :utm_medium, :utm_content, :utm_campaign, :placement ].map do |k|
+          [ :get, Regexp.new("[&|?]#{k.to_s}=(.*?)(&.*|)$"), k ]
+        end
+      end
+
       def labels_match_first
         # The app can override this method to identify requests that are of specific interest.
         # The first match results in a Visit::Trait.
@@ -18,20 +50,8 @@ module Visit
         []
       end
 
-      def labels_match_all
-        [ :gclid, :utm_term, :utm_source, :utm_medium, :utm_content, :utm_campaign, :placement ].map do |k|
-          [ :get, Regexp.new("[&|?]#{k.to_s}=(.*?)(&.*|)$"), k ]
-        end
-      end
-
-      def ignorable
-        # Before storing an event, the gem matches the http request path against the regexps returned by this method.
-        # If there's a match, the request is ignored.
-        # Helps avoid filling up the database with requests to polling endpoints.
-        #
-        # [
-        #   /^\/api/
-        # ]
+      def notify(e)
+        Rails.logger.error "ERROR IN VISIT GEM: #{e.to_s}"
       end
 
       def user_agent_robots
@@ -66,26 +86,6 @@ module Visit
           /AdsBot-Google/i,
           /Mechanize/i,
         ]
-      end
-
-      def create(o)
-        # This method writes the visit to the database.
-        # The app can choose to override this method and delegate to a worker -
-        # desirable because this method is called during the Rails request cycle.
-
-        Visit::Arrival.create o
-      end
-
-      def notify(e)
-        Rails.logger.error "ERROR IN VISIT GEM: #{e.to_s}"
-      end
-
-      def current_user_id(controller)
-        controller.instance_eval { current_user ? current_user.id : nil }
-      end
-
-      def cache
-        @cache ||= Visit::Cache::Null.new
       end
     end
   end
