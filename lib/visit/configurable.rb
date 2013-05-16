@@ -30,9 +30,9 @@ module Visit
       end
 
       def create
-        # Writes the visit to the database.
-        # The app can choose to override this method and delegate to a worker -
-        # desirable because this method is called during the Rails request cycle.
+        # Write the visit to the database.
+        # The app should override this method and delegate to a worker
+        # because this method is called during the Rails request cycle.
 
         @create ||= -> (o) do
           Visit::Arrival.create o
