@@ -3,11 +3,9 @@ module Visit
     class << self
 
       def create_if_interesting(request_payload)
-        o = get_visit_event_hash request_payload
-
-        if o
+        if !request_payload.is_ignorable || !Visit::Event.ignore?(request_payload.get_path)
           begin
-            ve = Configurable.create.call o
+            ve = Configurable.create.call request_payload.to_h
           rescue
             Configurable.notify.call $!
           end
@@ -49,24 +47,6 @@ module Visit
         end
 
         ve
-      end
-
-      def get_visit_event_hash(request_payload)
-        if !request_payload.is_ignorable || !Visit::Event.ignore?(request_payload.get_path)
-          {}.tap do |o|
-            o[:http_method] = request_payload.request.method
-            o[:url]         = request_payload.get_url
-            o[:vid]         = request_payload.get_vid
-            o[:user_id]     = request_payload.user_id
-            o[:user_agent]  = request_payload.request.env["HTTP_USER_AGENT"]
-            o[:remote_ip]   = request_payload.request.remote_ip
-            o[:referer]     = request_payload.request.referer
-            o[:cookies]     = Configurable.cookies_to_hash request_payload.cookies
-            o[:created_at]  = Time.now
-          end
-        else
-          nil
-        end
       end
 
     end
