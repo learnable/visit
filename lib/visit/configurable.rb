@@ -1,9 +1,9 @@
 module Visit
   class Configurable
     class << self
-      attr_accessor :cache, :create, :current_user_id, :ignorable,
-        :labels_match_all, :labels_match_first, :notify,
-        :user_agent_robots
+      attr_accessor :cache, :create, :cookies_to_hash,
+        :current_user_id, :ignorable, :labels_match_all,
+        :labels_match_first, :notify, :user_agent_robots
 
       def cache
         @cache ||= Visit::Cache::Null.new
@@ -11,6 +11,22 @@ module Visit
 
       def configure
         yield(self)
+      end
+
+      def cookies_to_hash
+        @cookies_to_hash ||= -> (cookies) do
+          {}.tap do |h|
+            features = {}
+            cookies.each do |k,v|
+              if k == :coupon
+                h[:coupon] = v
+              elsif k =~ /flip_(.*?)_(.*$)/
+                features[$2] = v
+              end
+            end
+            h[:features] = features.to_json unless features.empty?
+          end
+        end
       end
 
       def create

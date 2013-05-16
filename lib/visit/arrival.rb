@@ -61,25 +61,11 @@ module Visit
             o[:user_agent]  = request_payload.request.env["HTTP_USER_AGENT"]
             o[:remote_ip]   = request_payload.request.remote_ip
             o[:referer]     = request_payload.request.referer
-            o[:cookies]     = get_visit_event_cookies request_payload.cookies
+            o[:cookies]     = Configurable.cookies_to_hash request_payload.cookies
             o[:created_at]  = Time.now
           end
         else
           nil
-        end
-      end
-
-      def get_visit_event_cookies(cookies)
-        {}.tap do |h|
-          features = {}
-          cookies.each do |k,v|
-            if k == :coupon
-              h[:coupon] = v
-            elsif k =~ /flip_(.*?)_(.*$)/
-              features[$2] = v
-            end
-          end
-          h[:features] = features.to_json unless features.empty?
         end
       end
 
