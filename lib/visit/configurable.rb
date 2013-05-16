@@ -63,7 +63,7 @@ module Visit
         @labels_match_first ||= []
       end
 
-      def notify(e)
+      def notify
         @notify ||= -> (e) do
           Rails.logger.error "ERROR IN VISIT GEM: #{e.to_s}"
         end
