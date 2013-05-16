@@ -34,8 +34,8 @@ module Visit
         # The app should override this method and delegate to a worker
         # because this method is called during the Rails request cycle.
 
-        @create ||= -> (o) do
-          Visit::Arrival.create o
+        @create ||= -> (request_payload_hash) do
+          Visit::Arrival.create request_payload_hash
         end
       end
 

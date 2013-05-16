@@ -5,15 +5,15 @@ module Visit
       def create_if_interesting(request_payload)
         if !request_payload.is_ignorable || !Visit::Event.ignore?(request_payload.get_path)
           begin
-            ve = Configurable.create.call request_payload.to_h
+            Configurable.create.call request_payload.to_h
           rescue
             Configurable.notify.call $!
           end
         end
       end
 
-      def create(o)
-        ve = create_visit(o)
+      def create(request_payload_hash)
+        ve = create_visit(request_payload_hash)
 
         TraitFactory.new.create_traits_for_visit_events [ ve ]
 
@@ -22,27 +22,29 @@ module Visit
 
       private
 
-      def create_visit(o)
-        ve = Visit::Event.new \
-          vid:       o[:vid],
-          user_id:   o[:user_id],
-          remote_ip: o[:remote_ip]
+      def create_visit(request_payload_hash)
+        request_payload_hash.symbolize_keys!
 
-        ve.url_id        = SourceValue.get_id_from_optimistic_find_or_create_by_v(o[:url])
-        ve.user_agent_id = SourceValue.get_id_from_optimistic_find_or_create_by_v(o[:user_agent])
-        ve.referer_id    = SourceValue.get_id_from_optimistic_find_or_create_by_v(o[:referer])
-        ve.http_method   = o[:http_method]
-        ve.created_at    = o[:created_at] # prem reminder re: flippa PHP app
+        ve = Visit::Event.new \
+          vid:       request_payload_hash[:vid],
+          user_id:   request_payload_hash[:user_id],
+          remote_ip: request_payload_hash[:remote_ip]
+
+        ve.url_id        = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(request_payload_hash[:url])
+        ve.user_agent_id = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(request_payload_hash[:user_agent])
+        ve.referer_id    = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(request_payload_hash[:referer])
+        ve.http_method   = request_payload_hash[:http_method]
+        ve.created_at    = request_payload_hash[:created_at] # prem reminder re: flippa PHP app
         ve.save!
 
         # Manage::log "Arrival::create_visit saved ve: #{ve.to_yaml}"
 
-        o[:cookies].each do |k,v|
-          vs = Source.new
+        request_payload_hash[:cookies].each do |k,v|
+          vs = Visit::Source.new
           vs.visit_event_id = ve.id
-          vs.k_id = SourceValue.get_id_from_optimistic_find_or_create_by_v(k)
-          vs.v_id = SourceValue.get_id_from_optimistic_find_or_create_by_v(v)
-          vs.created_at = o[:created_at] # prem reminder re: flippa PHP app
+          vs.k_id = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(k)
+          vs.v_id = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(v)
+          vs.created_at = request_payload_hash[:created_at]
           vs.save!
         end
 
