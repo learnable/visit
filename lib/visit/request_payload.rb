@@ -17,5 +17,18 @@ module Visit
       RequestPayload.get_vid cookies, session
     end
 
+    def to_h
+      {}.tap do |h|
+        h[:http_method] = request.method
+        h[:url]         = get_url
+        h[:vid]         = get_vid
+        h[:user_id]     = user_id
+        h[:user_agent]  = request.env["HTTP_USER_AGENT"]
+        h[:remote_ip]   = request.remote_ip
+        h[:referer]     = request.referer
+        h[:cookies]     = Configurable.cookies_to_hash.call cookies
+        h[:created_at]  = Time.now
+      end
+    end
   end
 end
