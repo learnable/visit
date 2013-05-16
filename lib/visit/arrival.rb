@@ -2,8 +2,8 @@ module Visit
   class Arrival
     class << self
 
-      def create_if_interesting(rp)
-        o = get_visit_event_hash rp
+      def create_if_interesting(request_payload)
+        o = get_visit_event_hash request_payload
 
         if o
           begin
@@ -51,17 +51,17 @@ module Visit
         ve
       end
 
-      def get_visit_event_hash(rp)
-        if !rp.is_ignorable || !Visit::Event.ignore?(rp.get_path)
+      def get_visit_event_hash(request_payload)
+        if !request_payload.is_ignorable || !Visit::Event.ignore?(request_payload.get_path)
           {}.tap do |o|
-            o[:http_method] = rp.request.method
-            o[:url]         = rp.get_url
-            o[:vid]         = rp.get_vid
-            o[:user_id]     = rp.user_id
-            o[:user_agent]  = rp.request.env["HTTP_USER_AGENT"]
-            o[:remote_ip]   = rp.request.remote_ip
-            o[:referer]     = rp.request.referer
-            o[:cookies]     = get_visit_event_cookies rp.cookies
+            o[:http_method] = request_payload.request.method
+            o[:url]         = request_payload.get_url
+            o[:vid]         = request_payload.get_vid
+            o[:user_id]     = request_payload.user_id
+            o[:user_agent]  = request_payload.request.env["HTTP_USER_AGENT"]
+            o[:remote_ip]   = request_payload.request.remote_ip
+            o[:referer]     = request_payload.request.referer
+            o[:cookies]     = get_visit_event_cookies request_payload.cookies
             o[:created_at]  = Time.now
           end
         else
