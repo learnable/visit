@@ -5,12 +5,12 @@ module Visit
     end
 
     def self.delete_all
-      Visit::Trait.delete_all
-      Visit::TraitValue.delete_all
+      Trait.delete_all
+      TraitValue.delete_all
     end
 
     def self.recreate_all
-      Visit::Configurable.cache.clear
+      Configurable.cache.clear
       delete_all
       self.new.run
     end
@@ -18,8 +18,8 @@ module Visit
     # create Traits and TraitValues in batches
     #
     def run
-      Visit::Event.
-        newer_than_visit_trait(Visit::Trait.last).
+      Event.
+        newer_than_visit_trait(Trait.last).
         includes(:visit_source_values_url, :visit_source_values_user_agent).
         find_in_batches do |a_ve|
 
@@ -55,37 +55,37 @@ module Visit
       end
     end
   end
-end
 
-class Visit::TraitFactory::Tuplet < Struct.new(:k_id, :v_id, :k, :v, :ve_id, :timestamp)
-  def to_s
-    "(#{k_id}, #{v_id}, #{ve_id}, '#{timestamp}')"
-  end
-end
-
-class Visit::TraitFactory::TupletFactory
-  def tuplets_from_ve_batch(a_ve)
-    a_ve.each.flat_map do |ve|
-      tuplets_from_ve ve
+  class TraitFactory::Tuplet < Struct.new(:k_id, :v_id, :k, :v, :ve_id, :timestamp)
+    def to_s
+      "(#{k_id}, #{v_id}, #{ve_id}, '#{timestamp}')"
     end
   end
 
-  private
-
-  def tuplets_from_ve(ve)
-    Visit::Event::Traits.new(ve).to_h.each.map do |k,v|
-      if v.nil? || v.empty?
-        nil
-      else
-        k_id = get_trait_value_id k
-        v_id = get_trait_value_id v
-
-        Visit::TraitFactory::Tuplet.new k_id, v_id, k, v, ve.id, Time.now
+  class TraitFactory::TupletFactory
+    def tuplets_from_ve_batch(a_ve)
+      a_ve.each.flat_map do |ve|
+        tuplets_from_ve ve
       end
-    end.select{ |tuplet| !tuplet.nil? }
-  end
+    end
 
-  def get_trait_value_id(str)
-    Visit::TraitValue.get_id_from_optimistic_find_or_create_by_v(str)
+    private
+
+    def tuplets_from_ve(ve)
+      Event::Traits.new(ve).to_h.each.map do |k,v|
+        if v.nil? || v.empty?
+          nil
+        else
+          k_id = get_trait_value_id k
+          v_id = get_trait_value_id v
+
+          TraitFactory::Tuplet.new k_id, v_id, k, v, ve.id, Time.now
+        end
+      end.select{ |tuplet| !tuplet.nil? }
+    end
+
+    def get_trait_value_id(str)
+      TraitValue.get_id_from_optimistic_find_or_create_by_v(str)
+    end
   end
 end

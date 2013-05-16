@@ -10,12 +10,12 @@ module Visit
     protected
 
     def create_visit_event(path = nil)
-      Visit::Arrival::create_if_interesting \
-        Visit::RequestPayload.new \
+      Arrival::create_if_interesting \
+        RequestPayload.new \
           request,
           cookies,
           session,
-          Visit::Configurable.current_user_id.call(self),
+          Configurable.current_user_id.call(self),
           false,
           path
     end
@@ -25,18 +25,18 @@ module Visit
     MAX = 9223372036854775807 # see: http://dev.mysql.com/doc/refman/5.1/en/numeric-types.html
 
     def set_visit_vid
-      if !Visit::RequestPayload::get_vid cookies, session
+      if !RequestPayload::get_vid cookies, session
         session[:vid] = rand(MAX)
       end
     end
 
     def on_every_request
-      Visit::Arrival::create_if_interesting \
-        Visit::RequestPayload.new \
+      Arrival::create_if_interesting \
+        RequestPayload.new \
           request,
           cookies,
           session,
-          Visit::Configurable.current_user_id.call(self),
+          Configurable.current_user_id.call(self),
           true,
           nil
     end

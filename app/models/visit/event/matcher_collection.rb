@@ -1,7 +1,7 @@
 module Visit
   class Event::MatcherCollection
     def initialize(a)
-      @matchers = a.map { |a| Visit::Event::Matcher.new *a }
+      @matchers = a.map { |a| Event::Matcher.new *a }
     end
 
     def match_first_to_h(other_http_method, path)

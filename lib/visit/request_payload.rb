@@ -14,7 +14,7 @@ module Visit
     end
 
     def get_vid
-      Visit::RequestPayload.get_vid cookies, session
+      RequestPayload.get_vid cookies, session
     end
 
   end

@@ -38,11 +38,11 @@ module Visit
     end
 
     def vid
-      @vid ||= Visit::Event.find(@range.begin).vid
+      @vid ||= Event.find(@range.begin).vid
     end
 
     def events
-      @events ||= Visit::Query::LabelledEvent.new.scoped.where(vid: vid).where(id: @range).all
+      @events ||= Query::LabelledEvent.new.scoped.where(vid: vid).where(id: @range).all
     end
 
     protected

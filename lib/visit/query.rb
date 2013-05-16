@@ -1,6 +1,6 @@
 module Visit
   class Query
-    def initialize(relation = Visit::Event.scoped)
+    def initialize(relation = Event.scoped)
       @relation = relation
     end
 

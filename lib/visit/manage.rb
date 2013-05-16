@@ -8,10 +8,10 @@ module Visit
       end
 
       def destroy_ignorable
-        Visit::Event.includes(:visit_source_values_url).find_in_batches do |a_ve|
+        Event.includes(:visit_source_values_url).find_in_batches do |a_ve|
           a_to_be_destroyed = a_ve.map { |ve| ve.ignore? ? ve.id : nil }.select{ |id| !id.nil? }
 
-          Visit::Event.destroy a_to_be_destroyed
+          Event.destroy a_to_be_destroyed
 
           yield a_to_be_destroyed if block_given?
         end
@@ -20,7 +20,7 @@ module Visit
       def archive_visit_events(days=93)
         age = days.days.ago.utc
         count = 1
-        Visit::Event.select("id").where("created_at < ?", age).find_in_batches do |a_ve|
+        Event.select("id").where("created_at < ?", age).find_in_batches do |a_ve|
           a_id = a_ve.map { |ve| ve.id }
           ids = a_id.join(',')
           activity = {}

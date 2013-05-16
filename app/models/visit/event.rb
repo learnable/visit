@@ -49,7 +49,7 @@ module Visit
     def self.ignore?(path)
       ret = nil
 
-      Visit::Configurable.ignorable.each do |re|
+      Configurable.ignorable.each do |re|
         ret = path =~ re
         break if ret
       end
@@ -58,15 +58,15 @@ module Visit
     end
 
     def ignore?
-      Visit::Event.ignore? Visit::Event.path_from_url(url)
+      Event.ignore? Event.path_from_url(url)
     end
 
     def http_method
-      Visit::Event::HttpMethod.instance.from_enum http_method_enum
+      Event::HttpMethod.instance.from_enum http_method_enum
     end
 
     def http_method=(new_value)
-      self.http_method_enum = Visit::Event::HttpMethod.instance.to_enum new_value
+      self.http_method_enum = Event::HttpMethod.instance.to_enum new_value
     end
 
     def url
@@ -90,9 +90,9 @@ module Visit
     private
 
     def fetch_from_cache(id)
-      key = Visit::Cache::Key.new("SourceValue.find", id)
+      key = Cache::Key.new("SourceValue.find", id)
 
-      Visit::Configurable.cache.fetch(key) do
+      Configurable.cache.fetch(key) do
         yield
       end
     end

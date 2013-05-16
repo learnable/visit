@@ -7,9 +7,9 @@ module Visit
 
         if o
           begin
-            ve = Visit::Configurable.create.call o
+            ve = Configurable.create.call o
           rescue
-            Visit::Configurable.notify.call $!
+            Configurable.notify.call $!
           end
         end
       end
@@ -17,7 +17,7 @@ module Visit
       def create(o)
         ve = create_visit(o)
 
-        Visit::TraitFactory.new.create_traits_for_visit_events [ ve ]
+        TraitFactory.new.create_traits_for_visit_events [ ve ]
 
         ve
       end
@@ -30,20 +30,20 @@ module Visit
           user_id:   o[:user_id],
           remote_ip: o[:remote_ip]
 
-        ve.url_id        = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(o[:url])
-        ve.user_agent_id = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(o[:user_agent])
-        ve.referer_id    = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(o[:referer])
+        ve.url_id        = SourceValue.get_id_from_optimistic_find_or_create_by_v(o[:url])
+        ve.user_agent_id = SourceValue.get_id_from_optimistic_find_or_create_by_v(o[:user_agent])
+        ve.referer_id    = SourceValue.get_id_from_optimistic_find_or_create_by_v(o[:referer])
         ve.http_method   = o[:http_method]
         ve.created_at    = o[:created_at] # prem reminder re: flippa PHP app
         ve.save!
 
-        # Visit::Manage::log "Visit::Arrival::create_visit saved ve: #{ve.to_yaml}"
+        # Manage::log "Arrival::create_visit saved ve: #{ve.to_yaml}"
 
         o[:cookies].each do |k,v|
-          vs = Visit::Source.new
+          vs = Source.new
           vs.visit_event_id = ve.id
-          vs.k_id = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(k)
-          vs.v_id = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(v)
+          vs.k_id = SourceValue.get_id_from_optimistic_find_or_create_by_v(k)
+          vs.v_id = SourceValue.get_id_from_optimistic_find_or_create_by_v(v)
           vs.created_at = o[:created_at] # prem reminder re: flippa PHP app
           vs.save!
         end

@@ -22,7 +22,7 @@ module Visit
         previous = nil
         begin_range_id = nil
 
-        Visit::Query::LabelledEvent.new.scoped.traceable_to_user(user_id).find_each do |current|
+        Query::LabelledEvent.new.scoped.traceable_to_user(user_id).find_each do |current|
           if range_breakpoint?(current, previous)
             yield (begin_range_id..previous.id)
             begin_range_id = current.id
