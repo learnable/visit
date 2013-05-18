@@ -4,6 +4,7 @@ module Visit
       def key
         "#{part_a}:#{part_b}"
       end
+      alias_method :to_s, :key
     end
   end
 end
