@@ -13,11 +13,11 @@ module Visit
       end
 
       def create(request_payload_hash)
-        ve = create_visit(request_payload_hash)
+        event = create_visit(request_payload_hash)
 
-        TraitFactory.new.create_traits_for_visit_events [ ve ]
+        TraitFactory.new.create_traits_for_visit_events [ event ]
 
-        ve
+        event
       end
 
       private
@@ -25,30 +25,30 @@ module Visit
       def create_visit(request_payload_hash)
         request_payload_hash.symbolize_keys!
 
-        ve = Visit::Event.new \
+        event = Visit::Event.new \
           vid:       request_payload_hash[:vid],
           user_id:   request_payload_hash[:user_id],
           remote_ip: request_payload_hash[:remote_ip]
 
-        ve.url_id        = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(request_payload_hash[:url])
-        ve.user_agent_id = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(request_payload_hash[:user_agent])
-        ve.referer_id    = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(request_payload_hash[:referer])
-        ve.http_method   = request_payload_hash[:http_method]
-        ve.created_at    = request_payload_hash[:created_at] # prem reminder re: flippa PHP app
-        ve.save!
+        event.url_id        = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(request_payload_hash[:url])
+        event.user_agent_id = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(request_payload_hash[:user_agent])
+        event.referer_id    = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(request_payload_hash[:referer])
+        event.http_method   = request_payload_hash[:http_method]
+        event.created_at    = request_payload_hash[:created_at] # prem reminder re: flippa PHP app
+        event.save!
 
-        # Manage::log "Arrival::create_visit saved ve: #{ve.to_yaml}"
+        # Manage::log "Arrival::create_visit saved event: #{event.to_yaml}"
 
         request_payload_hash[:cookies].each do |k,v|
           vs = Visit::Source.new
-          vs.visit_event_id = ve.id
+          vs.visit_event_id = event.id
           vs.k_id = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(k)
           vs.v_id = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(v)
           vs.created_at = request_payload_hash[:created_at]
           vs.save!
         end
 
-        ve
+        event
       end
 
     end

@@ -60,11 +60,11 @@ describe "Visit::ControllerFilters", type: :controller do
 
     it "should create exactly one VisitEvent when a visit_id visits exactly once" do
       do_some_visits
-      a_ve = Visit::Event.find_all_by_vid(visit_id_next)
-      a_ve.should have(1).records
-      a_ve.first.vid.should == visit_id_next
-      a_ve.first.user_id.should == user_id
-      a_ve.first.http_method.to_s.should == request.method.downcase
+      a_event = Visit::Event.find_all_by_vid(visit_id_next)
+      a_event.should have(1).records
+      a_event.first.vid.should == visit_id_next
+      a_event.first.user_id.should == user_id
+      a_event.first.http_method.to_s.should == request.method.downcase
     end
 
     it "should create multiple VisitEvents when a visit_id visits multiple times" do

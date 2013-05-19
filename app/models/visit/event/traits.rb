@@ -1,9 +1,9 @@
 module Visit
   class Event::Traits
 
-    def initialize(ve)
-      @ve = ve
-      @path = Event.path_from_url(ve.url)
+    def initialize(event)
+      @event = event
+      @path = Event.path_from_url(event.url)
     end
 
     def to_h
@@ -19,19 +19,19 @@ module Visit
     def get_match_first
        c = Event::MatcherCollection.new Configurable.labels_match_first
 
-       c.match_first_to_h(@ve.http_method, @path)
+       c.match_first_to_h(@event.http_method, @path)
     end
 
     def get_match_all
        c = Event::MatcherCollection.new Configurable.labels_match_all
 
-       c.match_all_to_a(@ve.http_method, @path)
+       c.match_all_to_a(@event.http_method, @path)
     end
 
     def get_user_agent_robot
       {}.tap do |h|
         Configurable.user_agent_robots.each do |re|
-          if @ve.user_agent =~ re
+          if @event.user_agent =~ re
             h[:robot] = re.to_s
             break
           end
