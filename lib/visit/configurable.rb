@@ -2,11 +2,15 @@ module Visit
   class Configurable
     class << self
       attr_accessor :cache, :create, :cookies_to_hash,
-        :current_user_id, :ignorable, :labels_match_all,
-        :labels_match_first, :notify, :user_agent_robots
+        :case_insensitive_string_comparison, :current_user_id, :ignorable,
+        :labels_match_all, :labels_match_first, :notify, :user_agent_robots
 
       def cache
         @cache ||= Visit::Cache::Null.new
+      end
+
+      def case_insensitive_string_comparison
+        true
       end
 
       def configure
