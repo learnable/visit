@@ -11,8 +11,8 @@ module Visit
         end
 
         @h[:cookies].each do |k,v|
-          ret << k.to_s
-          ret << v.to_s
+          ret << k
+          ret << v
         end
       end
     end

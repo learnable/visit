@@ -22,13 +22,13 @@ module Visit
           {}.tap do |h|
             features = {}
             cookies.each do |k,v|
-              if k == :coupon
-                h[:coupon] = v
+              if k == 'coupon'
+                h['coupon'] = v
               elsif k =~ /flip_(.*?)_(.*$)/
                 features[$2] = v
               end
             end
-            h[:features] = features.to_json unless features.empty?
+            h['features'] = features.to_json unless features.empty?
           end
         end
       end
