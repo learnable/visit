@@ -5,11 +5,31 @@ module Visit
         @cache = {}
       end
 
+      def has_key?(key)
+        raise "expected Cache::Key" unless key.instance_of? Visit::Cache::Key
+
+        @cache.has_key?(key.to_s)
+      end
+
       def fetch(key, options = {})
-        if !cache.has_key?(key)
-          cache[key] = yield
+        raise "expected Cache::Key" unless key.instance_of? Visit::Cache::Key
+
+        k = key.to_s
+
+        is_hit = true
+
+        if !has_key?(key)
+          is_hit = false
+
+          @cache[k] = yield
         end
-        cache[key]
+
+        # Manage.log "AMHERE: cache: id: #{@cache.object_id} key: #{k} #{is_hit ? 'hit' : 'miss'} returns: #{@cache[k].to_s}" if k =~ /robot/i
+        @cache[k]
+      end
+
+      def to_h
+        @cache
       end
 
       def clear
