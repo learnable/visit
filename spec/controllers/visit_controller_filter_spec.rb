@@ -28,8 +28,8 @@ describe "Visit::ControllerFilters", type: :controller do
   context "#set_event" do
 
     before :each do
-      Visit::Trait.delete_all
-      Visit::Event.delete_all
+      Visit::Trait.destroy_all
+      Visit::Event.destroy_all
     end
 
     let(:visit_id_next) { 556 }
