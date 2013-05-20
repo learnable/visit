@@ -88,7 +88,8 @@ module Visit
 
       def notify
         @notify ||= -> (e) do
-          Rails.logger.error "ERROR IN VISIT GEM: #{e.to_s}"
+          Rails.logger.error "ERROR IN VISIT GEM: #{e.to_s}\nBACKTRACE: #{e.backtrace}"
+          $stderr.puts "ERROR IN VISIT GEM: #{e.to_s}\nBACKTRACE: #{e.backtrace}"
         end
       end
 
