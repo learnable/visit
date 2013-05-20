@@ -25,8 +25,6 @@ module Visit
 
         a_request_payload_hash.each { |rph| rph.symbolize_keys! }
 
-        debugger
-
         collect = Collect::SourceValues.new Visit::SourceValue, a_request_payload_hash
         collect.transform!
         collect.import!
