@@ -10,7 +10,7 @@ describe Visit::RequestPayloadHashDecorator do
       :user_agent  => "mozilla",
       :remote_ip   => 333,
       :referer     => "http://blah.com",
-      :cookies     => { a: :b, c: :d },
+      :cookies     => { "a" => "b", "c" => "d" },
       :created_at  => Time.now
     }
 
