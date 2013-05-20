@@ -1,4 +1,7 @@
+require 'activerecord-import'
+
 # ActiveSupport dependencies.
+
 %w{
   concern
   inflector
