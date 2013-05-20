@@ -135,6 +135,8 @@ This sql query creates a database view for that purpose.
 TODO
 ----
 MAJOR
+* we've dropped the uniqueness validations and database constraints
+  so we need a sweeper to fix duplicates
 
 MODERATE
 * support the visit_* tables living in separate db from the app

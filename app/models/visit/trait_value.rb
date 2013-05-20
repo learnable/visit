@@ -4,9 +4,6 @@ module Visit
 
     extend HasOptimisticFindOrCreate
 
-    # TODO - replace uniqueness with a sweeper
-    # validates :v, :uniqueness => true
-
     attr_accessible :v
   end
 end
