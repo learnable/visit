@@ -4,8 +4,6 @@ module Visit
 
     extend HasOptimisticFindOrCreate
 
-    has_many :visit_event_traits, dependent: :destroy
-
     # TODO - replace uniqueness with a sweeper
     # validates :v, :uniqueness => true
 
