@@ -28,7 +28,6 @@ describe "Visit::ControllerFilters", type: :controller do
   context "#set_event" do
 
     before :each do
-      Visit::Trait.destroy_all
       Visit::Event.destroy_all
     end
 
