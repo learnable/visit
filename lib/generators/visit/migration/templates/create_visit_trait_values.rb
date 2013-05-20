@@ -6,6 +6,6 @@ class CreateVisitTraitValues < ActiveRecord::Migration
       t.timestamp :created_at
     end
 
-    add_index :visit_trait_values, :v, :unique => true
+    add_index :visit_trait_values, :v
   end
 end
