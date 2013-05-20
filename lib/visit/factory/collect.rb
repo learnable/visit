@@ -40,6 +40,8 @@ module Visit
       protected
 
       def candidate_for_import(value, created_at)
+        value = "" if value.nil?
+
         if should_import?(value)
           @cache.fetch(cache_key(value)) do
             { value: value, created_at: created_at }
@@ -119,15 +121,15 @@ module Visit
 
     class Collect::Events < Collect
       def import!
-        @a_request_payload_hash.each do |request_payload_hash|
+        @collection.each do |request_payload_hash|
           event = Visit::Event.new \
             vid:       request_payload_hash[:vid],
             user_id:   request_payload_hash[:user_id],
             remote_ip: request_payload_hash[:remote_ip]
 
-          event.url_id        = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(request_payload_hash[:url])
-          event.user_agent_id = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(request_payload_hash[:user_agent])
-          event.referer_id    = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(request_payload_hash[:referer])
+          event.url_id        = payload_to_source_value_id request_payload_hash, :url
+          event.user_agent_id = payload_to_source_value_id request_payload_hash, :user_agent
+          event.referer_id    = payload_to_source_value_id request_payload_hash, :referer
           event.http_method   = request_payload_hash[:http_method]
           event.created_at    = request_payload_hash[:created_at]
           event.save!
@@ -135,20 +137,30 @@ module Visit
           request_payload_hash[:event] = event
         end
       end
+
+      private
+
+      def payload_to_source_value_id(h, key)
+        value = h[key]
+
+        value.nil? ?
+          nil :
+          Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(value)
+      end
     end
 
     class Collect::Sources < Collect
-      def initialize(model, a_request_payload_hash)
-        super(model, a_request_payload_hash)
+      def initialize(model, collection)
+        super(model, collection)
         @a = []
       end
 
-      def transform
-        @a_request_payload_hash.each do |request_payload_hash|
+      def transform!
+        @collection.each do |request_payload_hash|
           @a << {
             visit_event_id: request_payload_hash[:event].id,
             created_at: request_payload_hash[:created_at],
-            pairs: RequestPayloadHashDecorator.new(request_payload_hash).to_pairs(model_class)
+            pairs: RequestPayloadHashDecorator.new(request_payload_hash).to_pairs(Visit::SourceValue)
           }
         end
       end
