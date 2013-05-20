@@ -30,9 +30,9 @@ module Visit
           user_id:   request_payload_hash[:user_id],
           remote_ip: request_payload_hash[:remote_ip]
 
-        event.url_id        = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(request_payload_hash[:url])
-        event.user_agent_id = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(request_payload_hash[:user_agent])
-        event.referer_id    = Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(request_payload_hash[:referer])
+        event.url_id        = payload_to_source_value_id request_payload_hash, :url
+        event.user_agent_id = payload_to_source_value_id request_payload_hash, :user_agent
+        event.referer_id    = payload_to_source_value_id request_payload_hash, :referer
         event.http_method   = request_payload_hash[:http_method]
         event.created_at    = request_payload_hash[:created_at] # prem reminder re: flippa PHP app
         event.save!
@@ -51,6 +51,13 @@ module Visit
         event
       end
 
+      def payload_to_source_value_id(h, key)
+        value = h[key]
+
+        value.nil? ?
+          nil :
+          Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(value)
+      end
     end
   end
 end
