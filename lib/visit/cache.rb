@@ -4,12 +4,6 @@ module Visit
       @cache = cache
     end
 
-    def has_key?(key)
-        ret = true
-        fetch(key) { ret = false }
-        ret
-    end
-
     protected
 
     def cache
