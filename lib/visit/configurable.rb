@@ -39,7 +39,8 @@ module Visit
         # because this method is called during the Rails request cycle.
 
         @create ||= -> (request_payload_hash) do
-          Visit::Arrival.create request_payload_hash
+          # Visit::Arrival.create request_payload_hash
+          Visit::Factory.run [ request_payload_hash ]
         end
       end
 
