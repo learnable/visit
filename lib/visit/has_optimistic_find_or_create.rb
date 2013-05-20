@@ -1,6 +1,8 @@
 module Visit
   module HasOptimisticFindOrCreate
     def get_id_from_optimistic_find_or_create_by_v(v)
+      raise "unexpected v.nil?" if v.nil?
+
       Configurable.cache.fetch(cache_key(v)) do
         optimistic_find_or_create_by_v(v).id
       end

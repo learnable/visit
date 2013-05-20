@@ -3,6 +3,7 @@
 module Visit
   class Flow
     def initialize(r)
+      raise "unexpected r.nil?" if r.nil?
       @range = r
     end
 
