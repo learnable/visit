@@ -1,11 +1,13 @@
 module Visit
   module HasOptimisticFindOrCreate
     def get_id_from_optimistic_find_or_create_by_v(v)
-      key = Cache::Key.new(cache_key_prefix, v)
-
-      Configurable.cache.fetch(key) do
+      Configurable.cache.fetch(cache_key(v)) do
         optimistic_find_or_create_by_v(v).id
       end
+    end
+
+    def cache_key(v)
+      Cache::Key.new(cache_key_prefix, v)
     end
 
     private
