@@ -10,7 +10,7 @@ module Visit
     protected
 
     def create_visit_event(path = nil)
-      Arrival::create_if_interesting \
+      create_if_interesting \
         RequestPayload.new \
           request,
           cookies,
@@ -31,7 +31,7 @@ module Visit
     end
 
     def on_every_request
-      Arrival::create_if_interesting \
+      create_if_interesting \
         RequestPayload.new \
           request,
           cookies,
@@ -39,6 +39,16 @@ module Visit
           Configurable.current_user_id.call(self),
           true,
           nil
+    end
+
+    def create_if_interesting(request_payload)
+      if !request_payload.is_ignorable || !Visit::Event.ignore?(request_payload.get_path)
+        begin
+          Configurable.create.call request_payload.to_h
+        rescue
+          Configurable.notify.call $!
+        end
+      end
     end
 
   end
