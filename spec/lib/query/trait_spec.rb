@@ -1,12 +1,15 @@
 require 'spec_helper'
+require 'shared_gem_config'
 
 describe Visit::Query::Trait do
   before do
-    ve1 = create(:visit_event, url: "http://is-goog/1" )
-    ve2 = create(:visit_event, url: "http://is-moz/1?utm_campaign=xxx", user_agent: 'aa')
-    ve3 = create(:visit_event, url: "http://is-moz/2?utm_campaign=yyy", user_agent: 'bb')
+    Visit::Event.destroy_all
 
-    Visit::TraitFactory.new.create_traits_for_visit_events [ ve1, ve2, ve3 ]
+    h1 = new_request_payload_hash url: "http://is-goog/1"
+    h2 = new_request_payload_hash url: "http://is-moz/1?utm_campaign=xxx", user_agent: "aa"
+    h3 = new_request_payload_hash url: "http://is-moz/2?utm_campaign=yyy", user_agent: "bb"
+
+    Visit::Factory.run [ h1, h2, h3 ]
   end
 
   let(:query) { Visit::Query::Trait.new("utm_campaign") }
