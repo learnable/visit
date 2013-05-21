@@ -18,7 +18,7 @@ module Visit
       end
 
       def cookies_to_hash
-        @cookies_to_hash ||= -> (cookies) do
+        @cookies_to_hash ||= ->(cookies) do
           {}.tap do |h|
             features = {}
             cookies.each do |k,v|
@@ -38,13 +38,13 @@ module Visit
         # The app should override this method and delegate to a worker
         # because this method is called during the Rails request cycle.
 
-        @create ||= -> (request_payload_hash) do
+        @create ||= ->(request_payload_hash) do
           Visit::Factory.run [ request_payload_hash ]
         end
       end
 
       def current_user_id
-        @current_user_id ||= -> (controller) do
+        @current_user_id ||= ->(controller) do
           controller.instance_eval { current_user ? current_user.id : nil }
         end
       end
@@ -87,7 +87,7 @@ module Visit
       end
 
       def notify
-        @notify ||= -> (e) do
+        @notify ||= ->(e) do
           Rails.logger.error "ERROR IN VISIT GEM: #{e.to_s}\nBACKTRACE: #{e.backtrace}"
           $stderr.puts "ERROR IN VISIT GEM: #{e.to_s}\nBACKTRACE: #{e.backtrace}"
         end
