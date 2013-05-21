@@ -8,7 +8,7 @@ module Visit
       def has_key?(key)
         raise "expected Cache::key" unless key.instance_of? Visit::Cache::Key
 
-        @cache.get(key.to_s) == false ? false : true
+        @cache.exist?(key.to_s)
       end
 
       def fetch(key, options = {})
