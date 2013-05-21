@@ -130,7 +130,7 @@ This sql query creates a database view for that purpose.
     LEFT OUTER JOIN visit_trait_values capture2_vtv
       ON capture2_vtv.id = capture2_vt.v_id
 
-    ORDER BY id ASC
+    ORDER BY visit_events.id ASC
 
 TODO
 ----
