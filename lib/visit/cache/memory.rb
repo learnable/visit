@@ -6,7 +6,7 @@ module Visit
       end
 
       def has_key?(key)
-        raise "expected Cache::Key" unless key.instance_of? Visit::Cache::Key
+        raise_if_not_key(key)
 
         @cache.has_key?(key.to_s)
       end
