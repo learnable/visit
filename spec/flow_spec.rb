@@ -8,12 +8,10 @@ describe Visit::Flow do
 
   before do
     Visit::Event.destroy_all
-    create :visit_event, url: "http://e.org/articles", user: user, vid: 100
-    create :visit_event, url: "http://e.org/articles/1", user: user, vid: 100
-    create :visit_event, url: "http://e.org/articles/2/3", user: user, vid: 100
-    # Run factory to assign labels to visit events in order for Flow to
-    # register the events
-    Visit::TraitFactory.new.run
+    h1 = new_request_payload_hash url: "http://e.org/articles", user_id: user.id, vid: 100
+    h2 = new_request_payload_hash url: "http://e.org/articles/1", user_id: user.id, vid: 100
+    h3 = new_request_payload_hash url: "http://e.org/articles/2/3", user_id: user.id, vid: 100
+    Visit::Factory.run [ h1, h2, h3 ]
   end
 
   context "Flow::Ranges.for_user" do
