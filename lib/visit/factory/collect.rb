@@ -55,7 +55,7 @@ module Visit
         k = cache_key(value)
 
         ret = true
-        # Manage.log "AMHERE 1: value: #{value} cache_key.to_s: #{k.to_s}" if k.key =~ /robot/
+        # Manage.log "AMHERE 1: value: #{value} k: #{k.to_s}" if k.key =~ /robot/
 
         ret = ret && !@cache.has_key?(k)
         # Manage.log "AMHERE 2: ret: #{ret}" if k.key =~ /robot/
@@ -127,9 +127,9 @@ module Visit
             user_id:   request_payload_hash[:user_id],
             remote_ip: request_payload_hash[:remote_ip]
 
-          event.url_id        = payload_to_source_value_id request_payload_hash, :url
-          event.user_agent_id = payload_to_source_value_id request_payload_hash, :user_agent
-          event.referer_id    = payload_to_source_value_id request_payload_hash, :referer
+          event.url_id        = payload_to_source_value_id request_payload_hash[:url]
+          event.user_agent_id = payload_to_source_value_id request_payload_hash[:user_agent]
+          event.referer_id    = payload_to_source_value_id request_payload_hash[:referer]
           event.http_method   = request_payload_hash[:http_method]
           event.created_at    = request_payload_hash[:created_at]
           event.save!
@@ -140,9 +140,7 @@ module Visit
 
       private
 
-      def payload_to_source_value_id(h, key)
-        value = h[key]
-
+      def payload_to_source_value_id(value)
         value.nil? ?
           nil :
           Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(value)
