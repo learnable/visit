@@ -1,11 +1,12 @@
 require 'spec_helper'
+require 'shared_gem_config'
 
 describe Visit::Query::Robot do
   before do
-    ve1 = create(:visit_event, url: "http://is-goog/1", user_agent: "googlebot")
-    ve2 = create(:visit_event, url: "http://is-moz/2", user_agent: "mozilla")
+    h1 = new_request_payload_hash url: "http://is-goog/1", user_agent: "googlebot"
+    h2 = new_request_payload_hash url: "http://is-moz/2", user_agent: "mozilla"
 
-    Visit::TraitFactory.new.create_traits_for_visit_events [ ve1, ve2 ]
+    Visit::Factory.run [ h1, h2 ]
   end
 
   let(:query) { Visit::Query::Robot.new }
