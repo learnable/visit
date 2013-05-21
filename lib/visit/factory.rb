@@ -2,8 +2,8 @@ module Visit
   class Factory
     class << self
       def delete_traits
-        Trait.delete_all
-        TraitValue.delete_all
+        Visit::Trait.delete_all
+        Visit::TraitValue.delete_all
       end
 
       def recreate_traits
@@ -11,12 +11,10 @@ module Visit
 
         delete_traits
 
-        factory = Factory.new
-
         Visit::Event.
           includes([:visit_source_values_url, :visit_source_values_user_agent, :visit_source_values_referer]).
           find_in_batches do |a_event|
-            factory.create_traits a_event.map { |event| { event: event } }
+            Visit::Factory.create_traits a_event.map { |event| { event: event } }
           end
       end
 
