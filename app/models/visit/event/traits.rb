@@ -30,9 +30,9 @@ module Visit
 
     def get_user_agent_robot
       {}.tap do |h|
-        Configurable.user_agent_robots.each do |re|
+        Configurable.user_agent_robots.each do |name, re|
           if @event.user_agent =~ re
-            h[:robot] = re.to_s
+            h[:robot] = name
             break
           end
         end

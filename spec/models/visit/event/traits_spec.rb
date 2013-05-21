@@ -30,12 +30,15 @@ describe Visit::Event::Traits do
     end
 
     context "when user_agent is a robot" do
+
       let(:ve) { create(:visit_event, url: "http://thishost.org/articles?gclid=4455", user_agent: "googlebot") }
+
       it "#to_h.has_key?(:robot) should be true" do
         traits.to_h.has_key?(:robot).should be_true
       end
+
       it "#to_h[:robot] contains the .to_s of the regexp that matched the user agent" do
-        traits.to_h[:robot].should =~ /googlebot/i
+        traits.to_h[:robot].should == :google
       end
     end
   end
