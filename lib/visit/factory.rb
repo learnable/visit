@@ -21,8 +21,6 @@ module Visit
       end
 
       def run(a_request_payload_hash)
-        # Manage.log "AMHERE: Visit::Factory.run: a_request_payload_hash: #{a_request_payload_hash.to_yaml}"
-
         a_request_payload_hash.each { |rph| rph.symbolize_keys! }
 
         collect = Collect::SourceValues.new Visit::SourceValue, a_request_payload_hash
