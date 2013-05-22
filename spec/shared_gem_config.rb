@@ -32,3 +32,10 @@ def new_request_payload_hash opts = {}
 
   h.merge opts
 end
+
+def run_requests_through_factory(a)
+  b = a.map do |h|
+      new_request_payload_hash h
+    end
+  Visit::Factory.run b
+end
