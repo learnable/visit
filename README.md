@@ -55,8 +55,8 @@ To customise, create a config/initializers/visit.rb, eg:
 Assumed Models
 --------------
 
-Visit assumes there is a table 'users' existing in the database, and the
-existence of a <code>current_user</code> controller helper.
+The CreateVisitEvents migration has a foreign key reference to a 'users' table.
+You can remove the foreign key reference and nothing will break.
 
 Label and captures
 ------------------
