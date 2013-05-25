@@ -72,12 +72,31 @@ Which in turn supports queries like this:
 Value Deduper
 -------------
 
-The visit_source_value.v and visit_trait_value.v columns don't have unique indexes
-because mysql doesn't support unique indexes on large varchar columns.
+For internal consistency, the gem needs each row in the visit_source_values and visit_trait_values 
+to have a unique value of 'v'.
 
-Because the index on the 'v' columns isn't unique, the app is exected to run Visit::ValueDepuer.run periodically
+But because mysql indexes can only cover the first 255 chars of a VARCHAR column
+(ignoring <code>innodb_large_prefix</code>),
+the 'v' columns have non-unique indexes.
+
+The app is exected to run Visit::ValueDepuer.run periodically
 (eg. daily) to eliminate duplicate values of 'v' and fix any references to those duplicates.
 
+Here's what a sidekiq worker looks like:
+
+    require "visit"
+
+    class VisitDeduperWorker < BaseWorker
+      sidekiq_options queue: :visit
+
+      def perform
+        begin
+          Visit::ValueDepuer.run
+        rescue
+          Airbrake.notify $!
+        end
+      end
+    end
 
 Developing the gem
 ------------------
