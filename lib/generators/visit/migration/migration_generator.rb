@@ -10,7 +10,6 @@ module Visit
       %w{
         visit_source_values
         visit_events
-        visit_event_archives
         visit_sources
         visit_trait_values
         visit_traits
