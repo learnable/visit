@@ -41,8 +41,6 @@ describe "Visit::ControllerFilters", type: :controller do
         create :user, id: user_id if !User.exists?(user_id)
         o = double
         o.stub(:id) { uid }
-        o.stub(:_agreement_version) { 2 }
-        o.stub("has_broken_payment_device?") { false }
         @controller.stub(:current_user) { o }
       end
       get :index
