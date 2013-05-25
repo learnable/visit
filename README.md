@@ -86,7 +86,7 @@ Here's what a sidekiq worker looks like:
 
     require "visit"
 
-    class VisitDeduperWorker < BaseWorker
+    class VisitValueDeduperWorker < BaseWorker
       def perform
         begin
           Visit::ValueDeduper.run
@@ -125,7 +125,7 @@ cd spec/dummy
 bundle exec rake db:create
 rails g visit:migration
 bundle exec rake db:migrate
-bundle exec rake db:migrate RAILS_ENV=test
+bundle exec rake db:migrate RAILS_ENV=test # or rake db:test:prepare
 ```
 
 visit_event_views
