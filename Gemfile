@@ -6,6 +6,7 @@ gemspec
 group :development, :test do
   gem "devise"
   gem "pg"
+  gem "mysql2"
   gem "jquery-rails"
   gem "debugger"
 end
