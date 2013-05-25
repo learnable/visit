@@ -69,6 +69,16 @@ Which in turn supports queries like this:
       where(created_at: (1.day.ago..Time.now)).
       count
 
+Value Deduper
+-------------
+
+The visit_source_value.v and visit_trait_value.v columns don't have unique indexes
+because mysql doesn't support unique indexes on large varchar columns.
+
+Because the index on the 'v' columns isn't unique, the app is exected to run Visit::ValueDepuer.run periodically
+(eg. daily) to eliminate duplicate values of 'v' and fix any references to those duplicates.
+
+
 Developing the gem
 ------------------
 
@@ -135,8 +145,6 @@ This sql query creates a database view for that purpose.
 TODO
 ----
 MAJOR
-* we've dropped the uniqueness validations and database constraints
-  so we need a sweeper to fix duplicates
 
 MODERATE
 * support the visit_* tables living in separate db from the app
