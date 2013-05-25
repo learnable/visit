@@ -72,14 +72,14 @@ Which in turn supports queries like this:
 Value Deduper
 -------------
 
-For internal consistency, the gem needs each row in the visit_source_values and visit_trait_values 
+For internal consistency, the gem requires each row in tables visit_source_values and visit_trait_values 
 to have a unique value of 'v'.
 
 But because mysql indexes can only cover the first 255 chars of a VARCHAR column
 (ignoring <code>innodb_large_prefix</code>),
 the 'v' columns have non-unique indexes.
 
-The app is exected to run Visit::ValueDepuer.run periodically
+So your app should periodically run Visit::ValueDeduper.run
 (eg. daily) to eliminate duplicate values of 'v' and fix any references to those duplicates.
 
 Here's what a sidekiq worker looks like:
@@ -87,11 +87,9 @@ Here's what a sidekiq worker looks like:
     require "visit"
 
     class VisitDeduperWorker < BaseWorker
-      sidekiq_options queue: :visit
-
       def perform
         begin
-          Visit::ValueDepuer.run
+          Visit::ValueDeduper.run
         rescue
           Airbrake.notify $!
         end
@@ -124,10 +122,10 @@ CREATE USER visit CREATEDB;
 ```bash
 bundle
 cd spec/dummy
-rails g visit:migration
 bundle exec rake db:create
+rails g visit:migration
 bundle exec rake db:migrate
-bundle exec rake db:test:prepare
+bundle exec rake db:migrate RAILS_ENV=test
 ```
 
 visit_event_views
@@ -173,14 +171,18 @@ This sql query creates a database view for that purpose.
 
     ORDER BY visit_events.id ASC
 
+Gotchas
+-------
+* if your app doesn't have a 'users' table, edit the create_visit_events migration.
+
 TODO
 ----
 MAJOR
 
 MODERATE
-* support the visit_* tables living in separate db from the app
-* Visit::Manage.archive_visit_events is broken
-* created_at should correspond to Time.now in the Rails request cycle, not Time.now in the worker
+* larger token
+* bulk insert
+* configurable option re: use of /visit/tag.gif
+* implement an archiving solution ==> zip up everying over 3 months old and send to S3?
 
 MINOR
-* don't hardcode 'users' as the 'users' table in the application - make it configurable
