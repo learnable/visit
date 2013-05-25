@@ -10,16 +10,16 @@ describe "Visit::ControllerFilters", type: :controller do
     end
   end
 
-  let(:visit_id) { 555 }
+  let(:token) { 555 }
 
-  context "session[:visit_id]" do
-    it "should be set when there's no visit_id cookie" do
+  context "session[:token]" do
+    it "should be set when there's no token cookie" do
       get :index
       session.should have_key(:token)
       session[:token].length.should == Visit::Event.token_length
     end
-    it "should not be set when there's a visit_id cookie" do
-      @request.cookies["token"] = visit_id
+    it "should not be set when there's a token cookie" do
+      @request.cookies["token"] = token
       get :index
       session.should_not have_key(:token)
     end
@@ -31,10 +31,10 @@ describe "Visit::ControllerFilters", type: :controller do
       Visit::Event.destroy_all
     end
 
-    let(:visit_id_next) { "556" }
+    let(:token_next) { "556" }
     let(:user_id) { 444 }
 
-    def do_visit(path, token = visit_id, uid = user_id)
+    def do_visit(path, token = token, uid = user_id)
       @request.stub(:path) { path }
       @request.cookies["token"] = token
       if user_id
@@ -54,21 +54,21 @@ describe "Visit::ControllerFilters", type: :controller do
       do_visit "/courses/xx-123"                  # X visits again
       do_visit "/courses/blah.js"                 # ignored visit
       do_visit "/system/blah"                     # ignored visit
-      do_visit "/teach", visit_id_next, user_id   # Y visits
+      do_visit "/teach", token_next, user_id      # Y visits
     end
 
-    it "should create exactly one VisitEvent when a visit_id visits exactly once" do
+    it "should create exactly one VisitEvent when a token visits exactly once" do
       do_some_visits
-      a_event = Visit::Event.find_all_by_token(visit_id_next)
+      a_event = Visit::Event.find_all_by_token(token_next)
       a_event.should have(1).records
-      a_event.first.token.should == visit_id_next
+      a_event.first.token.should == token_next
       a_event.first.user_id.should == user_id
       a_event.first.http_method.to_s.should == request.method.downcase
     end
 
-    it "should create multiple VisitEvents when a visit_id visits multiple times" do
+    it "should create multiple VisitEvents when a token visits multiple times" do
       do_some_visits
-      Visit::Event.find_all_by_token(visit_id).should have(3).records
+      Visit::Event.find_all_by_token(token).should have(3).records
     end
 
   end
