@@ -142,7 +142,7 @@ This sql query creates a database view for that purpose.
       visit_events.http_method_enum as http_method_enum,
       url_vsv.v as url,
       user_id,
-      vid,
+      token,
       label_vtv.v as label,
       capture1_vtv.v as capture1,
       capture2_vtv.v as capture2,

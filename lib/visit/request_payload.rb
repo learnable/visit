@@ -1,8 +1,8 @@
 module Visit
   class RequestPayload < Struct.new(:request, :cookies, :session, :user_id, :is_ignorable, :path)
 
-    def self.get_vid(cookies, session)
-      cookies["vid"] || session[:vid]
+    def self.get_token(cookies, session)
+      cookies["token"] || session[:token]
     end
 
     def get_path
@@ -13,15 +13,15 @@ module Visit
       path ? "#{request.scheme}://#{request.host}/#{path}" : request.url
     end
 
-    def get_vid
-      RequestPayload.get_vid cookies, session
+    def get_token
+      RequestPayload.get_token cookies, session
     end
 
     def to_h
       {}.tap do |h|
         h[:http_method] = request.method
         h[:url]         = get_url
-        h[:vid]         = get_vid
+        h[:token]       = get_token
         h[:user_id]     = user_id
         h[:user_agent]  = request.env["HTTP_USER_AGENT"]
         h[:remote_ip]   = request.remote_ip

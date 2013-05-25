@@ -37,7 +37,7 @@ class Duplicate
       starting_point(model_class_value).map(&:id).each do |id|
         Visit::Query::EventsReferencingValues.new(id).scoped.each do |model|
           new_model = Visit::Event.new
-          [:http_method_enum, :url_id, :vid, :user_id, :user_agent_id, :referer_id, :remote_ip].each do |attr|
+          [:http_method_enum, :url_id, :token, :user_id, :user_agent_id, :referer_id, :remote_ip].each do |attr|
             new_model[attr] = model[attr]
           end
 

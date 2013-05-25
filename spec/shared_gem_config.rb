@@ -21,7 +21,7 @@ def new_request_payload_hash opts = {}
   h = {
     :http_method => "GET",
     :url         => "https://earl.io?utm_campaign=qqq",
-    :vid         => 111,
+    :token       => 111,
     :user_id     => nil,
     :user_agent  => "mozilla",
     :remote_ip   => "1.2.3.4",

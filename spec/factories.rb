@@ -7,7 +7,7 @@ FactoryGirl.define do
     end
     url_id { Visit::SourceValue.find_or_create_by_v(url).id }
     user_agent_id { Visit::SourceValue.find_or_create_by_v(user_agent).id }
-    sequence :vid
+    sequence :token
     http_method :get
   end
 

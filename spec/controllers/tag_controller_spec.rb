@@ -7,7 +7,7 @@ describe Visit::TagController do
   it "sets a visit_id cookie" do
     get :create
     response.should be_ok
-    response.cookies.should have_key("vid")
+    response.cookies.should have_key("token")
   end
 
   it "sets correct Content-Type header" do
@@ -16,10 +16,10 @@ describe Visit::TagController do
   end
 
   it "retains existing visit_id cookie" do
-    request.cookies["vid"] = "1234"
+    request.cookies["token"] = "1234"
     get :create
     response.should be_ok
-    response.cookies.should_not have_key("vid")
+    response.cookies.should_not have_key("token")
   end
 
 end

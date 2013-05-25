@@ -3,7 +3,7 @@ class CreateVisitEvents < ActiveRecord::Migration
     create_table :visit_events do |t|
       t.integer  "http_method_enum"
       t.integer  "url_id", :references => :visit_source_values
-      t.integer  "vid", :limit => 8
+      t.integer  "token", :limit => 8
       t.integer  "user_id", :references => :users
       t.integer  "user_agent_id", :references => :visit_source_values
       t.integer  "referer_id", :references => :visit_source_values
@@ -12,7 +12,7 @@ class CreateVisitEvents < ActiveRecord::Migration
       t.timestamp :created_at
     end
 
-    add_index :visit_events, :vid
+    add_index :visit_events, :token
     add_index :visit_events, :created_at
   end
 end

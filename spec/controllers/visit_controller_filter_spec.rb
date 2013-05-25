@@ -15,13 +15,13 @@ describe "Visit::ControllerFilters", type: :controller do
   context "session[:visit_id]" do
     it "should be set when there's no visit_id cookie" do
       get :index
-      session.should have_key(:vid)
-      session[:vid].should be > 0
+      session.should have_key(:token)
+      session[:token].should be > 0
     end
     it "should not be set when there's a visit_id cookie" do
-      @request.cookies["vid"] = visit_id
+      @request.cookies["token"] = visit_id
       get :index
-      session.should_not have_key(:vid)
+      session.should_not have_key(:token)
     end
   end
 
@@ -34,9 +34,9 @@ describe "Visit::ControllerFilters", type: :controller do
     let(:visit_id_next) { 556 }
     let(:user_id) { 444 }
 
-    def do_visit(path, vid = visit_id, uid = user_id)
+    def do_visit(path, token = visit_id, uid = user_id)
       @request.stub(:path) { path }
-      @request.cookies["vid"] = vid
+      @request.cookies["token"] = token
       if user_id
         create :user, id: user_id if !User.exists?(user_id)
         o = double
@@ -59,16 +59,16 @@ describe "Visit::ControllerFilters", type: :controller do
 
     it "should create exactly one VisitEvent when a visit_id visits exactly once" do
       do_some_visits
-      a_event = Visit::Event.find_all_by_vid(visit_id_next)
+      a_event = Visit::Event.find_all_by_token(visit_id_next)
       a_event.should have(1).records
-      a_event.first.vid.should == visit_id_next
+      a_event.first.token.should == visit_id_next
       a_event.first.user_id.should == user_id
       a_event.first.http_method.to_s.should == request.method.downcase
     end
 
     it "should create multiple VisitEvents when a visit_id visits multiple times" do
       do_some_visits
-      Visit::Event.find_all_by_vid(visit_id).should have(3).records
+      Visit::Event.find_all_by_token(visit_id).should have(3).records
     end
 
   end

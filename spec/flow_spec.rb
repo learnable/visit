@@ -10,9 +10,9 @@ describe Visit::Flow do
     Visit::Event.destroy_all
 
     run_requests_through_factory [
-      { url: "http://e.org/articles", user_id: user.id, vid: 100 },
-      { url: "http://e.org/articles/1", user_id: user.id, vid: 100 },
-      { url: "http://e.org/articles/2/3", user_id: user.id, vid: 100 },
+      { url: "http://e.org/articles", user_id: user.id, token: 100 },
+      { url: "http://e.org/articles/1", user_id: user.id, token: 100 },
+      { url: "http://e.org/articles/2/3", user_id: user.id, token: 100 },
     ]
   end
 

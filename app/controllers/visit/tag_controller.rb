@@ -2,9 +2,9 @@ module Visit
   class TagController < ::ApplicationController
 
     def create
-      if !cookies["vid"]
-        cookies["vid"] = session[:vid]
-        session["vid"] = nil
+      if !cookies["token"]
+        cookies["token"] = session[:token]
+        session["token"] = nil
       end
 
       head :ok, :content_type => "image/gif"

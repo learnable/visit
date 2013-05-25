@@ -123,7 +123,7 @@ module Visit
       def import!
         @collection.each do |request_payload_hash|
           event = Visit::Event.new \
-            vid:       request_payload_hash[:vid],
+            token:     request_payload_hash[:token],
             user_id:   request_payload_hash[:user_id],
             remote_ip: request_payload_hash[:remote_ip]
 

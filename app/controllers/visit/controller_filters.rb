@@ -3,7 +3,7 @@ module Visit
     extend ActiveSupport::Concern
 
     included do
-      before_filter :set_visit_vid
+      before_filter :set_visit_token
       before_filter :on_every_request
     end
 
@@ -24,9 +24,9 @@ module Visit
 
     MAX = 9223372036854775807 # see: http://dev.mysql.com/doc/refman/5.1/en/numeric-types.html
 
-    def set_visit_vid
-      if !RequestPayload::get_vid cookies, session
-        session[:vid] = rand(MAX)
+    def set_visit_token
+      if !RequestPayload::get_token cookies, session
+        session[:token] = rand(MAX)
       end
     end
 

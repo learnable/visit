@@ -1,4 +1,4 @@
-# a Flow is a sequence of Events, close in time, for a particular user and vid
+# a Flow is a sequence of Events, close in time, for a particular user and token
 #
 module Visit
   class Flow
@@ -38,12 +38,12 @@ module Visit
       last.nil? ? nil : helpers.distance_of_time_in_words(last.created_at, first.created_at)
     end
 
-    def vid
-      @vid ||= Event.find(@range.begin).vid
+    def token
+      @token ||= Event.find(@range.begin).token
     end
 
     def events
-      @events ||= Query::LabelledEvent.new.scoped.where(vid: vid).where(id: @range).all
+      @events ||= Query::LabelledEvent.new.scoped.where(token: token).where(id: @range).all
     end
 
     protected

@@ -4,9 +4,9 @@ module Visit
 
       # 1. For all visits that can be traced to a particular user
       # 2. Organise the visits into 'ranges'
-      #    A 'range' is the begin+end points of a collection of visits close to each other in time.
-      #    A range can only have one vid. ie. if the visit cookie got deleted, it's a new range.
-      # 3. Return an array of (begin.id..end.id) for each range.
+      #    A Range is the begin+end points of a collection of visits close to each other in time.
+      #    All points in a Range have the same token. ie. if the visit cookie got deleted, it's a new Range.
+      # 3. Return an array of (begin.id..end.id) for each Range.
       #
       def for_user(user_id)
         [].tap do |a|
@@ -36,11 +36,11 @@ module Visit
       end
 
       def range_breakpoint?(current, previous)
-        !previous.nil? && (vid_change?(current, previous) || time_gap?(current, previous))
+        !previous.nil? && (token_change?(current, previous) || time_gap?(current, previous))
       end
 
-      def vid_change?(a, b)
-        a.vid != b.vid
+      def token_change?(a, b)
+        a.token != b.token
       end
 
       def time_gap?(a, b)
