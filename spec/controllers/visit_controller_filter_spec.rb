@@ -16,7 +16,7 @@ describe "Visit::ControllerFilters", type: :controller do
     it "should be set when there's no visit_id cookie" do
       get :index
       session.should have_key(:token)
-      session[:token].should be > 0
+      session[:token].length.should == Visit::Event.token_length
     end
     it "should not be set when there's a visit_id cookie" do
       @request.cookies["token"] = visit_id
@@ -31,7 +31,7 @@ describe "Visit::ControllerFilters", type: :controller do
       Visit::Event.destroy_all
     end
 
-    let(:visit_id_next) { 556 }
+    let(:visit_id_next) { "556" }
     let(:user_id) { 444 }
 
     def do_visit(path, token = visit_id, uid = user_id)

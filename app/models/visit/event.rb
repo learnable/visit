@@ -41,6 +41,10 @@ module Visit
       row.nil? ? self : where("id > ?", row.visit_event_id)
     end
 
+    def self.token_length
+      @token_length ||= Visit::Event.columns.select{|c| c.name == 'token' }.first.limit
+    end
+
     def self.path_from_url(url)
       uri = Addressable::URI.parse(url)
       uri.host ? url.gsub(%r(^.*?#{uri.host}), "") : url # strip scheme and host

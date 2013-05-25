@@ -22,11 +22,9 @@ module Visit
 
     private
 
-    MAX = 9223372036854775807 # see: http://dev.mysql.com/doc/refman/5.1/en/numeric-types.html
-
     def set_visit_token
       if !RequestPayload::get_token cookies, session
-        session[:token] = rand(MAX)
+        session[:token] = SecureRandom.base64(Visit::Event.token_length).slice(0,Visit::Event.token_length)
       end
     end
 
