@@ -103,19 +103,31 @@ Developing the gem
 
     git clone git@github.com:learnable/visit.git
 
+### mysql
+
+    $ mysql -u root
+
+    CREATE DATABASE visit;
+    CREATE DATABASE visit_test;
+    GRANT usage on *.* TO visit@localhost IDENTIFIED BY 'visit';
+    GRANT ALL PRIVILEGES on visit.* to visit@localhost;
+    GRANT ALL PRIVILEGES on visit_test.* to visit@localhost;
+
+### postgres
+
 Via <code>psql</code>
 ```psql
 CREATE USER visit CREATEDB;
 ```
 
-Then:
+### Then
 ```bash
 bundle
 cd spec/dummy
 rails g visit:migration
 bundle exec rake db:create
 bundle exec rake db:migrate
-RACK_ENV=test bundle exec rake db:migrate
+bundle exec rake db:test:prepare
 ```
 
 visit_event_views
