@@ -3,7 +3,8 @@ module Visit
     class << self
       attr_accessor :cache, :create, :cookies_to_hash,
         :case_insensitive_string_comparison, :current_user_id, :ignorable,
-        :labels_match_all, :labels_match_first, :notify, :user_agent_robots
+        :is_token_cookie_set_in, :labels_match_all, :labels_match_first,
+        :notify, :user_agent_robots
 
       def cache
         @cache ||= Visit::Cache::Null.new
@@ -58,6 +59,12 @@ module Visit
         #   /^\/api/
         # ]
         @ignorable ||= []
+      end
+
+      def is_token_cookie_set_in
+        @is_token_cookie_set_in ||= ->(sym) do
+          sym == :visit_tag_controller # :application_controller or :visit_tag_controller
+        end
       end
 
       def labels_match_all
