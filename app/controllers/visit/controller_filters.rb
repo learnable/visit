@@ -24,7 +24,7 @@ module Visit
 
     def set_visit_token
       if !RequestPayload::get_token cookies, session
-        session[:token] = SecureRandom.base64(Visit::Event.token_length).slice(0,Visit::Event.token_length)
+        session[:token] = random_visit_token
       end
     end
 
@@ -47,6 +47,10 @@ module Visit
           Configurable.notify.call $!
         end
       end
+    end
+
+    def random_visit_token
+      SecureRandom.base64(Visit::Event.token_length).slice(0,Visit::Event.token_length)
     end
 
   end
