@@ -10,22 +10,73 @@ describe "Visit::ControllerFilters", type: :controller do
     end
   end
 
-  let(:token) { 555 }
+  let(:token) { "0123456789123456" }
 
-  context "session[:token]" do
-    it "should be set when there's no token cookie" do
-      get :index
-      session.should have_key(:token)
-      session[:token].length.should == Visit::Event.token_length
+  shared_examples "a non altering controller filter" do
+    context "when cookie contains a token" do
+      it "should not alter session" do
+        @request.cookies["token"] = token
+        get :index
+        session.should_not have_key("token")
+      end
     end
-    it "should not be set when there's a token cookie" do
-      @request.cookies["token"] = token
-      get :index
-      session.should_not have_key(:token)
+
+    context "when session contains a token" do
+      it "should not alter cookies" do
+        session["token"] = token
+        get :index
+        @request.cookies.should_not have_key("token")
+      end
     end
   end
 
-  context "#set_event" do
+  context "#set_visit_token" do
+    context "when Configurable.is_token_cookie_set_in(:visit_tag_controller)" do
+      before do
+        Visit::Configurable.configure do |c|
+          c.is_token_cookie_set_in = ->(sym) do
+            sym == :visit_tag_controller
+          end
+        end
+      end
+
+      context "when neither session nor cookie contains a token" do
+        it_should_behave_like "a non altering controller filter"
+
+        it "should set token in the session (and not cookie)" do
+          get :index
+          session.should have_key("token")
+          session["token"].length.should == Visit::Event.token_length
+          @request.cookies.should_not have_key("token")
+        end
+      end
+
+    end
+
+    context "when Configurable.is_token_cookie_set_in(:application_controller)" do
+      before do
+        Visit::Configurable.configure do |c|
+          c.is_token_cookie_set_in = ->(sym) do
+            sym == :application_controller
+          end
+        end
+      end
+
+      context "when neither session nor cookie contains a token" do
+        it_should_behave_like "a non altering controller filter"
+
+        it "should set token in the cookie (and not session)" do
+          get :index
+
+          response.cookies.should have_key("token")
+          response.cookies["token"].length.should == Visit::Event.token_length
+          session.should_not have_key("token")
+        end
+      end
+    end
+  end
+
+  context "as a basic acceptance test, after some visits" do
 
     before :each do
       Visit::Event.destroy_all
@@ -55,20 +106,23 @@ describe "Visit::ControllerFilters", type: :controller do
       do_visit "/teach", token_next, user_id      # Y visits
     end
 
-    it "should create exactly one VisitEvent when a token visits exactly once" do
-      do_some_visits
-      a_event = Visit::Event.find_all_by_token(token_next)
-      a_event.should have(1).records
-      a_event.first.token.should == token_next
-      a_event.first.user_id.should == user_id
-      a_event.first.http_method.to_s.should == request.method.downcase
+    context "when a token visits exactly once" do
+      it "should create exactly one Visit::Event" do
+        do_some_visits
+        a_event = Visit::Event.find_all_by_token(token_next)
+        a_event.should have(1).records
+        a_event.first.token.should == token_next
+        a_event.first.user_id.should == user_id
+        a_event.first.http_method.to_s.should == request.method.downcase
+      end
     end
 
-    it "should create multiple VisitEvents when a token visits multiple times" do
-      do_some_visits
-      Visit::Event.find_all_by_token(token).should have(3).records
+    context "when a token visits multiple times" do
+      it "should create multiple Visit::Events" do
+        do_some_visits
+        Visit::Event.find_all_by_token(token).should have(3).records
+      end
     end
-
   end
 
 end
