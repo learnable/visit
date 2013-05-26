@@ -3,7 +3,6 @@ require 'shared_gem_config'
 
 describe Visit::TagController do
 
-
   it "sets a token cookie" do
     get :create
     response.should be_ok
