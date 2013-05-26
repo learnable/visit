@@ -24,7 +24,11 @@ module Visit
 
     def set_visit_token
       if !RequestPayload::get_token cookies, session
-        session[:token] = random_visit_token
+        if Configurable.is_token_cookie_set_in.call :application_controller
+          cookies["token"] = random_visit_token
+        else
+          session["token"] = random_visit_token
+        end
       end
     end
 
