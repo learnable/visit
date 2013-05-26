@@ -4,13 +4,13 @@ module Visit
 
     included do
       before_filter :set_visit_token
-      before_filter :on_every_request
+      before_filter :on_every_visit_request
     end
 
     protected
 
     def create_visit_event(path = nil)
-      create_if_interesting \
+      create_if_interesting_visit \
         RequestPayload.new \
           request,
           cookies,
@@ -28,8 +28,8 @@ module Visit
       end
     end
 
-    def on_every_request
-      create_if_interesting \
+    def on_every_visit_request
+      create_if_interesting_visit \
         RequestPayload.new \
           request,
           cookies,
@@ -39,7 +39,7 @@ module Visit
           nil
     end
 
-    def create_if_interesting(request_payload)
+    def create_if_interesting_visit(request_payload)
       if !request_payload.is_ignorable || !Visit::Event.ignore?(request_payload.get_path)
         begin
           Configurable.create.call request_payload.to_h
