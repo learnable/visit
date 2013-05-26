@@ -181,7 +181,6 @@ MAJOR
 
 MODERATE
 * bulk insert
-* configurable option re: use of /visit/tag.gif
 * implement an archiving solution ==> zip up everying over 3 months old and send to S3?
 
 MINOR
