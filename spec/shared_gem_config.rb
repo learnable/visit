@@ -1,22 +1,3 @@
-class Visit::Configurable
-
-  def self.labels_match_first
-    [
-      [  :get, %r{^/articles(?:\?.*|)$},   :articles_index ],
-      [  :get, %r{^/articles/(\d+)/(\d+)}, :subarticle     ],
-      [  :get, %r{^/articles/(\d+)},       :article        ],
-    ]
-  end
-
-  def self.ignorable
-    [
-      /\/courses\/blah.js/,
-      /\/system\/blah/,
-    ]
-  end
-
-end
-
 def new_request_payload_hash opts = {}
   h = {
     :http_method => "GET",
