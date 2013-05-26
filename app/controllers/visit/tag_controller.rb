@@ -3,7 +3,7 @@ module Visit
 
     def create
       if !cookies["token"]
-        cookies["token"] = session[:token]
+        cookies["token"] = session["token"]
         session["token"] = nil
       end
 
