@@ -60,7 +60,10 @@ Assumed Models
 --------------
 
 The CreateVisitEvents migration has a foreign key reference to a 'users' table.
-You can remove the foreign key reference and nothing will break.
+
+If your app doesn't have a 'users' table, edit the <code>create_visit_events</code> migration,
+remove the foreign key reference and nothing will break.
+
 
 Label and captures
 ------------------
@@ -174,10 +177,6 @@ This sql query creates a database view for that purpose.
       ON capture2_vtv.id = capture2_vt.v_id
 
     ORDER BY visit_events.id ASC
-
-Gotchas
--------
-* if your app doesn't have a 'users' table, edit the create_visit_events migration.
 
 TODO
 ----
