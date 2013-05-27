@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'shared_gem_config'
 require 'shared_duplicate_values'
 
 shared_examples "a Query" do |model_class|

@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'shared_gem_config'
 require 'shared_duplicate_values'
 
 shared_examples "a nice deduper" do |model_class_pair, model_class_value|
@@ -34,16 +33,17 @@ shared_examples "a nice deduper" do |model_class_pair, model_class_value|
 end
 
 describe Visit::ValueDeduper do
-
   before { Duplicate.setup }
 
   context "#run" do
     context "in the presence of duplicate TraitValues" do
       it_should_behave_like "a nice deduper", Visit::Trait, Visit::TraitValue
     end
+
     context "in the presence of duplicate SourceValues" do
       it_should_behave_like "a nice deduper", Visit::Source, Visit::SourceValue
     end
+
     context "in the presence of duplicate SourceValues and duplicate Events" do
       before {
         Duplicate.create_duplicates_for_value(Visit::SourceValue)

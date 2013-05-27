@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'shared_gem_config'
 
 describe Visit::Query::Robot do
   before do

@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'shared_gem_config'
 
 describe Visit::Event::Traits do
   let(:ve) { create(:visit_event, url: "http://thishost.org/articles?gclid=4455") }

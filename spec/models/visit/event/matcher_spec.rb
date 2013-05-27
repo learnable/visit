@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'shared_gem_config'
 
 describe Visit::Event::Matcher do
   context "a matcher with http_method :get" do
