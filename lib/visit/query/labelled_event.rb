@@ -3,7 +3,6 @@ module Visit
 
     def scoped
       @relation.
-        select("visit_events.*, label_vtv.v as label, capture1_vtv.v as capture1, capture2_vtv.v as capture2").
         joins(stmt)
     end
 
