@@ -32,6 +32,10 @@ To customise, create a config/initializers/visit.rb, eg:
           /^\/api/, # don't store requests to /api
         ]
 
+      c.is_token_cookie_set_in = ->(sym) do
+        sym == :visit_tag_controller # :application_controller or :visit_tag_controller
+      end
+
       c.labels_match_first = [
           [ :get, /^\/contact/, :contact_prompt ]
         ]
@@ -65,7 +69,7 @@ Visit::Configurable.labels allows the app to associate labels (and regexp captur
 Which in turn supports queries like this:
 
     Visit::Query::LabelledEvent.new.scoped.
-      where("label = 'contact_prompt'").
+      where("label_vtv.v = 'dashboard'").
       where(created_at: (1.day.ago..Time.now)).
       count
 
