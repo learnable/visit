@@ -43,7 +43,9 @@ module Visit
     end
 
     def events
-      @events ||= Query::LabelledEvent.new.scoped.where(token: token).where(id: @range).all
+      @events ||= Query::LabelledEvent.new.scoped.
+        select("visit_events.*, label_vtv.v as label, capture1_vtv.v as capture1, capture2_vtv.v as capture2").
+        where(token: token).where(id: @range).all
     end
 
     protected
