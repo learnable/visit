@@ -22,7 +22,7 @@ module Visit
         previous = nil
         begin_range_id = nil
 
-        Query::LabelledEvent.new.scoped.traceable_to_user(user_id).find_each do |current|
+        Visit::Event.where(:token => distinct_tokens_for_user(user_id)).find_each do |current|
           if range_breakpoint?(current, previous)
             yield (begin_range_id..previous.id)
             begin_range_id = current.id
@@ -45,6 +45,10 @@ module Visit
 
       def time_gap?(a, b)
         (a.created_at - b.created_at).abs > 2.hours
+      end
+
+      def distinct_tokens_for_user(user_id)
+        Visit::Event.select(:token).where(:user_id => user_id).uniq.pluck(:token)
       end
 
     end
