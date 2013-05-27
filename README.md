@@ -18,7 +18,7 @@ Customise
 
 To customise, create a config/initializers/visit.rb, eg:
 
-    class Visit::Configurable.configure do |c|
+    Visit::Configurable.configure do |c|
 
       c.create = ->(o) do
         MySidekiqWorker.perform_async o # write to the db in a worker (don't slow down the Rails request cycle)
