@@ -31,16 +31,6 @@ module Visit
     attr_accessible :user_id
     attr_accessible :remote_ip
 
-    ## Scopes
-    #
-    def self.traceable_to_user(user_id)
-      joins("INNER JOIN visit_events ve_token ON ve_token.token = visit_events.token AND ve_token.user_id = '#{user_id}'")
-    end
-
-    def self.newer_than_visit_trait(row)
-      row.nil? ? self : where("id > ?", row.visit_event_id)
-    end
-
     def self.token_length
       @token_length ||= Visit::Event.columns.select{|c| c.name == 'token' }.first.limit
     end
