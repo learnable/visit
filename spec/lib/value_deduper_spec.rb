@@ -1,17 +1,16 @@
 require 'spec_helper'
-require 'shared_duplicate_values'
 
 shared_examples "a nice deduper" do |model_class_pair, model_class_value|
   before {
-    Duplicate.create_duplicates_for_value(model_class_value)
-    Duplicate.create_duplicates_for_pair(model_class_pair, model_class_value)
+    DuplicateFixture.create_duplicates_for_value(model_class_value)
+    DuplicateFixture.create_duplicates_for_pair(model_class_pair, model_class_value)
   }
 
   context "and in the Value model" do
     it "delete the duplicate rows" do
       Visit::ValueDeduper.run
 
-      Duplicate.starting_point(model_class_value).map(&:v).each do |v|
+      DuplicateFixture.starting_point(model_class_value).map(&:v).each do |v|
         model_class_value.where(v: v).count.should == 1
       end
     end
@@ -24,7 +23,7 @@ shared_examples "a nice deduper" do |model_class_pair, model_class_value|
   end
 
   it "leave no Traits referencing duplicate values" do
-    id_duplicates = Duplicate.id_duplicates(model_class_value)
+    id_duplicates = DuplicateFixture.id_duplicates(model_class_value)
 
     Visit::ValueDeduper.run
 
@@ -33,7 +32,7 @@ shared_examples "a nice deduper" do |model_class_pair, model_class_value|
 end
 
 describe Visit::ValueDeduper do
-  before { Duplicate.setup }
+  before { DuplicateFixture.setup }
 
   context "#run" do
     context "in the presence of duplicate TraitValues" do
@@ -46,13 +45,13 @@ describe Visit::ValueDeduper do
 
     context "in the presence of duplicate SourceValues and duplicate Events" do
       before {
-        Duplicate.create_duplicates_for_value(Visit::SourceValue)
-        Duplicate.create_duplicates_for_pair(Visit::Source, Visit::SourceValue)
-        Duplicate.create_duplicates_for_event(Visit::SourceValue)
+        DuplicateFixture.create_duplicates_for_value(Visit::SourceValue)
+        DuplicateFixture.create_duplicates_for_pair(Visit::Source, Visit::SourceValue)
+        DuplicateFixture.create_duplicates_for_event(Visit::SourceValue)
       }
       
       it "leave no Traits referencing duplicate values" do
-        id_duplicates = Duplicate.id_duplicates(Visit::SourceValue)
+        id_duplicates = DuplicateFixture.id_duplicates(Visit::SourceValue)
 
         Visit::ValueDeduper.run
 

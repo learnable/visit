@@ -1,4 +1,4 @@
-class Duplicate
+class DuplicateFixture
   class << self
 
     def setup
@@ -47,6 +47,7 @@ class Duplicate
         end
       end
     end
+
     def starting_point(model_class)
       model_class.first(number_of_duplicates)
     end
@@ -56,8 +57,8 @@ class Duplicate
     end
 
     def id_duplicates(model_class_value)
-      Duplicate.starting_point(model_class_value).map(&:id).map do |id|
-        Duplicate.duplicate_corresponding_to(model_class_value, id)
+      starting_point(model_class_value).map(&:id).map do |id|
+        duplicate_corresponding_to(model_class_value, id)
       end
     end
 
