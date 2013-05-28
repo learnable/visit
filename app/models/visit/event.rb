@@ -32,6 +32,7 @@ module Visit
     attr_accessible :remote_ip
 
     include Event::HasCachedAttributes
+    include Event::HasHttpMethod
 
     def self.token_length
       @token_length ||= Visit::Event.columns.select{|c| c.name == 'token' }.first.limit
@@ -55,14 +56,6 @@ module Visit
 
     def ignore?
       Event.ignore? Event.path_from_url(url)
-    end
-
-    def http_method
-      Event::HttpMethod.instance.from_enum http_method_enum
-    end
-
-    def http_method=(new_value)
-      self.http_method_enum = Event::HttpMethod.instance.to_enum new_value
     end
 
   end
