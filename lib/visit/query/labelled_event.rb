@@ -20,7 +20,7 @@ module Visit
     def stmts_for_traits
       @a_traits.map do |k|
         stmt_join_trait("LEFT OUTER JOIN", k.to_s)
-      end.join("\n")
+      end.join("")
     end
 
   end
