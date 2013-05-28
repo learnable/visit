@@ -8,9 +8,6 @@ module Visit
     has_many :visit_traits,  class_name: "Visit::Trait",  foreign_key: "visit_event_id", dependent: :destroy
     has_many :visit_sources, class_name: "Visit::Source", foreign_key: "visit_event_id", dependent: :destroy
 
-    has_many :visit_source_k, class_name: "::Visit::Source", :through => :visit_sources, :source => :key,   dependent: :destroy
-    has_many :visit_source_v, class_name: "::Visit::Source", :through => :visit_sources, :source => :value, dependent: :destroy
-
     has_many :visit_trait_keys,   class_name: "::Visit::Trait", :through => :visit_traits, :source => :key,   dependent: :destroy
     has_many :visit_trait_values, class_name: "::Visit::Trait", :through => :visit_traits, :source => :value, dependent: :destroy
 
