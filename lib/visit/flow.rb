@@ -6,9 +6,9 @@ module Visit
       @events = events
     end
 
-    def self.new_from_relation(relation)
+    def self.new_from_relation(relation, breakpoint = Breakpoint.new)
       [].tap do |collection|
-        Visit::Flow::Ranges.new(relation).for_each_range do |a|
+        breakpoint.each_array_of_events(relation) do |a|
           collection << self.new(a)
         end
       end.reverse
