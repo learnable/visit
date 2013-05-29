@@ -2,11 +2,7 @@ class DuplicateFixture
   class << self
 
     def setup
-      Visit::Event.delete_all
-      Visit::Source.delete_all
-      Visit::SourceValue.delete_all
-      Visit::Trait.delete_all
-      Visit::TraitValue.delete_all
+      delete_all_visits
 
       run_requests_through_factory [
         { url: "http://e.org/articles" },
