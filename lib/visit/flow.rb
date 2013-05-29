@@ -1,16 +1,15 @@
-# a Flow is a sequence of Events, close in time, for a particular user and token
+# a Flow is a sequence of Events, close in time
 #
 module Visit
   class Flow
-    def initialize(r)
-      raise "unexpected r.nil?" if r.nil?
-      @range = r
+    def initialize(events)
+      @events = events
     end
 
-    def self.new_from_ranges(ranges)
-      [].tap do |a|
-        ranges.each do |r|
-          a << self.new(r)
+    def self.new_from_relation(relation)
+      [].tap do |collection|
+        Visit::Flow::Ranges.new(relation).for_each_range do |a|
+          collection << self.new(a)
         end
       end.reverse
     end
@@ -39,13 +38,11 @@ module Visit
     end
 
     def token
-      @token ||= Event.find(@range.begin).token
+      @token ||= @events.first.token
     end
 
     def events
-      @events ||= Query::LabelledEvent.new([:capture1, :capture2]).scoped.
-        select("visit_events.*, label_vtv.v as label, capture1_vtv.v as capture1, capture2_vtv.v as capture2").
-        where(token: token).where(id: @range).all
+      @events
     end
 
     protected
