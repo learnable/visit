@@ -7,7 +7,7 @@ module Visit
     ]
 
     c.ignorable = [
-      /\/courses\/blah.js/,
+      /.*\.js/,
       /\/system\/blah/,
     ]
   end

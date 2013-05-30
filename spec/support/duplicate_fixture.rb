@@ -2,11 +2,9 @@ class DuplicateFixture
   class << self
 
     def setup
-      delete_all_visits
-
-      run_requests_through_factory [
-        { url: "http://e.org/articles" },
-        { url: "http://e.org/articles/1" }
+      start_with_visits [
+        { url: "http://e.org/articles"   },
+        { url: "http://e.org/articles/1" },
       ]
     end
 

@@ -6,9 +6,7 @@ describe Visit::Flow do
   let(:flows) { Visit::Flow.new_from_relation(relation) }
 
   before do
-    delete_all_visits
-
-    run_requests_through_factory [
+    start_with_visits [
       { url: "http://e.org/articles",     user_id: 11, token: 100 },
       { url: "http://e.org/articles/1",   user_id: 11, token: 100 },
       { url: "http://e.org/articles/2/3", user_id: 11, token: 100 },

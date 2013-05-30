@@ -77,8 +77,9 @@ describe "Visit::ControllerFilters", type: :controller do
 
   context "as a basic acceptance test, after some visits" do
 
-    before :each do
-      Visit::Event.destroy_all
+    before do
+      delete_all_visits
+      do_some_visits
     end
 
     let(:token_next) { "556" }
@@ -107,7 +108,6 @@ describe "Visit::ControllerFilters", type: :controller do
 
     context "when a token visits exactly once" do
       it "should create exactly one Visit::Event" do
-        do_some_visits
         a_event = Visit::Event.find_all_by_token(token_next)
         a_event.should have(1).records
         a_event.first.token.should == token_next
@@ -118,10 +118,14 @@ describe "Visit::ControllerFilters", type: :controller do
 
     context "when a token visits multiple times" do
       it "should create multiple Visit::Events" do
-        do_some_visits
         Visit::Event.find_all_by_token(token).should have(3).records
       end
     end
-  end
 
+    context "when a logged-in user visits" do
+      it "the Visit::Event should have .user_id set" do
+        Visit::Event.find_by_token(token_next).user_id.should == user_id
+      end
+    end
+  end
 end

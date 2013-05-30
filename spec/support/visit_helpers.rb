@@ -14,6 +14,11 @@ def new_request_payload_hash opts = {}
   h.merge opts
 end
 
+def start_with_visits(a)
+  delete_all_visits
+  run_requests_through_factory a
+end
+
 def run_requests_through_factory(a)
   b = a.map do |h|
       new_request_payload_hash h

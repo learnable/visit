@@ -4,8 +4,7 @@ describe Visit::Flow::Breakpoint do
 
   context "the #each_array_of_events iterator yields" do
     before do
-      delete_all_visits
-      run_requests_through_factory [
+      start_with_visits [
         { url: "http://a", user_id: 11, token: "1111111111111111" },
         { url: "http://b", user_id: 11, token: "1111111111111111" },
         { url: "http://c", user_id: 11, token: "1111111111111111" },

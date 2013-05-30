@@ -2,9 +2,7 @@ require 'spec_helper'
 
 describe Visit::Query::Trait do
   before do
-    Visit::Event.destroy_all
-
-    run_requests_through_factory [
+    start_with_visits [
       { url: "http://is-goog/1", },
       { url: "http://is-moz/1?utm_campaign=xxx", user_agent: "aa"   },
       { url: "http://is-moz/2?utm_campaign=yyy", user_agent: "bb"   }
