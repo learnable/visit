@@ -21,11 +21,18 @@ module Visit
     protected
 
     def breakpoint?(current, previous)
-      !previous.nil? && (token_change?(current, previous) || time_gap?(current, previous))
+      !previous.nil? &&
+        (token_change?(current, previous) ||
+         user_change?(current, previous) ||
+         time_gap?(current, previous))
     end
 
     def token_change?(a, b)
       a.token != b.token
+    end
+
+    def user_change?(a, b)
+      a.user_id != b.user_id
     end
 
     def time_gap?(a, b)
