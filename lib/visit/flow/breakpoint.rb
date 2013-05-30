@@ -1,7 +1,7 @@
 module Visit
   class Flow::Breakpoint
-    # this class knows how to chop up an Event relation according to some criteria
-    # and yield a sequence of Arrays containing Events
+    # this class knows chops up an Event relation,
+    # yielding a sequence of Arrays containing Events
 
     def each_array_of_events(relation)
       a = []
