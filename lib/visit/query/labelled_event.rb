@@ -8,8 +8,8 @@ module Visit
 
     def scoped
       relation = @relation.joins(stmt)
-      relation = add_joins_for_traits(relation)
-      relation = add_selects_for_traits(relation)
+      relation = add_joins_for_traits(relation)   if !@a_traits.empty?
+      relation = add_selects_for_traits(relation) if !@a_traits.empty?
       relation
     end
 
@@ -20,15 +20,11 @@ module Visit
     end
 
     def add_joins_for_traits(relation)
-      @a_traits.empty? ?
-        relation :
-        relation.joins(@a_traits.map {|k| stmt_join_trait("LEFT OUTER JOIN", k) }.join(""))
+      relation.joins(@a_traits.map {|k| stmt_join_trait("LEFT OUTER JOIN", k) }.join(""))
     end
 
     def add_selects_for_traits(relation)
-      @a_traits.empty? ?
-        relation :
-        relation.select("visit_events.*, label_vtv.v as label, #{select_string_for_traits}")
+      relation.select("visit_events.*, label_vtv.v as label, #{select_string_for_traits}")
     end
 
     def select_string_for_traits
