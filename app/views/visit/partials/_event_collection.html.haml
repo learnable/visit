@@ -2,12 +2,11 @@
   %table.table.table-striped.table-condensed.table-hover
     %thead
       %tr
-        %td url
         %td id
         %td created_at
-        %td method
         %td token
         %td user_id
+        %td user_agent
         %td utm_medium
         %td utm_campaign
         %td utm_term
@@ -16,17 +15,13 @@
     %tbody
       -events.each do |event|
         %tr
-          %td(title="#{event.url}")
-            %strong
-              =event.url.slice(0, 60)
-          %td= event.id
+          %td(title="#{event.url}")= event.id
           %td= event.created_at.to_formatted_s(:ymd)
-          %td= event.http_method
           %td
             %font(size="-3")
               = event.token
           %td= event.user_id
-          %td= event.utm_medium
+          %td(title="#{event.user_agent}")= Visit::EventDecorator.new(event).user_agent_family
           %td= event.utm_campaign
           %td= event.utm_term
           %td= event.placement
