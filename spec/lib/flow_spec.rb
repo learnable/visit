@@ -23,16 +23,16 @@ describe Visit::Flow do
 
   context "#steps" do
     it "should return a useful string" do
-      flows.second.steps.should == "articles_index -> article(1) -> subarticle(2/3)"
+      flows.first.steps.should == "articles_index -> article(1) -> subarticle(2/3)"
     end
   end
 
   context "#user_id" do
     it "should return the first non-null user_id" do
-      flows.second.user_id.should == 11
+      flows.second.user_id.should be_nil
     end
     it "should return nil when the flow doens't have any events with user_id set" do
-      flows.first.user_id.should be_nil
+      flows.first.user_id.should == 11
     end
   end
 

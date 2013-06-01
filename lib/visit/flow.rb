@@ -11,7 +11,7 @@ module Visit
         breakpoint.each_array_of_events(relation) do |a|
           collection << self.new(a)
         end
-      end.reverse
+      end
     end
 
     def has_label?(label)
