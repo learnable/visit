@@ -48,9 +48,15 @@ module Visit
         begin
           serialized_list = SerializedList.new("request_payload_hashes")
 
-          serialized_list.append request_payload.to_h
+          redis_future_for_list_length = nil
 
-          if serialized_list.length >= Configurable.bulk_insert_batch_size
+          Configurable.redis.pipelined do
+            serialized_list.append request_payload.to_h
+
+            redis_future_for_list_length = serialized_list.length
+          end
+
+          if redis_future_for_list_length.value >= Configurable.bulk_insert_batch_size
             Configurable.create.call serialized_list.values
 
             serialized_list.clear
