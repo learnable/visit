@@ -4,7 +4,7 @@ module Visit
       attr_accessor :cache, :create, :cookies_to_hash,
         :case_insensitive_string_comparison, :current_user_id, :ignorable,
         :is_token_cookie_set_in, :labels_match_all, :labels_match_first,
-        :notify, :user_agent_robots
+        :notify, :redis, :user_agent_robots
 
       def cache
         @cache ||= Visit::Cache::Null.new
@@ -98,6 +98,10 @@ module Visit
           Rails.logger.error "ERROR IN VISIT GEM: #{e.to_s}\nBACKTRACE: #{e.backtrace}"
           $stderr.puts "ERROR IN VISIT GEM: #{e.to_s}\nBACKTRACE: #{e.backtrace}"
         end
+      end
+
+      def redis
+        @redis ||= nil
       end
 
       def user_agent_robots
