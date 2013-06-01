@@ -46,7 +46,14 @@ module Visit
     def create_if_interesting_visit(request_payload)
       if !request_payload.is_ignorable || !Visit::Event.ignore?(request_payload.get_path)
         begin
-          Configurable.create.call [ request_payload.to_h ]
+          serialized_list = SerializedList.new("request_payload_hashes")
+
+          serialized_list.insert request_payload.to_h
+
+          if serialized_list.length >= Configurable.bulk_insert_batch_size
+            Configurable.create.call serialized_list.values
+            serialized_list.clear
+          end
         rescue
           Configurable.notify.call $!
         end
