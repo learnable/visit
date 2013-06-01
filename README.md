@@ -85,8 +85,7 @@ For internal consistency, the gem requires each row in tables visit_source_value
 to have a unique value of 'v'.
 
 But because mysql indexes can only cover the first 255 chars of a VARCHAR column
-(ignoring <code>innodb_large_prefix</code>),
-the 'v' columns have non-unique indexes.
+(ignoring <code>innodb_large_prefix</code>), the 'v' columns have non-unique indexes.
 
 So your app should periodically run Visit::ValueDeduper.run
 (eg. daily) to eliminate duplicate values of 'v' and fix any references to those duplicates.
@@ -104,6 +103,14 @@ Here's what a sidekiq worker looks like:
         end
       end
     end
+
+MySQL users: if you are happy to increase <code>innodb_large_prefix</code>, you can then
+increase the index :length limits in the CreateVisitSourceValues
+and CreateVisitTraitValues migrations.
+
+PostgreSQL users: everything ought to work out of the box but if you want to squeeze
+a little extra lookup performance (through larger indexes on the *values tables), feel free to submit
+a pull request on this README re: where you encounter PostgreSQL limits.
 
 Developing the gem
 ------------------
