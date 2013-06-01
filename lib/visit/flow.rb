@@ -48,7 +48,7 @@ module Visit
     def user_id
       ve_with_user_id = @events.select { |ve| !ve.user_id.nil? }
 
-      ve_with_user_id.empty? ? nil : ve_with_user_id.first.user_id
+      @user_id ||= ve_with_user_id.empty? ? nil : ve_with_user_id.first.user_id
     end
 
     protected
