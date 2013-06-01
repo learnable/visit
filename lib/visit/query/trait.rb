@@ -1,16 +1,13 @@
 module Visit
-  class Query
-    class Trait < Query
-      def initialize(trait, relation = Event.scoped)
-        @trait = trait
-        super relation
-      end
+  class Query::Trait < Query
+    def initialize(trait, relation = Event.scoped)
+      @trait = trait
+      super relation
+    end
 
-      protected
-
-      def stmt
-        stmt_join_trait("INNER JOIN", @trait)
-      end
+    def scoped
+      super.
+        joins(stmt_join_trait("INNER JOIN", @trait))
     end
   end
 end

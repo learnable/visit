@@ -1,23 +1,18 @@
 module Visit
   class Query::LabelledEvent < Query
-
     def initialize(a_traits = [], relation = Event.scoped)
       @relation = relation
       @a_traits = a_traits.map(&:to_s)
     end
 
     def scoped
-      relation = @relation.joins(stmt)
+      relation = @relation.joins(stmt_join_trait("INNER JOIN", 'label'))
       relation = add_joins_for_traits(relation)   if !@a_traits.empty?
       relation = add_selects_for_traits(relation) if !@a_traits.empty?
       relation
     end
 
-    protected
-
-    def stmt
-      stmt_join_trait("INNER JOIN", 'label')
-    end
+    private
 
     def add_joins_for_traits(relation)
       relation.joins(@a_traits.map {|k| stmt_join_trait("LEFT OUTER JOIN", k) }.join(""))

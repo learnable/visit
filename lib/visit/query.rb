@@ -5,8 +5,7 @@ module Visit
     end
 
     def scoped
-      @relation.
-        joins(stmt)
+      @relation
     end
 
     def self.distinct_tokens_for_user_id(user_id)
