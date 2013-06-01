@@ -6,7 +6,7 @@ module Visit
     def each_array_of_events(relation)
       a = []
 
-      relation.find_each do |current|
+      relation.each do |current|
         if breakpoint?(current, a.last)
           yield a
           a = [ ]
