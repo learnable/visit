@@ -10,5 +10,7 @@ module Visit
       /.*\.js/,
       /\/system\/blah/,
     ]
+
+    c.redis = $redis
   end
 end
