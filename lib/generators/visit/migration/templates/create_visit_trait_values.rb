@@ -6,6 +6,6 @@ class CreateVisitTraitValues < ActiveRecord::Migration
       t.timestamp :created_at
     end
 
-    add_index :visit_trait_values, :v
+    add_index :visit_trait_values, :v, :length => 256
   end
 end
