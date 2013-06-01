@@ -4,9 +4,10 @@ source "http://rubygems.org"
 gemspec
 
 group :development, :test do
-  gem "devise"
-  gem "pg"
-  gem "mysql2"
-  gem "jquery-rails"
   gem "debugger"
+  gem "devise"
+  gem "jquery-rails"
+  gem "mysql2"
+  gem "pg"
+  gem "user_agent_parser"
 end

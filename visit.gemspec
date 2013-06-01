@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
   s.add_dependency("activerecord-import", "~> 0.3.1")
   s.add_dependency("i18n")
   s.add_dependency("addressable")
+  s.add_dependency("user_agent_parser")
 
   # Dependencies for dev/testing of the actual gem. Test gems are required
   # manually in spec_helper.
