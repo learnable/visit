@@ -11,7 +11,7 @@ module Visit
       end
 
       def case_insensitive_string_comparison
-        true
+        @case_insensitive_string_comparison ||= true
       end
 
       def configure
