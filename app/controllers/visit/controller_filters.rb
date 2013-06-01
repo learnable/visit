@@ -46,20 +46,14 @@ module Visit
     def create_if_interesting_visit(request_payload)
       if !request_payload.is_ignorable || !Visit::Event.ignore?(request_payload.get_path)
         begin
-          serialized_list = SerializedList.new("request_payload_hashes")
+          list = SerializedList.new("request_payload_hashes")
 
-          redis_future_for_list_length = nil
+          list_length = list.pipelined_append_and_return_length request_payload.to_h
 
-          Configurable.redis.pipelined do
-            serialized_list.append request_payload.to_h
+          if list_length >= Configurable.bulk_insert_batch_size
+            Configurable.create.call list.values
 
-            redis_future_for_list_length = serialized_list.length
-          end
-
-          if redis_future_for_list_length.value >= Configurable.bulk_insert_batch_size
-            Configurable.create.call serialized_list.values
-
-            serialized_list.clear
+            list.clear
           end
         rescue
           Configurable.notify.call $!

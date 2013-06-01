@@ -36,6 +36,13 @@ describe Visit::SerializedList do
     expect(list.length).to eq(0)
   end
 
+  it "has a pipelined append+length operation" do
+    length = list.pipelined_append_and_return_length({a: 1})
+    expect(length).to eq(1)
+
+    length = list.pipelined_append_and_return_length({b: 2})
+    expect(length).to eq(2)
+  end
 end
 
 

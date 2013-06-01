@@ -21,6 +21,18 @@ module Visit
       redis.del(@key)
     end
 
+    def pipelined_append_and_return_length data
+      redis_future_for_length = nil
+
+      redis.pipelined do
+        append data
+
+        redis_future_for_length = length
+      end
+
+      redis_future_for_length.value
+    end
+
     private
 
     def redis
