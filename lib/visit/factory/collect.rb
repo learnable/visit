@@ -121,20 +121,22 @@ module Visit
 
     class Collect::Events < Collect
       def import!
-        @collection.each do |request_payload_hash|
-          event = Visit::Event.new \
-            token:     request_payload_hash[:token],
-            user_id:   request_payload_hash[:user_id],
-            remote_ip: request_payload_hash[:remote_ip]
+        ActiveRecord::Base.transaction do
+          @collection.each do |request_payload_hash|
+            event = Visit::Event.new \
+              token:     request_payload_hash[:token],
+              user_id:   request_payload_hash[:user_id],
+              remote_ip: request_payload_hash[:remote_ip]
 
-          event.url_id        = payload_to_source_value_id request_payload_hash[:url]
-          event.user_agent_id = payload_to_source_value_id request_payload_hash[:user_agent]
-          event.referer_id    = payload_to_source_value_id request_payload_hash[:referer]
-          event.http_method   = request_payload_hash[:http_method]
-          event.created_at    = request_payload_hash[:created_at]
-          event.save!
+            event.url_id        = payload_to_source_value_id request_payload_hash[:url]
+            event.user_agent_id = payload_to_source_value_id request_payload_hash[:user_agent]
+            event.referer_id    = payload_to_source_value_id request_payload_hash[:referer]
+            event.http_method   = request_payload_hash[:http_method]
+            event.created_at    = request_payload_hash[:created_at]
+            event.save!
 
-          request_payload_hash[:event] = event
+            request_payload_hash[:event] = event
+          end
         end
       end
 
