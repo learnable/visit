@@ -5,7 +5,7 @@ module Visit
       @key = "visit:#{Rails.application.class.parent_name}:#{key_suffix}"
     end
 
-    def insert(data)
+    def append(data)
       redis.rpush(@key, data.to_yaml)
     end
 

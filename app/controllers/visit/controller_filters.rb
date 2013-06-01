@@ -48,10 +48,11 @@ module Visit
         begin
           serialized_list = SerializedList.new("request_payload_hashes")
 
-          serialized_list.insert request_payload.to_h
+          serialized_list.append request_payload.to_h
 
           if serialized_list.length >= Configurable.bulk_insert_batch_size
             Configurable.create.call serialized_list.values
+
             serialized_list.clear
           end
         rescue
