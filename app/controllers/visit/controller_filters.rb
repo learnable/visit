@@ -46,7 +46,7 @@ module Visit
     def create_if_interesting_visit(request_payload)
       if !request_payload.is_ignorable || !Visit::Event.ignore?(request_payload.get_path)
         begin
-          Configurable.create.call request_payload.to_h
+          Configurable.create.call [ request_payload.to_h ]
         rescue
           Configurable.notify.call $!
         end
