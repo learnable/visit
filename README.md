@@ -53,7 +53,7 @@ To customise, create a config/initializers/visit.rb, eg:
         ActiveSupport::Cache.lookup_store \
           :dalli_store,
           "127.0.0.1:11211",
-          { :namespace => "#{@app_name}::visit", :expires_in => 28.days }
+          { :namespace => "#{Rails.application.class.parent_name}::visit", :expires_in => 28.days }
     end
 
 Assumed Models
