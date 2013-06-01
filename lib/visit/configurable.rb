@@ -1,10 +1,14 @@
 module Visit
   class Configurable
     class << self
-      attr_accessor :cache, :create, :cookies_to_hash,
+      attr_accessor :bulk_insert_batch_size, :cache, :create, :cookies_to_hash,
         :case_insensitive_string_comparison, :current_user_id, :ignorable,
         :is_token_cookie_set_in, :labels_match_all, :labels_match_first,
         :notify, :redis, :user_agent_robots
+
+      def bulk_insert_batch_size
+        @bulk_insert_batch_size ||= 1
+      end
 
       def cache
         @cache ||= Visit::Cache::Null.new
