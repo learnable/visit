@@ -9,5 +9,6 @@ group :development, :test do
   gem "jquery-rails"
   gem "mysql2"
   gem "pg"
+  gem "redis"
   gem "user_agent_parser"
 end
