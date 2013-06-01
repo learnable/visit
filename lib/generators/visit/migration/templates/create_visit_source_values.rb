@@ -6,6 +6,6 @@ class CreateVisitSourceValues < ActiveRecord::Migration
       t.timestamp :created_at
     end
 
-    add_index :visit_source_values, :v
+    add_index :visit_source_values, :v, :length => 256
   end
 end
