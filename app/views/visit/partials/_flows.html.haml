@@ -1,0 +1,12 @@
+%table.table
+  - flows.each do |flow|
+    %tr
+      %td
+        %strong
+          = flow.start_time_in_words
+          ago for
+          = flow.time_on_site_in_words
+        - if local_assigns[:is_show_token]
+          = ", token: #{flow.token}"
+        %br
+        = flow.steps
