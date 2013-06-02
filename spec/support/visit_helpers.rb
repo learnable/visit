@@ -23,7 +23,7 @@ def run_requests_through_factory(a)
   b = a.map do |h|
       new_request_payload_hash h
     end
-  Visit::Factory.run b
+  Visit::Factory.new.run b
 end
 
 def delete_all_visits
