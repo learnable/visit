@@ -6,6 +6,10 @@ class CreateVisitSourceValues < ActiveRecord::Migration
       t.timestamp :created_at
     end
 
-    add_index :visit_source_values, :v, :length => 256
+    if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
+      add_index :visit_source_values, :v, :length => 256
+    else
+      add_index :visit_source_values, :v
+    end
   end
 end
