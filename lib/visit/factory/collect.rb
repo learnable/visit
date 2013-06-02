@@ -23,11 +23,11 @@ module Visit
     class Collect::Values < Collect
       def initialize(model, collection)
         super(model, collection)
-        @cache = Cache::Memory.new
+        @to_import = Cache::Memory.new
       end
 
       def import!
-        models = @cache.to_h.map do |cache_key, h|
+        models = @to_import.to_h.map do |cache_key, h|
           model_class.new.tap do |model|
             model.v = h[:value]
             model.created_at = h[:created_at]
@@ -43,7 +43,7 @@ module Visit
         value = "" if value.nil?
 
         if should_import?(value)
-          @cache.fetch(cache_key(value)) do
+          @to_import.fetch(cache_key(value)) do
             { value: value, created_at: created_at }
           end
         end
@@ -57,7 +57,7 @@ module Visit
         ret = true
         # Manage.log "AMHERE 1: value: #{value} k: #{k.to_s}"
 
-        ret = ret && !@cache.has_key?(k)
+        ret = ret && !@to_import.has_key?(k)
         # Manage.log "AMHERE 2: ret: #{ret}"
 
         ret = ret && !Configurable.cache.has_key?(k)
