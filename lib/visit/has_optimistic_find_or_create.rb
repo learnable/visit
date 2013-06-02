@@ -8,6 +8,27 @@ module Visit
       end
     end
 
+    def get_id_from_find_by_v(v, cache)
+      raise "unexpected v.nil?" if v.nil?
+      id = nil
+
+      k = cache_key(v)
+
+      if cache.has_key? k
+        id = cache.fetch(k)
+      else
+        row = self.find_by_v(v)
+
+        if !row.nil?
+          id = cache.fetch(k) do
+            row.id
+          end
+        end
+      end
+
+      id
+    end
+
     def cache_key(v)
       Cache::Key.new(cache_key_prefix, v)
     end
