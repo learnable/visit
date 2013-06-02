@@ -8,19 +8,19 @@ module Visit
       end
     end
 
-    def get_id_from_find_by_v(v, cache)
+    def get_id_from_find_by_v(v)
       raise "unexpected v.nil?" if v.nil?
       id = nil
 
       k = cache_key(v)
 
-      if cache.has_key? k
-        id = cache.fetch(k)
+      if Configurable.cache.has_key? k
+        id = Configurable.cache.fetch(k)
       else
         row = self.find_by_v(v)
 
         if !row.nil?
-          id = cache.fetch(k) do
+          id = Configurable.cache.fetch(k) do
             row.id
           end
         end

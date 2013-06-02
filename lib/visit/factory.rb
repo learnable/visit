@@ -1,11 +1,5 @@
 module Visit
   class Factory
-    def initialize
-      @cache = Configurable.cache.instance_of?(Visit::Cache::Null) ?
-        Visit::Cache::Memory.new :
-        Configurable.cache
-    end
-
     def self.delete_traits
       Visit::Trait.delete_all
       Visit::TraitValue.delete_all
@@ -24,9 +18,11 @@ module Visit
     end
 
     def run(a_request_payload_hash)
+      cache_setup
+
       a_request_payload_hash.each { |rph| rph.symbolize_keys! }
 
-      collect = Collect::SourceValues.new Visit::SourceValue, a_request_payload_hash, @cache
+      collect = Collect::SourceValues.new Visit::SourceValue, a_request_payload_hash
       collect.transform!
       collect.import!
 
@@ -39,18 +35,38 @@ module Visit
       collect.import!
 
       create_traits(a_request_payload_hash)
+
+      cache_restore_original
     end
 
     def create_traits(a_event)
-      collect_traits = Collect::Traits.new Visit::Trait, a_event, @cache
+      collect_traits = Collect::Traits.new Visit::Trait, a_event
       collect_traits.transform!
       a_event = collect_traits.collection # contains :traits
 
-      collect_trait_values = Collect::TraitValues.new Visit::TraitValue, a_event, @cache
+      collect_trait_values = Collect::TraitValues.new Visit::TraitValue, a_event
       collect_trait_values.transform!
       collect_trait_values.import!
 
       collect_traits.import!
+    end
+
+    private
+
+    def cache_setup
+      if Configurable.cache.instance_of? Visit::Cache::Null
+        @original_cache = Configurable.cache
+        Configurable.cache = Visit::Cache::Memory.new
+      else
+        @original_cache = nil
+      end
+    end
+
+    def cache_restore_original
+      if !@original_cache.nil?
+        Configurable.cache = @original_cache
+        @original_cache = nil
+      end
     end
   end
 end
