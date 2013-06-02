@@ -55,13 +55,13 @@ module Visit
         k = cache_key(value)
 
         ret = true
-        # Manage.log "AMHERE 1: value: #{value} k: #{k.to_s}" if k.key =~ /robot/
+        # Manage.log "AMHERE 1: value: #{value} k: #{k.to_s}"
 
         ret = ret && !@cache.has_key?(k)
-        # Manage.log "AMHERE 2: ret: #{ret}" if k.key =~ /robot/
+        # Manage.log "AMHERE 2: ret: #{ret}"
 
         ret = ret && !Configurable.cache.has_key?(k)
-        # Manage.log "AMHERE 3: ret: #{ret}" if k.key =~ /robot/
+        # Manage.log "AMHERE 3: ret: #{ret}"
 
         ret = ret && model_class.find_by_v(value).nil?
         # Manage.log "AMHERE 4: ret: #{ret}"
