@@ -3,6 +3,7 @@ class CreateVisitEvents < ActiveRecord::Migration
     create_table :visit_events do |t|
       t.integer  "http_method_enum"
       t.integer  "url_id", :references => :visit_source_values
+      t.binary   "token"
       t.integer  "user_id", :references => :users
       t.integer  "user_agent_id", :references => :visit_source_values
       t.integer  "referer_id", :references => :visit_source_values
@@ -11,13 +12,14 @@ class CreateVisitEvents < ActiveRecord::Migration
       t.timestamp :created_at
     end
 
-    # t.binary ought to do the job here, except that
-    # in Rails 3, t.binary maps to BLOB.
+    # In Rails 3, t.binary maps to mysql BLOB, which is not what we want, we alter that below.
+    # In Rails 4, t.binary maps to mysql VARCHAR.
     #
-    # In Rails 4, t.binary maps to VARCHAR so when all the gem's apps are on Rails 4
-    # this migration can be made more rails-y.
-    #
-    execute "ALTER TABLE visit_events ADD token VARBINARY(16) DEFAULT NULL AFTER url_id"
+    # When all the gem's apps are on Rails 4, delete this ALTER TABLE.
+
+    if ActiveRecord::Base.connection.adapter_name.downcase.starts_with? 'mysql'
+      execute "ALTER TABLE visit_events change token token VARBINARY(16) DEFAULT NULL"
+    end
 
     add_index :visit_events, :token
     add_index :visit_events, :created_at
