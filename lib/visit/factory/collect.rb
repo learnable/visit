@@ -4,14 +4,19 @@ module Visit
     class Collect
       attr_reader :collection
 
-      def initialize(model_class, collection)
+      def initialize(model_class, collection, cache = nil)
         @model_class = model_class
         @collection = collection
+        @cache = cache
       end
 
       protected
 
       attr_reader :model_class
+
+      def cache
+        @cache
+      end
 
       private
 
@@ -21,8 +26,8 @@ module Visit
     end
 
     class Collect::Values < Collect
-      def initialize(model, collection)
-        super(model, collection)
+      def initialize(model, collection, cache)
+        super(model, collection, cache)
         @to_import = Cache::Memory.new
       end
 
@@ -60,19 +65,15 @@ module Visit
         ret = ret && !@to_import.has_key?(k)
         # Manage.log "AMHERE 2: ret: #{ret}"
 
-        ret = ret && !Configurable.cache.has_key?(k)
+        ret = ret && !model_class.get_id_from_find_by_v(value, cache)
         # Manage.log "AMHERE 3: ret: #{ret}"
-
-        ret = ret && model_class.find_by_v(value).nil?
-        # Manage.log "AMHERE 4: ret: #{ret}"
 
         ret
       end
 
-      def cache_key(value)
-        model_class.cache_key(value)
+      def cache_key(v)
+        model_class.cache_key(v)
       end
-
     end
 
     class Collect::SourceValues < Collect::Values
@@ -107,8 +108,8 @@ module Visit
         models = @collection.flat_map do |o|
           o[:traits].map do |k,v|
             model_class.new.tap do |model|
-              model.k_id = Visit::TraitValue.get_id_from_optimistic_find_or_create_by_v(k)
-              model.v_id = Visit::TraitValue.get_id_from_optimistic_find_or_create_by_v(v)
+              model.k_id = Visit::TraitValue.get_id_from_find_by_v(k, cache)
+              model.v_id = Visit::TraitValue.get_id_from_find_by_v(v, cache)
               model.visit_event_id = o[:event].id
               model.created_at = o[:event].created_at
             end
