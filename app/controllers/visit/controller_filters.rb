@@ -62,7 +62,7 @@ module Visit
     end
 
     def random_visit_token
-      SecureRandom.base64(Visit::Event.token_length).slice(0,Visit::Event.token_length)
+      SecureRandom.base64(Visit::Event::TOKEN_LENGTH).slice(0,Visit::Event::TOKEN_LENGTH)
     end
 
   end

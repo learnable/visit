@@ -31,9 +31,7 @@ module Visit
     include Event::HasCachedAttributes
     include Event::HasHttpMethod
 
-    def self.token_length
-      @token_length ||= Visit::Event.columns.select{|c| c.name == 'token' }.first.limit
-    end
+    TOKEN_LENGTH = 16
 
     def self.path_from_url(url)
       uri = Addressable::URI.parse(url)

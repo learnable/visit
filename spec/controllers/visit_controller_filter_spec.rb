@@ -45,7 +45,7 @@ describe "Visit::ControllerFilters", type: :controller do
         it "should set token in the session (and not cookie)" do
           get :index
           session.should have_key("token")
-          session["token"].length.should == Visit::Event.token_length
+          session["token"].length.should == Visit::Event::TOKEN_LENGTH
           @request.cookies.should_not have_key("token")
         end
       end
@@ -68,7 +68,7 @@ describe "Visit::ControllerFilters", type: :controller do
           get :index
 
           response.cookies.should have_key("token")
-          response.cookies["token"].length.should == Visit::Event.token_length
+          response.cookies["token"].length.should == Visit::Event::TOKEN_LENGTH
           session.should_not have_key("token")
         end
       end
