@@ -105,12 +105,9 @@ Here's what a sidekiq worker looks like:
     end
 
 MySQL users: if you are happy to increase <code>innodb_large_prefix</code>, you can then
-increase the index :length limits in the CreateVisitSourceValues
-and CreateVisitTraitValues migrations.
-
-PostgreSQL users: everything ought to work out of the box but if you want to squeeze
-a little extra lookup performance (through larger indexes on the *values tables), feel free to submit
-a pull request on this README re: where you encounter PostgreSQL limits.
+increase the index :length limits in the CreateVisitSourceValues and CreateVisitTraitValues migrations.
+It might give you a little more lookup performance - when there are strings that are the
+same in the first 255 chars and different after that.
 
 Developing the gem
 ------------------
@@ -141,7 +138,7 @@ cd spec/dummy
 bundle exec rake db:create
 rails g visit:migration
 bundle exec rake db:migrate
-bundle exec rake db:migrate RAILS_ENV=test # or rake db:test:prepare
+bundle exec rake db:migrate RAILS_ENV=test
 ```
 
 visit_event_views
@@ -192,7 +189,6 @@ TODO
 MAJOR
 
 MODERATE
-* bulk insert
 * implement an archiving solution ==> zip up everying over 3 months old and send to S3?
 
 MINOR
