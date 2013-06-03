@@ -12,7 +12,7 @@ describe Visit::Flow do
     start_with_visits [
       { url: "http://e.org/articles",     user_id: 11, token: 100, created_at: Time.now - 3.minutes },
       { url: "http://e.org/articles/1",   user_id: 11, token: 100, created_at: Time.now - 2.minutes },
-      { url: "http://e.org/articles/2/3", user_id: 11, token: 100, created_at: Time.now - 2.minutes },
+      { url: "http://e.org/articles/2/3", user_id: 11, token: 100, created_at: Time.now - 1.minute  },
       { url: "http://e.org/articles",                  token: 200 },
       { url: "http://e.org/articles/1",                token: 200 },
     ]
