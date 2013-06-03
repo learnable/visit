@@ -12,10 +12,6 @@ module Visit
       scoped.select("DISTINCT visit_events.token").pluck("visit_events.token")
     end
 
-    def self.distinct_tokens_for_user_id(user_id)
-      Visit::Event.select(:token).where(:user_id => user_id).uniq.pluck(:token)
-    end
-
     protected
 
     def stmt_join_trait(join_type, key)
