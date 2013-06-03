@@ -9,7 +9,7 @@ module Visit
     def self.new_from_relation(relation, breakpoint = Breakpoint.new)
       [].tap do |collection|
         breakpoint.each_array_of_events(relation) do |a|
-          collection << self.new(a)
+          collection << self.new(a.sort_by { |ve| ve.created_at })
         end
       end
     end
