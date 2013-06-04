@@ -39,6 +39,8 @@ module Visit
       cache_restore_original
     end
 
+    private
+
     def create_traits(a_event)
       collect_traits = Collect::Traits.new Visit::Trait, a_event
       collect_traits.transform!
@@ -50,8 +52,6 @@ module Visit
 
       collect_traits.import!
     end
-
-    private
 
     def cache_setup
       if Configurable.cache.instance_of? Visit::Cache::Null
