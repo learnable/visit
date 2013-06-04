@@ -22,15 +22,15 @@ module Visit
 
       a_request_payload_hash.each { |rph| rph.symbolize_keys! }
 
-      collect = Collect::SourceValues.new Visit::SourceValue, a_request_payload_hash
+      collect = Collect::SourceValues.new a_request_payload_hash
       collect.transform!
       collect.import!
 
-      collect = Collect::Events.new Visit::Event, a_request_payload_hash
+      collect = Collect::Events.new a_request_payload_hash
       collect.import!
       a_request_payload_hash = collect.collection # contains :event
 
-      collect = Collect::Sources.new Visit::Source, a_request_payload_hash
+      collect = Collect::Sources.new a_request_payload_hash
       collect.transform!
       collect.import!
 
@@ -42,11 +42,11 @@ module Visit
     private
 
     def create_traits(a_event)
-      collect_traits = Collect::Traits.new Visit::Trait, a_event
+      collect_traits = Collect::Traits.new a_event
       collect_traits.transform!
       a_event = collect_traits.collection # contains :traits
 
-      collect_trait_values = Collect::TraitValues.new Visit::TraitValue, a_event
+      collect_trait_values = Collect::TraitValues.new a_event
       collect_trait_values.transform!
       collect_trait_values.import!
 
@@ -69,4 +69,5 @@ module Visit
       end
     end
   end
+
 end

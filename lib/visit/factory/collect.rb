@@ -72,6 +72,10 @@ module Visit
     end
 
     class Collect::SourceValues < Collect::Values
+      def initialize(collection)
+        super Visit::SourceValue, collection
+      end
+
       def transform!
         @collection.each do |request_payload_hash|
           RequestPayload.new(request_payload_hash).to_values.each do |value|
@@ -82,6 +86,10 @@ module Visit
     end
 
     class Collect::TraitValues < Collect::Values
+      def initialize(collection)
+        super Visit::TraitValue, collection
+      end
+
       def transform!
         @collection.each do |o|
           o[:traits].each do |k,v|
@@ -93,6 +101,10 @@ module Visit
     end    
 
     class Collect::Traits < Collect
+      def initialize(collection)
+        super Visit::Trait, collection
+      end
+
       def transform!
         @collection.each do |o|
           o[:traits] = o[:event].to_traits
@@ -116,6 +128,10 @@ module Visit
     end
 
     class Collect::Events < Collect
+      def initialize(collection)
+        super Visit::Event, collection
+      end
+
       def import!
         ActiveRecord::Base.transaction do
           @collection.each do |request_payload_hash|
@@ -146,8 +162,8 @@ module Visit
     end
 
     class Collect::Sources < Collect
-      def initialize(model, collection)
-        super(model, collection)
+      def initialize(collection)
+        super(Visit::Source, collection)
         @a = []
       end
 
