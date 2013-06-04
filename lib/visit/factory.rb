@@ -13,40 +13,43 @@ module Visit
       Visit::Event.
         includes([:visit_source_values_url, :visit_source_values_user_agent, :visit_source_values_referer]).
         find_in_batches do |a_event|
-          create_traits a_event.map { |event| { event: event } }
+          create_traits a_event.map { |event| Box.new(nil, event, nil) }
         end
     end
 
     def run(a_request_payload_hash)
       cache_setup
 
-      a_request_payload_hash.each { |rph| rph.symbolize_keys! }
+      boxes = a_request_payload_hash.map do |rph|
+        Box.new RequestPayload.new(rph)
+      end
 
-      collect = Collect::SourceValues.new a_request_payload_hash
+      collect = Collect::SourceValues.new boxes
       collect.transform!
       collect.import!
 
-      collect = Collect::Events.new a_request_payload_hash
-      collect.import!
-      a_request_payload_hash = collect.collection # contains :event
+      collect = Collect::Events.new boxes
+      collect.import!  # boxes mutated - now contains :event
+      boxes = collect.boxes
 
-      collect = Collect::Sources.new a_request_payload_hash
+      collect = Collect::Sources.new boxes
       collect.transform!
       collect.import!
 
-      create_traits(a_request_payload_hash)
+      create_traits boxes
 
       cache_restore_original
     end
 
     private
 
-    def create_traits(a_event)
-      collect_traits = Collect::Traits.new a_event
-      collect_traits.transform!
-      a_event = collect_traits.collection # contains :traits
+    def create_traits(boxes)
+      collect_traits = Collect::Traits.new boxes
+      collect_traits.transform! # boxes mutated - now contains :traits
+      boxes = collect_traits.boxes
 
-      collect_trait_values = Collect::TraitValues.new a_event
+
+      collect_trait_values = Collect::TraitValues.new boxes
       collect_trait_values.transform!
       collect_trait_values.import!
 
@@ -68,6 +71,9 @@ module Visit
         @original_cache = nil
       end
     end
+  end
+
+  class Box < Struct.new(:request_payload, :event, :traits)
   end
 
 end

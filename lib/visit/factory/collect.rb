@@ -2,11 +2,11 @@ module Visit
   class Factory
 
     class Collect
-      attr_reader :collection
+      attr_reader :boxes
 
-      def initialize(model_class, collection)
+      def initialize(model_class, boxes)
         @model_class = model_class
-        @collection = collection
+        @boxes = boxes
       end
 
       protected
@@ -21,8 +21,8 @@ module Visit
     end
 
     class Collect::Values < Collect
-      def initialize(model, collection)
-        super(model, collection)
+      def initialize(model, boxes)
+        super(model, boxes)
         @to_import = Cache::Memory.new
       end
 
@@ -72,53 +72,53 @@ module Visit
     end
 
     class Collect::SourceValues < Collect::Values
-      def initialize(collection)
-        super Visit::SourceValue, collection
+      def initialize(boxes)
+        super Visit::SourceValue, boxes
       end
 
       def transform!
-        @collection.each do |request_payload_hash|
-          RequestPayload.new(request_payload_hash).to_values.each do |value|
-            candidate_for_import(value, request_payload_hash[:created_at])
+        @boxes.each do |box|
+          box.request_payload.to_values.each do |value|
+            candidate_for_import(value, box.request_payload[:created_at])
           end
         end
       end
     end
 
     class Collect::TraitValues < Collect::Values
-      def initialize(collection)
-        super Visit::TraitValue, collection
+      def initialize(boxes)
+        super Visit::TraitValue, boxes
       end
 
       def transform!
-        @collection.each do |o|
-          o[:traits].each do |k,v|
-            candidate_for_import(k, o[:event].created_at)
-            candidate_for_import(v, o[:event].created_at)
+        @boxes.each do |box|
+          box[:traits].each do |k,v|
+            candidate_for_import(k, box.event.created_at)
+            candidate_for_import(v, box.event.created_at)
           end
         end
       end
     end    
 
     class Collect::Traits < Collect
-      def initialize(collection)
-        super Visit::Trait, collection
+      def initialize(boxes)
+        super Visit::Trait, boxes
       end
 
       def transform!
-        @collection.each do |o|
-          o[:traits] = o[:event].to_traits
+        @boxes.each do |box|
+          box[:traits] = box.event.to_traits
         end
       end
 
       def import!
-        models = @collection.flat_map do |o|
-          o[:traits].map do |k,v|
+        models = @boxes.flat_map do |box|
+          box[:traits].map do |k,v|
             model_class.new.tap do |model|
               model.k_id = Visit::TraitValue.get_id_from_find_by_v(k)
               model.v_id = Visit::TraitValue.get_id_from_find_by_v(v)
-              model.visit_event_id = o[:event].id
-              model.created_at = o[:event].created_at
+              model.visit_event_id = box.event.id
+              model.created_at = box.event.created_at
             end
           end
         end
@@ -128,26 +128,26 @@ module Visit
     end
 
     class Collect::Events < Collect
-      def initialize(collection)
-        super Visit::Event, collection
+      def initialize(boxes)
+        super Visit::Event, boxes
       end
 
       def import!
         ActiveRecord::Base.transaction do
-          @collection.each do |request_payload_hash|
+          @boxes.each do |box|
             event = Visit::Event.new \
-              token:     request_payload_hash[:token],
-              user_id:   request_payload_hash[:user_id],
-              remote_ip: request_payload_hash[:remote_ip]
+              token:     box.request_payload[:token],
+              user_id:   box.request_payload[:user_id],
+              remote_ip: box.request_payload[:remote_ip]
 
-            event.url_id        = payload_to_source_value_id request_payload_hash[:url]
-            event.user_agent_id = payload_to_source_value_id request_payload_hash[:user_agent]
-            event.referer_id    = payload_to_source_value_id request_payload_hash[:referer]
-            event.http_method   = request_payload_hash[:http_method]
-            event.created_at    = request_payload_hash[:created_at]
+            event.url_id        = payload_to_source_value_id box.request_payload[:url]
+            event.user_agent_id = payload_to_source_value_id box.request_payload[:user_agent]
+            event.referer_id    = payload_to_source_value_id box.request_payload[:referer]
+            event.http_method   = box.request_payload[:http_method]
+            event.created_at    = box.request_payload[:created_at]
             event.save!
 
-            request_payload_hash[:event] = event
+            box.event = event
           end
         end
       end
@@ -162,17 +162,17 @@ module Visit
     end
 
     class Collect::Sources < Collect
-      def initialize(collection)
-        super(Visit::Source, collection)
+      def initialize(boxes)
+        super(Visit::Source, boxes)
         @a = []
       end
 
       def transform!
-        @collection.each do |request_payload_hash|
+        @boxes.each do |box|
           @a << {
-            visit_event_id: request_payload_hash[:event].id,
-            created_at: request_payload_hash[:created_at],
-            pairs: RequestPayload.new(request_payload_hash).to_pairs
+            visit_event_id: box.event.id,
+            created_at: box.request_payload[:created_at],
+            pairs: box.request_payload.to_pairs
           }
         end
       end
