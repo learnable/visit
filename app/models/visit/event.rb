@@ -17,9 +17,8 @@ module Visit
 
     belongs_to :user
 
-    validates :url_id,        presence: true
-    validates :user_agent_id, presence: true
-    validates :remote_ip,     presence: true
+    validates :url_id,    presence: true
+    validates :remote_ip, presence: true
 
     include Visit::StoresIpAddress
     stores_ip_address :remote_ip
