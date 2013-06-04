@@ -22,7 +22,7 @@ describe Visit::Event do
     end
 
     context "given a scheme, host and path" do
-      it_should_behave_like "a pathfinder", "http://example.com/foo/bar", "/foo/bar"
+      it_should_behave_like "a pathfinder", "http://example.com/foo/bar)", "/foo/bar)"
     end
 
     context "given a scheme, host, path and port" do
