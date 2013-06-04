@@ -74,7 +74,7 @@ module Visit
     class Collect::SourceValues < Collect::Values
       def transform!
         @collection.each do |request_payload_hash|
-          RequestPayloadHashDecorator.new(request_payload_hash).to_values.each do |value|
+          RequestPayload.new(request_payload_hash).to_values.each do |value|
             candidate_for_import(value, request_payload_hash[:created_at])
           end
         end
@@ -156,7 +156,7 @@ module Visit
           @a << {
             visit_event_id: request_payload_hash[:event].id,
             created_at: request_payload_hash[:created_at],
-            pairs: RequestPayloadHashDecorator.new(request_payload_hash).to_pairs(Visit::SourceValue)
+            pairs: RequestPayload.new(request_payload_hash).to_pairs
           }
         end
       end
