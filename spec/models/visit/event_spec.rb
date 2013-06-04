@@ -26,10 +26,18 @@ describe Visit::Event do
     end
 
     context "given a scheme, host, path and port" do
-      let(:url) { 'http://example.com/foo/bar' }
+      let(:url) { 'http://example.com:8080/foo/bar' }
 
       it "returns the path" do
         expect(Visit::Event.path_from_url(url)).to eq('/foo/bar')
+      end
+    end
+
+    context "given a scheme, host, path, port, query string and fragment" do
+      let(:url) { 'http://example.com:8080/foo/bar?a=b#c' }
+
+      it "returns the path" do
+        expect(Visit::Event.path_from_url(url)).to eq('/foo/bar?a=b#c')
       end
     end
   end
