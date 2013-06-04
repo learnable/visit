@@ -17,24 +17,23 @@ module Visit
         end
     end
 
-    def run(a_request_payload_hash)
+    def run(request_payload_hashes)
       cache_setup
 
-      boxes = a_request_payload_hash.map do |rph|
+      boxes = request_payload_hashes.map do |rph|
         Box.new RequestPayload.new(rph)
       end
 
-      collect = Collect::SourceValues.new boxes
-      collect.transform!
-      collect.import!
+      # Each of these import! steps populates a table
+      # that the next import! needs a foreign key reference for.
+      # So the order is important.
+      # The collection of boxes is mutated along the way.
+      #
+      Collect::SourceValues.import! boxes
 
-      collect = Collect::Events.new boxes
-      collect.import!  # boxes mutated - now contains :event
-      boxes = collect.boxes
+      Collect::Events.import! boxes
 
-      collect = Collect::Sources.new boxes
-      collect.transform!
-      collect.import!
+      Collect::Sources.import! boxes
 
       create_traits boxes
 
@@ -44,16 +43,12 @@ module Visit
     private
 
     def create_traits(boxes)
-      collect_traits = Collect::Traits.new boxes
-      collect_traits.transform! # boxes mutated - now contains :traits
-      boxes = collect_traits.boxes
+      collect = Collect::Traits.new boxes
+      collect.transform! # boxes mutated - now contains :traits
 
+      Collect::TraitValues.import! boxes
 
-      collect_trait_values = Collect::TraitValues.new boxes
-      collect_trait_values.transform!
-      collect_trait_values.import!
-
-      collect_traits.import!
+      collect.bulk_insert!
     end
 
     def cache_setup

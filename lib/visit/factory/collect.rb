@@ -15,7 +15,7 @@ module Visit
 
       private
 
-      def bulk_insert!(models)
+      def bulk_insert_models!(models)
         model_class.import models, :validate => false
       end
     end
@@ -26,7 +26,13 @@ module Visit
         @to_import = Cache::Memory.new
       end
 
-      def import!
+      def self.import!(boxes)
+        collect = new boxes
+        collect.transform!
+        collect.bulk_insert!
+      end
+
+      def bulk_insert!
         models = @to_import.to_h.map do |cache_key, h|
           model_class.new.tap do |model|
             model.v = h[:value]
@@ -34,7 +40,7 @@ module Visit
           end
         end
 
-        bulk_insert! models
+        bulk_insert_models! models
       end
 
       protected
@@ -111,7 +117,7 @@ module Visit
         end
       end
 
-      def import!
+      def bulk_insert!
         models = @boxes.flat_map do |box|
           box[:traits].map do |k,v|
             model_class.new.tap do |model|
@@ -123,7 +129,7 @@ module Visit
           end
         end
 
-        bulk_insert! models
+        bulk_insert_models! models
       end
     end
 
@@ -132,7 +138,12 @@ module Visit
         super Visit::Event, boxes
       end
 
-      def import!
+      def self.import!(boxes)
+        collect = new boxes
+        collect.bulk_insert!
+      end
+
+      def bulk_insert!
         ActiveRecord::Base.transaction do
           @boxes.each do |box|
             event = Visit::Event.new \
@@ -167,6 +178,12 @@ module Visit
         @a = []
       end
 
+      def self.import!(boxes)
+        collect = new boxes
+        collect.transform!
+        collect.bulk_insert!
+      end
+
       def transform!
         @boxes.each do |box|
           @a << {
@@ -177,7 +194,7 @@ module Visit
         end
       end
 
-      def import!
+      def bulk_insert!
         models = @a.flat_map do |h|
           h[:pairs].map do |h_pair|
             model_class.new.tap do |model|
@@ -189,7 +206,7 @@ module Visit
           end
         end
 
-        bulk_insert! models
+        bulk_insert_models! models
       end
     end
   end
