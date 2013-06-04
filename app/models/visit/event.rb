@@ -51,11 +51,15 @@ module Visit
     def path
       uri = Addressable::URI.parse(url)
 
+      ret = url
+
       if uri.host
-        /(?<rhs>#{uri.path}.*)/.match(url)[:rhs]
-      else
-        url
+        ret = uri.path
+        ret += "?#{uri.query}" if uri.query
+        ret += "##{uri.fragment}" if uri.fragment
       end
+
+      ret
     end
 
     def to_traits
