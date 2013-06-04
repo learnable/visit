@@ -34,8 +34,7 @@ module Visit
     TOKEN_LENGTH = 16
 
     def self.path_from_url(url)
-      uri = Addressable::URI.parse(url)
-      uri.host ? url.gsub(%r(^.*?#{uri.host}), "") : url # strip scheme and host
+      Addressable::URI.parse(url).path
     end
 
     def self.ignore?(path)
