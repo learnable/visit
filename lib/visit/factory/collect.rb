@@ -9,6 +9,12 @@ module Visit
         @boxes = boxes
       end
 
+      def self.import!(boxes)
+        collect = new boxes
+        collect.transform!
+        collect.bulk_insert!
+      end
+
       protected
 
       attr_reader :model_class
@@ -24,12 +30,6 @@ module Visit
       def initialize(model, boxes)
         super(model, boxes)
         @to_import = Cache::Memory.new
-      end
-
-      def self.import!(boxes)
-        collect = new boxes
-        collect.transform!
-        collect.bulk_insert!
       end
 
       def bulk_insert!
@@ -138,11 +138,6 @@ module Visit
         super Visit::Event, boxes
       end
 
-      def self.import!(boxes)
-        collect = new boxes
-        collect.bulk_insert!
-      end
-
       def bulk_insert!
         ActiveRecord::Base.transaction do
           @boxes.each do |box|
@@ -163,6 +158,9 @@ module Visit
         end
       end
 
+      def transform!
+      end
+
       private
 
       def payload_to_source_value_id(value)
@@ -176,12 +174,6 @@ module Visit
       def initialize(boxes)
         super(Visit::Source, boxes)
         @a = []
-      end
-
-      def self.import!(boxes)
-        collect = new boxes
-        collect.transform!
-        collect.bulk_insert!
       end
 
       def transform!
