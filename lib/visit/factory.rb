@@ -13,7 +13,7 @@ module Visit
       Visit::Event.
         includes([:visit_source_values_url, :visit_source_values_user_agent, :visit_source_values_referer]).
         find_in_batches do |a_event|
-          Visit::Factory.create_traits a_event.map { |event| { event: event } }
+          create_traits a_event.map { |event| { event: event } }
         end
     end
 
