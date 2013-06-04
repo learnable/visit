@@ -95,7 +95,7 @@ module Visit
     class Collect::Traits < Collect
       def transform!
         @collection.each do |o|
-          o[:traits] = Event::Traits.new(o[:event]).to_h
+          o[:traits] = o[:event].to_traits
         end
       end
 

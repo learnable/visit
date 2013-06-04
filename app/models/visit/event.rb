@@ -58,5 +58,9 @@ module Visit
       end
     end
 
+    def to_traits
+      Traits.new(self)
+    end
+
   end
 end
