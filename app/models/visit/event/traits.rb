@@ -3,7 +3,7 @@ module Visit
 
     def initialize(event)
       @event = event
-      @path = Event.path_from_url(event.url)
+      @path = event.path
     end
 
     def to_h

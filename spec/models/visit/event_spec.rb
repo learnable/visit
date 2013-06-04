@@ -8,37 +8,29 @@ describe Visit::Event do
     first.url_id.should == second.url_id
   end
 
-  describe ".path_from_url" do
-    let(:url) { '/foo/bar' }
+  describe ".path" do
+    shared_examples "a pathfinder" do |url, path|
+      let(:event) { create(:visit_event, url: url) }
+
+      it "returns the path" do
+        expect(event.path).to eq(path)
+      end
+    end
 
     context "given a path" do
-      it "returns the path" do
-        expect(Visit::Event.path_from_url(url)).to eq('/foo/bar')
-      end
+      it_should_behave_like "a pathfinder", "/foo/bar", "/foo/bar"
     end
 
     context "given a scheme, host and path" do
-      let(:url) { 'http://example.com/foo/bar' }
-
-      it "returns the path" do
-        expect(Visit::Event.path_from_url(url)).to eq('/foo/bar')
-      end
+      it_should_behave_like "a pathfinder", "http://example.com/foo/bar", "/foo/bar"
     end
 
     context "given a scheme, host, path and port" do
-      let(:url) { 'http://example.com:8080/foo/bar' }
-
-      it "returns the path" do
-        expect(Visit::Event.path_from_url(url)).to eq('/foo/bar')
-      end
+      it_should_behave_like "a pathfinder", "http://example.com:8080/foo/bar", "/foo/bar"
     end
 
     context "given a scheme, host, path, port, query string and fragment" do
-      let(:url) { 'http://example.com:8080/foo/bar?a=b#c' }
-
-      it "returns the path" do
-        expect(Visit::Event.path_from_url(url)).to eq('/foo/bar?a=b#c')
-      end
+      it_should_behave_like "a pathfinder", "http://example.com:8080/foo/bar?a=b#c", "/foo/bar?a=b#c"
     end
   end
 

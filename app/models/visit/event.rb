@@ -33,16 +33,6 @@ module Visit
 
     TOKEN_LENGTH = 16
 
-    def self.path_from_url(url)
-      uri = Addressable::URI.parse(url)
-
-      if uri.host
-        /(?<rhs>#{uri.path}.*)/.match(url)[:rhs]
-      else
-        url
-      end
-    end
-
     def self.ignore?(path)
       ret = nil
 
@@ -55,7 +45,17 @@ module Visit
     end
 
     def ignore?
-      Event.ignore? Event.path_from_url(url)
+      Event.ignore? path
+    end
+
+    def path
+      uri = Addressable::URI.parse(url)
+
+      if uri.host
+        /(?<rhs>#{uri.path}.*)/.match(url)[:rhs]
+      else
+        url
+      end
     end
 
   end
