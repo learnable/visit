@@ -11,7 +11,7 @@ module Visit
 
     def create_visit_event(path = nil)
       create_if_interesting_visit \
-        RequestPayload.new \
+        RailsRequestContext.new \
           request,
           cookies,
           session,
@@ -23,7 +23,7 @@ module Visit
     private
 
     def set_visit_token
-      if !RequestPayload::get_token cookies, session
+      if !RailsRequestContext::get_token cookies, session
         if Configurable.is_token_cookie_set_in.call :application_controller
           cookies["token"] = random_visit_token
         else
@@ -34,7 +34,7 @@ module Visit
 
     def on_every_visit_request
       create_if_interesting_visit \
-        RequestPayload.new \
+        RailsRequestContext.new \
           request,
           cookies,
           session,

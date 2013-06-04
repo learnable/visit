@@ -1,5 +1,5 @@
 module Visit
-  class RequestPayload < Struct.new(:request, :cookies, :session, :user_id, :is_ignorable, :path)
+  class RailsRequestContext < Struct.new(:request, :cookies, :session, :user_id, :is_ignorable, :path)
 
     def self.get_token(cookies, session)
       cookies["token"] || session[:token]
@@ -14,7 +14,7 @@ module Visit
     end
 
     def get_token
-      RequestPayload.get_token cookies, session
+      RailsRequestContext.get_token cookies, session
     end
 
     def to_h
