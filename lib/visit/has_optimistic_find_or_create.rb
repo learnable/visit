@@ -17,7 +17,7 @@ module Visit
       if Configurable.cache.has_key? k
         id = Configurable.cache.fetch(k)
       else
-        row = self.find_by_v(v)
+        row = self.where(v: v).first
 
         if !row.nil?
           id = Configurable.cache.fetch(k) do
@@ -41,7 +41,7 @@ module Visit
       rescue ActiveRecord::StatementInvalid => e
         # multiple workers using find_or_create_by can result in a race condition
         # in which case, assume the row exists and return it
-        self.find_by_v(v)
+        self.where(v: v).first
       end
     end
 

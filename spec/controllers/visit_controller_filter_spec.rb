@@ -124,7 +124,7 @@ describe "Visit::ControllerFilters", type: :controller do
 
     context "when a logged-in user visits" do
       it "the Visit::Event should have .user_id set" do
-        Visit::Event.find_by_token(token_next).user_id.should == user_id
+        Visit::Event.where(token: token_next).first.user_id.should == user_id
       end
     end
   end
