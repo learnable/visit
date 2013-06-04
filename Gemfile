@@ -11,4 +11,5 @@ group :development, :test do
   gem "pg"
   gem "redis"
   gem "user_agent_parser"
+  gem "haml"
 end
