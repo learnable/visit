@@ -25,6 +25,10 @@ describe Visit::Event do
       it_should_behave_like "a pathfinder", "http://example.com/foo/bar)", "/foo/bar)"
     end
 
+    context "given a scheme and path" do
+      it_should_behave_like "a pathfinder", "file:///bar", "/bar"
+    end
+
     context "given a scheme, host, path and port" do
       it_should_behave_like "a pathfinder", "http://example.com:8080/foo/bar", "/foo/bar"
     end
