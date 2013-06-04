@@ -43,12 +43,12 @@ module Visit
           nil
     end
 
-    def create_if_interesting_visit(request_payload)
-      if !request_payload.is_ignorable || !Visit::Event.ignore?(request_payload.get_path)
+    def create_if_interesting_visit(rails_request_context)
+      if !rails_request_context.is_ignorable || !Visit::Event.ignore?(rails_request_context.get_path)
         begin
           list = SerializedList.new("request_payload_hashes")
 
-          list_length = list.pipelined_append_and_return_length request_payload.to_h
+          list_length = list.pipelined_append_and_return_length rails_request_context.to_h
 
           if list_length >= Configurable.bulk_insert_batch_size
             Configurable.create.call list.values
