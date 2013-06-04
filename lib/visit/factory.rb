@@ -24,11 +24,14 @@ module Visit
         Box.new RequestPayload.new(rph)
       end
 
-      # Each of these import! steps populates a table
-      # that the next import! needs a foreign key reference for.
-      # So the order is important.
-      # The collection of boxes is mutated along the way.
+      # Each import! step populates a table
+      # that the next import! step references as a foreign key.
       #
+      # The boxes collection is mutated:
+      # - by Collect::Events, which sets box.event
+      # - by Collect::Traits, which sets box.traits
+      #
+
       Collect::SourceValues.import! boxes
 
       Collect::Events.import! boxes
@@ -44,7 +47,7 @@ module Visit
 
     def create_traits(boxes)
       collect = Collect::Traits.new boxes
-      collect.transform! # boxes mutated - now contains :traits
+      collect.transform!
 
       Collect::TraitValues.import! boxes
 
