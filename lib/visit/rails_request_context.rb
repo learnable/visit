@@ -17,6 +17,10 @@ module Visit
       RailsRequestContext.get_token cookies, session
     end
 
+    def ignorable?
+      is_ignorable && Visit::Event.ignore?(get_path)
+    end
+
     def to_h
       {}.tap do |h|
         h[:http_method] = request.method

@@ -44,7 +44,7 @@ module Visit
     end
 
     def create_if_interesting_visit(rails_request_context)
-      if !rails_request_context.is_ignorable || !Visit::Event.ignore?(rails_request_context.get_path)
+      if !rails_request_context.ignorable?
         begin
           list = SerializedList.new("request_payload_hashes")
 
