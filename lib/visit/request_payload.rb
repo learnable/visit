@@ -1,5 +1,8 @@
 module Visit
   class RequestPayload < Struct.new(:http_method, :url, :token, :user_id, :user_agent, :referer, :remote_ip, :cookies, :created_at)
+
+    include HasIgnorablePath
+
     def initialize(h = {})
       members.each do |k|
         k_to_s = k.to_s
