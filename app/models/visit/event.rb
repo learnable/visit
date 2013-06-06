@@ -29,26 +29,9 @@ module Visit
 
     include Event::HasCachedAttributes
     include Event::HasHttpMethod
+    include HasIgnorablePath
 
     TOKEN_LENGTH = 16
-
-    def ignore?
-      Event.ignore? path
-    end
-
-    def path
-      uri = Addressable::URI.parse(url)
-
-      ret = url
-
-      if uri.host
-        ret = uri.path
-        ret += "?#{uri.query}" if uri.query
-        ret += "##{uri.fragment}" if uri.fragment
-      end
-
-      ret
-    end
 
     def to_traits
       Traits.new(self)
