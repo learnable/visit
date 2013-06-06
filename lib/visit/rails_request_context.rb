@@ -18,7 +18,7 @@ module Visit
     end
 
     def ignorable?
-      is_ignorable && Visit::Event.ignore?(get_path)
+      is_ignorable && Onboarder.ignorable?(get_path)
     end
 
     def to_h

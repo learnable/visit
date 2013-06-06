@@ -32,17 +32,6 @@ module Visit
 
     TOKEN_LENGTH = 16
 
-    def self.ignore?(path)
-      ret = nil
-
-      Configurable.ignorable.each do |re|
-        ret = path =~ re
-        break if ret
-      end
-
-      !ret.nil?
-    end
-
     def ignore?
       Event.ignore? path
     end
