@@ -28,8 +28,8 @@ module Visit
         h[:token]       = get_token
         h[:user_id]     = user_id
         h[:user_agent]  = request.env["HTTP_USER_AGENT"]
-        h[:remote_ip]   = request.remote_ip
         h[:referer]     = request.referer
+        h[:remote_ip]   = request.remote_ip
         h[:cookies]     = Configurable.cookies_to_hash.call cookies
         h[:created_at]  = Time.now
       end
