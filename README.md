@@ -46,10 +46,6 @@ To customise, create a config/initializers/visit.rb, eg:
         Airbrake.notify e # our app uses Airbrake for exception handling
       end
 
-      c.current_user_id = ->(controller) do
-        controller.instance_eval { current_user ? current_user.id : nil }
-      end
-
       # lighten the load on the db (far fewer SELECTs)
       c.cache = Visit::Cache::Dalli.new \
         ActiveSupport::Cache.lookup_store \
