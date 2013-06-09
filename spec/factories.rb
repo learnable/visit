@@ -1,5 +1,7 @@
 FactoryGirl.define do
 
+  sequence(:email) { |n| "user#{n}@example.org" }
+
   factory :visit_event, class: Visit::Event do
     ignore do
       url "http://www.example.com"
