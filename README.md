@@ -105,6 +105,18 @@ increase the index :length limits in the CreateVisitSourceValues and CreateVisit
 It might give you a little more lookup performance - when there are strings that are the
 same in the first 255 chars and different after that.
 
+My app is part Rails and part non-Rails
+---------------------------------------
+In a Rails app, the decision of whether to ignore an http request is made witin the Rails request cycle
+(<code>Onboarder.accept_unless_ignorable</code>).
+
+But if you serve http requests via a non-Rails app (eg PHP), you can:
+* shove all requests into redis, and
+* in a Rails worker, pass the request in redis to <code>Onboarder.accept_unless_ignorable</code>.
+
+<code>Onboarder.accept_unless_ignorable</code> decides whether a request should be ignored and if not,
+queues it to eventually create a Visit::Event.
+
 Developing the gem
 ------------------
 
