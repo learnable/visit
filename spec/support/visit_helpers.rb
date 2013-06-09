@@ -23,6 +23,12 @@ def run_requests_through_factory(a)
   b = a.map do |h|
       new_request_payload_hash h
     end
+
+  b.each do |request_payload_hash|
+    if !request_payload_hash[:user_id].nil? && !User.exists?(request_payload_hash[:user_id])
+      create :user, id: request_payload_hash[:user_id]
+    end
+  end
   Visit::Factory.new.run b
 end
 
