@@ -29,7 +29,7 @@ module Visit
 
     include Event::HasCachedAttributes
     include Event::HasHttpMethod
-    include HasIgnorablePath
+    include Visit::HasIgnorablePath
 
     TOKEN_LENGTH = 16
 
