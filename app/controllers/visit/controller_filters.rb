@@ -10,7 +10,7 @@ module Visit
     protected
 
     def create_visit_event(path = nil)
-      create_if_interesting_visit \
+      Onboarder.accept_unless_ignorable \
         RailsRequestContext.new \
           request,
           cookies,
@@ -33,7 +33,7 @@ module Visit
     end
 
     def on_every_visit_request
-      create_if_interesting_visit \
+      Onboarder.accept_unless_ignorable \
         RailsRequestContext.new \
           request,
           cookies,
@@ -41,24 +41,6 @@ module Visit
           Configurable.current_user_id.call(self),
           true,
           nil
-    end
-
-    def create_if_interesting_visit(rails_request_context)
-      if !rails_request_context.ignorable?
-        begin
-          list = SerializedList.new("request_payload_hashes")
-
-          list_length = list.pipelined_append_and_return_length rails_request_context.to_h
-
-          if list_length >= Configurable.bulk_insert_batch_size
-            Configurable.create.call list.values
-
-            list.clear
-          end
-        rescue
-          Configurable.notify.call $!
-        end
-      end
     end
 
     def random_visit_token
