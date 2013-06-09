@@ -13,6 +13,7 @@ module Visit
         visit_sources
         visit_trait_values
         visit_traits
+        visit_foreign_keys
       }.each do |name|
         migration_template "create_#{name}.rb", "db/migrate/create_#{name}.rb"
       end
