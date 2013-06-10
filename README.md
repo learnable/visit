@@ -100,19 +100,18 @@ The `visit_events` table has a column:
     t.integer  "user_id", :references => :users
 
 If your database doesn't have a `users` table, search for `user_id` in the `*_visit_*` migrations and
-remove any foreign key reference to `users`.  Likely you'll want to add an index to the `visit_events.user_id` column too.
+remove any foreign key reference to `users`.  Add an index on the `visit_events.user_id` column instead.
 
 My app is part Rails and part non-Rails
 ---------------------------------------
-In a Rails app, the decision of whether to ignore an http request is made witin the Rails request cycle
-(<code>Onboarder.accept_unless_ignorable</code>).
-
-But if you serve http requests via a non-Rails app (eg PHP), you can:
-* shove all requests into redis, and
-* in a Rails worker, pass the request in redis to <code>Onboarder.accept_unless_ignorable</code>.
-
-<code>Onboarder.accept_unless_ignorable</code> decides whether a request should be ignored and if not,
+<code>Onboarder.accept_unless_ignorable</code> decides whether an http request should be ignored and if not,
 queues it to eventually create a Visit::Event.
+
+In a Rails app, <code>Onboarder.accept_unless_ignorable</code> is called witin the Rails request cycle.
+
+If you serve http requests via a non-Rails app (eg PHP), you can:
+* shove all requests into redis, and
+* in a Rails worker, take the request from redis and pass it to <code>Onboarder.accept_unless_ignorable</code>.
 
 Developing the gem
 ------------------
