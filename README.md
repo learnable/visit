@@ -18,7 +18,7 @@ To customise, create a config/initializers/visit.rb, eg:
 
     Visit::Configurable.configure do |c|
 
-      c.bulk_insert_batch_size = 100 # cache request payloads in redis and bulk insert when cache size == 100
+      c.bulk_insert_batch_size = 100 # cache requests in redis and bulk insert when cache size == 100
 
       c.create = ->(o) do
         MySidekiqWorker.perform_async o # write to the db in a worker (don't slow down the Rails request cycle)
@@ -192,6 +192,6 @@ TODO
 MAJOR
 
 MODERATE
-* implement an archiving solution ==> zip up everying over 3 months old and send to S3?
+* implement archiving - zip up everying over 3 months old and send to S3?
 
 MINOR

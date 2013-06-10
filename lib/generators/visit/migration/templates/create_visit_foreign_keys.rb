@@ -1,26 +1,24 @@
 class CreateVisitForeignKeys < ActiveRecord::Migration
   def up
-    if !visit_indexes_exist?
-      add_indexes
-    else
-      puts "Indexes exist - doing nothing"
+    if !indexes_exist?
+      add_indexes!
     end
   end
 
   def down
-    visit_indexes.each do |h|
+    all_indexes.each do |h|
       execute "DROP FOREIGN KEY #{foreign_key_symbol(h)}"
     end
   end
 
-  def visit_indexes_exist?
+  def indexes_exist?
     keys = [ "fk__visit_events_user_id", "fk_visit_events_user_id" ]
 
     keys.map { |k| index_exists? :visit_events, :user_id, :name => k }.include? true
   end
 
-  def add_indexes
-    visit_indexes.each do |h|
+  def add_indexes!
+    all_indexes.each do |h|
       execute %Q{
         ALTER TABLE #{h[:table]}
         ADD CONSTRAINT #{foreign_key_symbol(h)}
@@ -30,11 +28,7 @@ class CreateVisitForeignKeys < ActiveRecord::Migration
     end
   end
 
-  def foreign_key_symbol(h)
-    "fk_#{h[:table]}_#{h[:foreign_key]}"
-  end
-
-  def visit_indexes
+  def all_indexes
     [
       { table: "visit_events",  foreign_key: "user_id",        references: "users"               },
       { table: "visit_events",  foreign_key: "url_id",         references: "visit_source_values" },
@@ -48,4 +42,9 @@ class CreateVisitForeignKeys < ActiveRecord::Migration
       { table: "visit_traits",  foreign_key: "visit_event_id", references: "visit_events"        },
     ]
   end
+
+  def foreign_key_symbol(h)
+    "fk_#{h[:table]}_#{h[:foreign_key]}"
+  end
+
 end
