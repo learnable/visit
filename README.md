@@ -1,6 +1,5 @@
 visit
 =====
-
 Store some subset (or all) of an app's http requests in a database.
 
 Get the data out using Active Record Query Interface.
@@ -15,7 +14,6 @@ Install the gem into your app
 
 Customise
 ---------
-
 To customise, create a config/initializers/visit.rb, eg:
 
     Visit::Configurable.configure do |c|
@@ -54,14 +52,6 @@ To customise, create a config/initializers/visit.rb, eg:
           { :namespace => "#{Rails.application.class.parent_name}::visit", :expires_in => 28.days }
     end
 
-Assumed Models
---------------
-
-The CreateVisitEvents migration has a foreign key reference to a 'users' table.
-
-If your app doesn't have a 'users' table, edit the <code>create_visit_events</code> migration,
-remove the foreign key reference and nothing will break.
-
 
 Label and captures
 ------------------
@@ -76,7 +66,6 @@ Which in turn supports queries like this:
 
 Value Deduper
 -------------
-
 For internal consistency, the gem requires each row in tables visit_source_values and visit_trait_values 
 to have a unique value of 'v'.
 
@@ -105,6 +94,14 @@ increase the index :length limits in the CreateVisitSourceValues and CreateVisit
 It might give you a little more lookup performance - when there are strings that are the
 same in the first 255 chars and different after that.
 
+Users
+-----
+The `visit_events` table has a column:  
+    t.integer  "user_id", :references => :users
+
+If your database doesn't have a `users` table, search for `user_id` in the `*_visit_*` migrations and
+remove any foreign key reference to `users`.  Likely you'll want to add an index to the `visit_events.user_id` column too.
+
 My app is part Rails and part non-Rails
 ---------------------------------------
 In a Rails app, the decision of whether to ignore an http request is made witin the Rails request cycle
@@ -119,7 +116,6 @@ queues it to eventually create a Visit::Event.
 
 Developing the gem
 ------------------
-
     git clone git@github.com:learnable/visit.git
 
 ### mysql
