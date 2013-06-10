@@ -1,4 +1,5 @@
 require 'addressable/uri'
+require 'visit/has_ignorable_path'
 
 module Visit
   class Event < ActiveRecord::Base
@@ -29,7 +30,7 @@ module Visit
 
     include Event::HasCachedAttributes
     include Event::HasHttpMethod
-    include Visit::HasIgnorablePath
+    include HasIgnorablePath
 
     TOKEN_LENGTH = 16
 
