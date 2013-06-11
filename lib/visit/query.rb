@@ -27,6 +27,15 @@ module Visit
       }
     end
 
+    def stmt_join_source_value(join_type, key)
+      %Q{
+        #{join_type} visit_source_values #{key}_vsv
+          ON visit_events.#{key}_id = #{key}_vsv.id
+      }
+    end
+
+    private
+
     def table_alias_prefix(key)
       key
     end
