@@ -30,8 +30,16 @@ module Visit
         h[:user_agent]  = request.env["HTTP_USER_AGENT"]
         h[:referer]     = request.referer
         h[:remote_ip]   = request.remote_ip
-        h[:cookies]     = Configurable.cookies_to_hash.call cookies
+        h[:cookies]     = cookies_to_hash(cookies)
         h[:created_at]  = Time.now
+      end
+    end
+
+    private
+
+    def cookies_to_hash(cookies)
+      cookies.keep_if do |k,v|
+        Configurable.cookies_match.any? { |re| k =~ re }
       end
     end
   end
