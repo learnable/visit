@@ -12,6 +12,7 @@ describe Visit::RailsRequestContext do
       ret = Visit::RailsRequestContext.new
       ret.request = @request
       ret.path = nil
+      ret.session = session
 
       opts.each { |k,v| ret[k] = v }
 
@@ -30,6 +31,26 @@ describe Visit::RailsRequestContext do
       end
       it "returns false when both rails_request_context.is_ignorable and path is ignorable" do
         new_rails_request_context({ is_ignorable: false, path: "/fred" }).ignorable?.should be_false
+      end
+    end
+
+    context "#to_h" do
+      context "for key :cookies, the value" do
+        subject {
+          new_rails_request_context(cookies: { "flip_aaa" => "aaa", "flip_bbb" => "bbb" }).to_h
+        }
+
+        it "is a Hash" do
+          subject.should be_a_kind_of(Hash)
+        end
+
+        it "contains flip_blah when a flip_blah cookie is present" do
+          subject[:cookies].should have_key("flip_aaa")
+          subject[:cookies].should have_key("flip_bbb")
+
+          subject[:cookies]["flip_aaa"].should == "aaa"
+          subject[:cookies]["flip_bbb"].should == "bbb"
+        end
       end
     end
 
