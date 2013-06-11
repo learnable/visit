@@ -25,7 +25,7 @@ To customise, create a config/initializers/visit.rb, eg:
         # It's advised to implement this as some kind of async worker when using
         # the bulk_insert_batch_size option, otherwise event insertion will be
         # done during a request.
-        MySidekiqWorker.perform_async(request_payload_hashes)
+        VisitFactoryWorker.perform_async(request_payload_hashes)
       end
 
       c.current_user_id = -> (controller) do
@@ -56,9 +56,9 @@ To customise, create a config/initializers/visit.rb, eg:
           { :namespace => "#{Rails.application.class.parent_name}::visit", :expires_in => 28.days }
     end
 
-Sample implementation of `MySidekiqWorker`:
+Sample implementation of `VisitFactoryWorker`:
 ```
-class MySidekiqWorker
+class VisitFactoryWorker
   include Sidekiq::Worker
 
   def perform(request_payload_hashes)
