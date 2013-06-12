@@ -17,6 +17,12 @@ module Visit
       end
     end
 
+    def to_h
+      members.inject({}) do |acc, k|
+        acc.merge(k => send(k))
+      end
+    end
+
     def to_values
       [].tap do |ret|
         [:url, :user_agent, :referer].each do |k|
