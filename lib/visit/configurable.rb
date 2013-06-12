@@ -67,7 +67,7 @@ module Visit
 
         @labels_match_all ||=
           [ :gclid, :utm_term, :utm_source, :utm_medium, :utm_campaign, :placement ].map do |k|
-            [ :get, Regexp.new("[&|?]#{k.to_s}=(.*?)(&.*|)$"), k ]
+            [ :get, Regexp.new("[&?]#{k.to_s}=(.*?)(&.*|)$"), k ]
           end
       end
 
