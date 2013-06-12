@@ -29,6 +29,12 @@ describe Visit::DestroyUnused do
         Visit::DestroyUnused.events!
       }.to change { Visit::Event.where(url_id: url_id).count }.by(0)
     end
+
+    it "doesn't change SourceValue" do
+      expect {
+        Visit::DestroyUnused.events!
+      }.to change { Visit::SourceValue.count }.by(0)
+    end
   end
 
   context "#sources!" do
@@ -50,8 +56,13 @@ describe Visit::DestroyUnused do
         Visit::DestroyUnused.sources!
       }.to change { Visit::Source.where(k_id: k_id).count }.by(0)
     end
-  end
 
+    it "doesn't change SourceValue" do
+      expect {
+        Visit::DestroyUnused.sources!
+      }.to change { Visit::SourceValue.count }.by(0)
+    end
+  end
 end
 
 
