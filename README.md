@@ -23,7 +23,11 @@ To customise, create a config/initializers/visit.rb, eg:
       c.bulk_insert_batch_size = 100 # cache request payloads in redis and bulk insert when cache size == 100
 
       c.create = ->(o) do
-        MySidekiqWorker.perform_async o # write to the db in a worker (don't slow down the Rails request cycle)
+        # write to the db in a worker (don't slow down the Rails request cycle)
+        # It's advised to implement this as some kind of async worker when using
+        # the bulk_insert_batch_size option, otherwise event insertion will be
+        # done during a request.
+        MySidekiqWorker.perform_async o
       end
 
       c.current_user_id = -> (controller) do
@@ -53,6 +57,17 @@ To customise, create a config/initializers/visit.rb, eg:
           "127.0.0.1:11211",
           { :namespace => "#{Rails.application.class.parent_name}::visit", :expires_in => 28.days }
     end
+
+Sample implementation of `MySidekiqWorker`:
+```
+class MySidekiqWorker
+  include Sidekiq::Worker
+
+  def perform(request_payload_hashes)
+    Visit::Factory.new.run(request_payload_hashes)
+  end
+end
+```
 
 Assumed Models
 --------------
