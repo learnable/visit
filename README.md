@@ -22,12 +22,12 @@ To customise, create a config/initializers/visit.rb, eg:
 
       c.bulk_insert_batch_size = 100 # cache request payloads in redis and bulk insert when cache size == 100
 
-      c.create = ->(o) do
+      c.create = ->(request_payload_hashes) do
         # write to the db in a worker (don't slow down the Rails request cycle)
         # It's advised to implement this as some kind of async worker when using
         # the bulk_insert_batch_size option, otherwise event insertion will be
         # done during a request.
-        MySidekiqWorker.perform_async o
+        MySidekiqWorker.perform_async(request_payload_hashes)
       end
 
       c.current_user_id = -> (controller) do
