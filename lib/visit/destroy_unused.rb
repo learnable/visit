@@ -10,9 +10,10 @@ module Visit
 
       def events!
         Event.includes(:visit_source_values_url).find_in_batches do |events|
-          ids = events.select { |event| event.ignorable? }.map(&:id)
+          ids  = events.select { |event| event.ignorable? }.map(&:id)
 
-          Event.destroy ids
+          Source.delete_all(visit_event_id: ids)
+          Event.delete ids
 
           yield ids if block_given?
         end
@@ -22,7 +23,7 @@ module Visit
         Source.includes([:key, :value]).find_in_batches do |sources|
           ids = sources.select { |source| source.in_use? }.map(&:id)
 
-          Source.destroy ids
+          Source.delete ids
 
           yield ids if block_given?
         end
