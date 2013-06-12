@@ -7,5 +7,10 @@ module Visit
     belongs_to :value, :class_name => "Visit::SourceValue", foreign_key: :v_id
 
     validates :k_id, :v_id, :visit_event_id, :presence => true
+
+    def in_use?
+      RailsRequestContext.cookie_filter( { key.v => value.v } ).empty?
+    end
+
   end
 end
