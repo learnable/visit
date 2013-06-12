@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
   s.add_dependency("addressable")
   s.add_dependency("user_agent_parser")
   s.add_dependency("haml")
+  s.add_dependency("redis")
 
   # Dependencies for dev/testing of the actual gem. Test gems are required
   # manually in spec_helper.
