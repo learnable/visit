@@ -9,11 +9,21 @@ module Visit
 
       def destroy_ignorable
         Event.includes(:visit_source_values_url).find_in_batches do |events|
-          a_to_be_destroyed = events.map { |ve| ve.ignorable? ? ve.id : nil }.select{ |id| !id.nil? }
+          ids = events.select { |event| event.ignorable? }.map(&:id)
 
-          Event.destroy a_to_be_destroyed
+          Event.destroy ids
 
-          yield a_to_be_destroyed if block_given?
+          yield ids if block_given?
+        end
+      end
+
+      def destroy_sources_if_not_used
+        Source.includes([:key, :value]).find_in_batches do |sources|
+          ids = sources.select { |source| source.in_use? }.map(&:id)
+
+          Source.destroy ids
+
+          yield ids if block_given?
         end
       end
 
