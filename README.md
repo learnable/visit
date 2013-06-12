@@ -19,6 +19,7 @@ Customise
 To customise, create a config/initializers/visit.rb, eg:
 
     Visit::Configurable.configure do |c|
+      c.redis = $redis # You'll need to provide a redis connection
 
       c.bulk_insert_batch_size = 100 # cache request payloads in redis and bulk insert when cache size == 100
 
