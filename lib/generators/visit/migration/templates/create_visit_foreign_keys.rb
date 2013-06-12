@@ -18,13 +18,17 @@ class CreateVisitForeignKeys < ActiveRecord::Migration
   end
 
   def add_indexes!
-    all_indexes.each do |h|
-      execute %Q{
-        ALTER TABLE #{h[:table]}
-        ADD CONSTRAINT #{foreign_key_symbol(h)}
-        FOREIGN KEY (#{h[:foreign_key]})
-        REFERENCES #{h[:references]}(id)
-      }
+    grouped_indexes.each do |table, indexes|
+      execute [
+        "ALTER TABLE #{table}",
+        indexes.map{|h|
+          %Q{
+            ADD CONSTRAINT #{foreign_key_symbol(h)}
+            FOREIGN KEY (#{h[:foreign_key]})
+            REFERENCES #{h[:references]}(id)
+          }
+        }.join(",\n")
+      ].join("\n")
     end
   end
 
@@ -41,6 +45,12 @@ class CreateVisitForeignKeys < ActiveRecord::Migration
       { table: "visit_traits",  foreign_key: "v_id",           references: "visit_trait_values"  },
       { table: "visit_traits",  foreign_key: "visit_event_id", references: "visit_events"        },
     ]
+  end
+
+  def grouped_indexes
+    all_indexes.reduce({}) do |acc, h|
+      acc.merge(h[:table] => [h]){|k, v1, v2| v1 + v2}
+    end
   end
 
   def foreign_key_symbol(h)
