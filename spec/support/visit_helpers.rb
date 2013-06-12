@@ -29,6 +29,7 @@ def run_requests_through_factory(a)
       create :user, id: request_payload_hash[:user_id]
     end
   end
+
   Visit::Factory.new.run b
 end
 
