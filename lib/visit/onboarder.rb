@@ -25,7 +25,7 @@ module Visit
 
             list.clear
           end
-        rescue Exception => e
+        rescue => e
           Configurable.notify.call e
         end
       end
