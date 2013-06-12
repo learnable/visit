@@ -1,6 +1,5 @@
 visit
 =====
-
 Store some subset (or all) of an app's http requests in a database.
 
 Get the data out using Active Record Query Interface.
@@ -15,12 +14,11 @@ Install the gem into your app
 
 Customise
 ---------
-
 To customise, create a config/initializers/visit.rb, eg:
 
     Visit::Configurable.configure do |c|
 
-      c.bulk_insert_batch_size = 100 # cache request payloads in redis and bulk insert when cache size == 100
+      c.bulk_insert_batch_size = 100 # cache requests in redis and bulk insert when cache size == 100
 
       c.create = ->(request_payload_hashes) do
         # write to the db in a worker (don't slow down the Rails request cycle)
@@ -69,15 +67,6 @@ class MySidekiqWorker
 end
 ```
 
-Assumed Models
---------------
-
-The CreateVisitEvents migration has a foreign key reference to a 'users' table.
-
-If your app doesn't have a 'users' table, edit the <code>create_visit_events</code> migration,
-remove the foreign key reference and nothing will break.
-
-
 Label and captures
 ------------------
 Visit::Configurable.labels allows the app to associate labels (and regexp captures) with URL paths.
@@ -91,7 +80,6 @@ Which in turn supports queries like this:
 
 Value Deduper
 -------------
-
 For internal consistency, the gem requires each row in tables visit_source_values and visit_trait_values 
 to have a unique value of 'v'.
 
@@ -120,21 +108,27 @@ increase the index :length limits in the CreateVisitSourceValues and CreateVisit
 It might give you a little more lookup performance - when there are strings that are the
 same in the first 255 chars and different after that.
 
+Users
+-----
+The `visit_events` table has a column:  
+    t.integer  "user_id", :references => :users
+
+If your database doesn't have a `users` table, search for `user_id` in the `*_visit_*` migrations and
+remove any foreign key reference to `users`.  Add an index on the `visit_events.user_id` column instead.
+
 My app is part Rails and part non-Rails
 ---------------------------------------
-In a Rails app, the decision of whether to ignore an http request is made witin the Rails request cycle
-(<code>Onboarder.accept_unless_ignorable</code>).
-
-But if you serve http requests via a non-Rails app (eg PHP), you can:
-* shove all requests into redis, and
-* in a Rails worker, pass the request in redis to <code>Onboarder.accept_unless_ignorable</code>.
-
-<code>Onboarder.accept_unless_ignorable</code> decides whether a request should be ignored and if not,
+<code>Onboarder.accept_unless_ignorable</code> decides whether an http request should be ignored and if not,
 queues it to eventually create a Visit::Event.
+
+In a Rails app, <code>Onboarder.accept_unless_ignorable</code> is called witin the Rails request cycle.
+
+If you serve http requests via a non-Rails app (eg PHP), you can:
+* shove all requests into redis, and
+* in a Rails worker, take the request from redis and pass it to <code>Onboarder.accept_unless_ignorable</code>.
 
 Developing the gem
 ------------------
-
     git clone git@github.com:learnable/visit.git
 
 ### mysql
@@ -212,6 +206,6 @@ TODO
 MAJOR
 
 MODERATE
-* implement an archiving solution ==> zip up everying over 3 months old and send to S3?
+* implement archiving - zip up everying over 3 months old and send to S3?
 
 MINOR

@@ -1,3 +1,5 @@
+require 'visit/has_ignorable_path'
+
 module Visit
   class RequestPayload < Struct.new(:http_method, :url, :token, :user_id, :user_agent, :referer, :remote_ip, :cookies, :created_at)
 
@@ -12,6 +14,12 @@ module Visit
         elsif h.has_key?(k_to_s)
           self[k] = h[k_to_s]
         end
+      end
+    end
+
+    def to_h
+      members.inject({}) do |acc, k|
+        acc.merge(k => send(k))
       end
     end
 
