@@ -33,7 +33,7 @@ describe Visit::Manage do
 
     it "deletes sources that aren't in Configurable.cookies_match" do
       expect {
-        Visit::Manage.destroy_sources_if_not_used { |a| puts "AMHEREX: #{a}"}
+        Visit::Manage.destroy_sources_if_not_used
       }.to change { Visit::Source.count }.by(-6)
     end
 
