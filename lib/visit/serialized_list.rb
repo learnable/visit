@@ -36,7 +36,11 @@ module Visit
     private
 
     def redis
-      Visit::Configurable.redis
+      if Visit::Configurable.redis.nil?
+        raise "Visit::Connfigurable.redis is not set, please configure it"
+      else
+        Visit::Configurable.redis
+      end
     end
   end
 end
