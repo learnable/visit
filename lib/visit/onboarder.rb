@@ -1,14 +1,7 @@
 module Visit
   class Onboarder
     def self.ignorable?(path)
-      ret = nil
-
-      Configurable.ignorable.each do |re|
-        ret = path =~ re
-        break if ret
-      end
-
-      !ret.nil?
+      Configurable.ignorable.any?{|re| path =~ re}
     end
 
     def self.accept_unless_ignorable(request)
