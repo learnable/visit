@@ -38,4 +38,14 @@ describe Visit::Event do
     end
   end
 
+  context "#source_value_ids" do
+    before { start_with_visits [ { url: "http://e.org/articles" } ] }
+
+    let (:event) { Visit::Query::MatchFirst.new.scoped.where("url_vsv.v" => "http://e.org/articles").first }
+
+    it "returns the source_values" do
+      event.source_value_ids.sort.should == Visit::SourceValue.all.map(&:id).sort
+    end
+  end
+
 end
