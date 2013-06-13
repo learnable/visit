@@ -43,13 +43,13 @@ module Visit
 
       Event.includes(:visit_sources).find_in_batches do |events|
         models = source_value_ids(events).map do |id|
-          SourceValueReference.new visit_source_value_id: id
+          SourceValueReference.new fk: id
         end
 
         SourceValueReference.import models
       end
 
-      condition = "id NOT IN (SELECT DISTINCT visit_source_value_id from visit_source_value_references)"
+      condition = "id NOT IN (SELECT DISTINCT fk from visit_source_value_references)"
 
       SourceValue.delete_all(condition) if !dry_run?
 
@@ -80,8 +80,10 @@ module Visit
       def self.up
         ActiveRecord::Migration.verbose = false
         create_table :visit_source_value_references, :temporary => true do |t|
-          t.references :visit_source_value, :null => false
+          # this doesn't use t.references :visit_source_value because of http://bugs.mysql.com/bug.php?id=15324
+          t.integer :fk, :null => false
         end
+        add_index :visit_source_value_references, :fk
       end
 
       def self.down
