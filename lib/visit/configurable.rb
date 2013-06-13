@@ -1,7 +1,7 @@
 module Visit
   class Configurable
     class << self
-      attr_accessor :bulk_insert_batch_size, :cache, :create, :cookies_to_hash,
+      attr_accessor :bulk_insert_batch_size, :cache, :create, :cookies_match,
         :case_insensitive_string_comparison, :current_user_id, :ignorable,
         :is_token_cookie_set_in, :labels_match_all, :labels_match_first,
         :notify, :redis, :user_agent_robots
@@ -22,20 +22,10 @@ module Visit
         yield(self)
       end
 
-      def cookies_to_hash
-        @cookies_to_hash ||= ->(cookies) do
-          {}.tap do |h|
-            features = {}
-            cookies.each do |k,v|
-              if k == 'coupon'
-                h['coupon'] = v
-              elsif k =~ /flip_(.*?)_(.*$)/
-                features[$2] = v
-              end
-            end
-            h['features'] = features.to_json unless features.empty?
-          end
-        end
+      def cookies_match
+        @cookies_match ||= [
+          /flip_.*/,
+        ]
       end
 
       def create
