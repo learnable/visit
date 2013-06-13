@@ -35,7 +35,7 @@ module Visit
           ret << self[k]
         end
 
-        self[:cookies].each do |k,v|
+        filtered_cookies.each do |k,v|
           ret << k
           ret << v
         end
@@ -44,13 +44,19 @@ module Visit
 
     def to_pairs
       [].tap do |ret|
-        self.class.cookie_filter(self[:cookies]).each do |k,v|
+        filtered_cookies.each do |k,v|
           ret << {
             k_id: SourceValue.get_id_from_optimistic_find_or_create_by_v(k),
             v_id: SourceValue.get_id_from_optimistic_find_or_create_by_v(v)
           }
         end
       end
+    end
+
+    private
+
+    def filtered_cookies
+      self.class.cookie_filter(self[:cookies])
     end
   end
 end

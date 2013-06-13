@@ -14,7 +14,7 @@ describe Visit::RequestPayload do
   end
 
   it "#to_values should return all the values" do
-    subject.to_values.should == [ "https://earl.io?utm_campaign=qqq", "mozilla", "http://blah.com", "a", "b", "c", "d" ]
+    subject.to_values.should == [ "https://earl.io?utm_campaign=qqq", "mozilla", "http://blah.com", "a", "b" ]
   end
 
   it "#to_pairs should return the cookies" do
