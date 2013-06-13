@@ -3,8 +3,8 @@ module Visit
     class << self
 
       def rows!
-        events!
         sources!
+        events!
         source_values!
       end
 

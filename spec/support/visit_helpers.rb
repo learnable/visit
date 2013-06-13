@@ -34,8 +34,8 @@ def run_requests_through_factory(a)
 end
 
 def delete_all_visits
-  Visit::Event.delete_all
   Visit::Source.delete_all
+  Visit::Event.delete_all
   Visit::SourceValue.delete_all
   Visit::Trait.delete_all
   Visit::TraitValue.delete_all
