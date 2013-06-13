@@ -42,13 +42,7 @@ module Visit
       CreateSourceValueRefererences.up
 
       Event.includes(:visit_sources).find_in_batches do |events|
-        h = {}.tap do |h|
-          events.each do |event|
-            event.source_value_ids.each { |id| h[id] = true }
-          end
-        end
-
-        models = h.keys.map do |id|
+        models = source_value_ids(events).map do |id|
           SourceValueReference.new visit_source_value_id: id
         end
 
@@ -60,7 +54,7 @@ module Visit
       SourceValue.delete_all(condition) if !dry_run?
 
       if block_given?
-        SourceValue.where(condition).find_each do |source_values|
+        SourceValue.where(condition).find_in_batches do |source_values|
           yield source_values
         end
       end
@@ -69,6 +63,14 @@ module Visit
     end
 
     private
+
+    def source_value_ids(events)
+      {}.tap do |h|
+        events.each do |event|
+          event.source_value_ids.each { |id| h[id] = true }
+        end
+      end.keys
+    end
 
     def dry_run?
       @dry_run

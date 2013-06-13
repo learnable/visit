@@ -135,21 +135,15 @@ Deleting unused rows
 --------------------
 There are a number of ways you can be storing data you don't need:
 * you don't set Configurable.ignorable,
-* after using the gem for a while you narrow the set of cookies you're interested in via Configurable.cookies_match
+* after using the gem for a while you narrow the set of cookies you're interested in (`Configurable.cookies_match`)
 
 If you then want to save space in your database:
 
     bundle exec rails console
-    > Visit::DestroyUnused.new(dry_run: true).sources! do |sources|
-        puts sources.to_yaml
-      end
-    > Visit::DestroyUnused.new(dry_run: true).events! do |events|
-        puts events.to_yaml
-      end
-    > Visit::DestroyUnused.new(dry_run: true).source_values! do |source_values|
-        puts source_values.to_yaml
-      end
-    # ok, I'm now going to irrevocably delete now
+    > Visit::DestroyUnused.new(dry_run: true).sources! { |sources| puts sources.to_yaml }
+    > Visit::DestroyUnused.new(dry_run: true).events! { |events| puts events.to_yaml }
+    > Visit::DestroyUnused.new(dry_run: true).source_values! { |source_values| puts source_values.to_yaml }
+    # ok, looks good, I'm now going to irrevocably delete!
     > Visit::DestroyUnused.new.irrevocable!
 
 Developing the gem
@@ -234,3 +228,5 @@ MODERATE
 * implement archiving - zip up everying over 3 months old and send to S3?
 
 MINOR
+* refactoring: SerializedList should become SerializedList::Redis
+  (with 'require' in the initializer) with the gem defaulting to a new class: SerializedList::Memory
