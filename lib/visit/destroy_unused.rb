@@ -4,7 +4,7 @@ module Visit
       @dry_run = opts[:dry_run]
     end
 
-    def rows!
+    def irrevocable!
       sources!
       events!
       source_values!
