@@ -9,40 +9,6 @@ describe Visit::DestroyUnused do
     ]
   end
 
-  context "#events!" do
-    it "deletes events that are ignored" do
-      expect {
-        Visit::DestroyUnused.new.events!
-      }.to change { Visit::Event.count }.by(-1)
-    end
-
-    it "does nothing during a dry run" do
-      expect {
-        Visit::DestroyUnused.new(dry_run: true).events!
-      }.to change { Visit::Event.count }.by(0)
-    end
-
-    it "deletes sources that are dependent on deleted events" do
-      expect {
-        Visit::DestroyUnused.new.events!
-      }.to change { Visit::Source.count }.by(-1)
-    end
-
-    it "leaves alone events that aren't ignored" do
-      url_id = Visit::SourceValue.where(v: 'http://a.com')
-
-      expect {
-        Visit::DestroyUnused.new.events!
-      }.to change { Visit::Event.where(url_id: url_id).count }.by(0)
-    end
-
-    it "doesn't change SourceValue" do
-      expect {
-        Visit::DestroyUnused.new.events!
-      }.to change { Visit::SourceValue.count }.by(0)
-    end
-  end
-
   context "#sources!" do
     def create_unused_source
       s = Visit::Source.new
@@ -81,6 +47,40 @@ describe Visit::DestroyUnused do
     it "doesn't change SourceValue" do
       expect {
         Visit::DestroyUnused.new.sources!
+      }.to change { Visit::SourceValue.count }.by(0)
+    end
+  end
+
+  context "#events!" do
+    it "deletes events that are ignored" do
+      expect {
+        Visit::DestroyUnused.new.events!
+      }.to change { Visit::Event.count }.by(-1)
+    end
+
+    it "does nothing during a dry run" do
+      expect {
+        Visit::DestroyUnused.new(dry_run: true).events!
+      }.to change { Visit::Event.count }.by(0)
+    end
+
+    it "deletes sources that are dependent on deleted events" do
+      expect {
+        Visit::DestroyUnused.new.events!
+      }.to change { Visit::Source.count }.by(-1)
+    end
+
+    it "leaves alone events that aren't ignored" do
+      url_id = Visit::SourceValue.where(v: 'http://a.com')
+
+      expect {
+        Visit::DestroyUnused.new.events!
+      }.to change { Visit::Event.where(url_id: url_id).count }.by(0)
+    end
+
+    it "doesn't change SourceValue" do
+      expect {
+        Visit::DestroyUnused.new.events!
       }.to change { Visit::SourceValue.count }.by(0)
     end
   end
