@@ -142,9 +142,11 @@ If you then want to save space in your database:
     bundle exec rails console
     > Visit::DestroyUnused.new(dry_run: true).sources! { |sources| puts sources.map { |source| [source.key.v, source.value.v] } }
     > Visit::DestroyUnused.new(dry_run: true).events! { |events| puts events.map { |event| event.url } }
+    # oh, I want to keep a url that's ignored, because I created it via `create_visit_event`
+    > Visit::DestroyUnused.new(dry_run: true, keep_urls: [ %r{/api} ]).events! { |events| puts events.map { |event| event.url } }
     > Visit::DestroyUnused.new(dry_run: true).source_values! { |source_values| puts source_values.map { |sv| sv.v } }
     # ok, looks good, I'm now going to irrevocably delete!
-    > Visit::DestroyUnused.new.irrevocable!
+    > Visit::DestroyUnused.new(keep_urls: [ %r{/api} ]).irrevocable!
 
 Developing the gem
 ------------------

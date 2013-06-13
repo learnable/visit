@@ -64,6 +64,12 @@ describe Visit::DestroyUnused do
       }.to change { Visit::Event.count }.by(0)
     end
 
+    it "does nothing when events that would otherwise be deleted match :keep_urls" do
+      expect {
+        Visit::DestroyUnused.new(keep_urls: [ %r{/system/blah} ]).events!
+      }.to change { Visit::Event.count }.by(0)
+    end
+
     it "deletes sources that are dependent on deleted events" do
       expect {
         Visit::DestroyUnused.new.events!

@@ -2,6 +2,7 @@ module Visit
   class DestroyUnused
     def initialize(opts = {})
       @dry_run = opts[:dry_run]
+      @keep_urls = opts[:keep_urls]
     end
 
     def irrevocable!
@@ -22,7 +23,7 @@ module Visit
 
     def events!
       Event.includes(:visit_source_values_url).find_in_batches do |events|
-        ignorable_events  = events.select { |event| event.ignorable? }
+        ignorable_events = events.select { |event| !keep_url?(event) && event.ignorable? }
 
         if !dry_run?
           ids = ignorable_events.map(&:id)
@@ -74,6 +75,10 @@ module Visit
 
     def dry_run?
       @dry_run
+    end
+
+    def keep_url?(event)
+      @keep_urls && @keep_urls.any? { |re| event.url =~ re }
     end
 
     class CreateSourceValueRefererences < ActiveRecord::Migration
