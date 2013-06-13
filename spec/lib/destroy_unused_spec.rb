@@ -12,13 +12,19 @@ describe Visit::DestroyUnused do
   context "#events!" do
     it "deletes events that are ignored" do
       expect {
-        Visit::DestroyUnused.events!
+        Visit::DestroyUnused.new.events!
       }.to change { Visit::Event.count }.by(-1)
+    end
+
+    it "does nothing during a dry run" do
+      expect {
+        Visit::DestroyUnused.new(dry_run: true).events!
+      }.to change { Visit::Event.count }.by(0)
     end
 
     it "deletes sources that are dependent on deleted events" do
       expect {
-        Visit::DestroyUnused.events!
+        Visit::DestroyUnused.new.events!
       }.to change { Visit::Source.count }.by(-1)
     end
 
@@ -26,13 +32,13 @@ describe Visit::DestroyUnused do
       url_id = Visit::SourceValue.where(v: 'http://a.com')
 
       expect {
-        Visit::DestroyUnused.events!
+        Visit::DestroyUnused.new.events!
       }.to change { Visit::Event.where(url_id: url_id).count }.by(0)
     end
 
     it "doesn't change SourceValue" do
       expect {
-        Visit::DestroyUnused.events!
+        Visit::DestroyUnused.new.events!
       }.to change { Visit::SourceValue.count }.by(0)
     end
   end
@@ -54,21 +60,27 @@ describe Visit::DestroyUnused do
 
     it "deletes sources that aren't in Configurable.cookies_match" do
       expect {
-        Visit::DestroyUnused.sources!
+        Visit::DestroyUnused.new.sources!
       }.to change { Visit::Source.count }.by(-1)
+    end
+
+    it "does nothing during a dry run" do
+      expect {
+        Visit::DestroyUnused.new(dry_run: true).sources!
+      }.to change { Visit::Source.count }.by(0)
     end
 
     it "leaves alone sources that aren't ignored" do
       k_id = Visit::SourceValue.where(v: 'flip_fred')
 
       expect {
-        Visit::DestroyUnused.sources!
+        Visit::DestroyUnused.new.sources!
       }.to change { Visit::Source.where(k_id: k_id).count }.by(0)
     end
 
     it "doesn't change SourceValue" do
       expect {
-        Visit::DestroyUnused.sources!
+        Visit::DestroyUnused.new.sources!
       }.to change { Visit::SourceValue.count }.by(0)
     end
   end
@@ -85,15 +97,21 @@ describe Visit::DestroyUnused do
 
       it "deletes unused source_values" do
         expect {
-          Visit::DestroyUnused.source_values!
+          Visit::DestroyUnused.new.source_values!
         }.to change { Visit::SourceValue.count }.by(-1)
+      end
+
+      it "does nothing during a dry run" do
+        expect {
+          Visit::DestroyUnused.new(dry_run: true).source_values!
+        }.to change { Visit::SourceValue.count }.by(0)
       end
     end
 
     context "with unused source_values present" do
       it "does nothing" do
         expect {
-          Visit::DestroyUnused.source_values!
+          Visit::DestroyUnused.new.source_values!
         }.to change { Visit::SourceValue.count }.by(0)
       end
     end
