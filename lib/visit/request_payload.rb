@@ -37,7 +37,7 @@ module Visit
 
         filtered_cookies.each do |k,v|
           ret << k
-          ret << v
+          ret << non_nil_v(v)
         end
       end
     end
@@ -47,7 +47,7 @@ module Visit
         filtered_cookies.each do |k,v|
           ret << {
             k_id: SourceValue.get_id_from_optimistic_find_or_create_by_v(k),
-            v_id: SourceValue.get_id_from_optimistic_find_or_create_by_v(v)
+            v_id: SourceValue.get_id_from_optimistic_find_or_create_by_v(non_nil_v(v))
           }
         end
       end
@@ -57,6 +57,10 @@ module Visit
 
     def filtered_cookies
       self.class.cookie_filter(self[:cookies])
+    end
+
+    def non_nil_v(v)
+      v.to_s
     end
   end
 end

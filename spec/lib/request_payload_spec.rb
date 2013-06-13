@@ -1,7 +1,12 @@
 require 'spec_helper'
 
 describe Visit::RequestPayload do
-  let (:request_payload_hash) { new_request_payload_hash }
+  let (:request_payload_hash) {
+    request_payload_hash = new_request_payload_hash
+    request_payload_hash[:cookies]["flip_blah"] = nil
+    request_payload_hash
+
+  }
   subject { Visit::RequestPayload.new request_payload_hash }
 
   it "can be constructed, given a hash with symbol as keys" do
@@ -14,13 +19,15 @@ describe Visit::RequestPayload do
   end
 
   it "#to_values should return all the values" do
-    subject.to_values.should == [ "https://earl.io?utm_campaign=qqq", "mozilla", "http://blah.com", "a", "b" ]
+    subject.to_values.should == [ "https://earl.io?utm_campaign=qqq", "mozilla", "http://blah.com", "a", "b", "flip_blah", "" ]
   end
 
   it "#to_pairs should return the cookies" do
-    subject.to_pairs.should have(1).item
+    subject.to_pairs.should have(2).item
     subject.to_pairs.first[:k_id].should == Visit::SourceValue.where(v: :a).first.id
     subject.to_pairs.first[:v_id].should == Visit::SourceValue.where(v: :b).first.id
+    subject.to_pairs.second[:k_id].should == Visit::SourceValue.where(v: :flip_blah).first.id
+    subject.to_pairs.second[:v_id].should == Visit::SourceValue.where(v: "").first.id
   end
 
 end
