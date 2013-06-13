@@ -72,6 +72,33 @@ describe Visit::DestroyUnused do
       }.to change { Visit::SourceValue.count }.by(0)
     end
   end
+
+  context "#sources_values!" do
+    def create_unused_source_value
+      sv = Visit::SourceValue.new
+      sv.v = "xxx"
+      sv.save!
+    end
+
+    context "with unused source_values present" do
+      before { create_unused_source_value }
+
+      it "deletes unused source_values" do
+        expect {
+          Visit::DestroyUnused.source_values!
+        }.to change { Visit::SourceValue.count }.by(-1)
+      end
+    end
+
+    context "with unused source_values present" do
+      it "does nothing" do
+        expect {
+          Visit::DestroyUnused.source_values!
+        }.to change { Visit::SourceValue.count }.by(0)
+      end
+    end
+  end
 end
+
 
 
