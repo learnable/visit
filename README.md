@@ -20,6 +20,10 @@ To customise, create a config/initializers/visit.rb, eg:
 
       c.bulk_insert_batch_size = 100 # cache requests in redis and bulk insert when cache size == 100
 
+      c.cookies_match = [
+        /flip_.*/, # save cookies set via the flip gem
+      ]
+
       c.create = ->(request_payload_hashes) do
         # write to the db in a worker (don't slow down the Rails request cycle)
         # It's advised to implement this as some kind of async worker when using
@@ -127,6 +131,27 @@ If you serve http requests via a non-Rails app (eg PHP), you can:
 * shove all requests into redis, and
 * in a Rails worker, take the request from redis and pass it to <code>Onboarder.accept_unless_ignorable</code>.
 
+Deleting unused rows
+--------------------
+There are a number of ways you can be storing data you don't need:
+* you don't set Configurable.ignorable,
+* after using the gem for a while you narrow the set of cookies you're interested in via Configurable.cookies_match
+
+If you then want to save space in your database:
+
+    bundle exec rails console
+    > Visit::DestroyUnused.new(dry_run: true).sources! do |sources|
+        puts sources.to_yaml
+      end
+    > Visit::DestroyUnused.new(dry_run: true).events! do |events|
+        puts events.to_yaml
+      end
+    > Visit::DestroyUnused.new(dry_run: true).source_values! do |source_values|
+        puts source_values.to_yaml
+      end
+    # ok, I'm now going to irrevocably delete now
+    > Visit::DestroyUnused.new.irrevocable!
+
 Developing the gem
 ------------------
     git clone git@github.com:learnable/visit.git
@@ -177,23 +202,23 @@ This sql query creates a database view for that purpose.
       user_agent_vsv.v as user_agent,
       visit_events.created_at as created_at
     FROM visit_events
-    
+
     INNER JOIN visit_source_values url_vsv
       ON visit_events.url_id = url_vsv.id
-    
+
     INNER JOIN visit_source_values user_agent_vsv
       ON visit_events.user_agent_id = user_agent_vsv.id
-    
+
     LEFT OUTER JOIN visit_traits label_vt
       ON visit_events.id = label_vt.visit_event_id AND label_vt.k_id = (select id from visit_trait_values where v = 'label')
     LEFT OUTER JOIN visit_trait_values label_vtv
       ON label_vtv.id = label_vt.v_id
-    
+
     LEFT OUTER JOIN visit_traits capture1_vt
       ON visit_events.id = capture1_vt.visit_event_id AND capture1_vt.k_id = (select id from visit_trait_values where v = 'capture1')
     LEFT OUTER JOIN visit_trait_values capture1_vtv
       ON capture1_vtv.id = capture1_vt.v_id
-    
+
     LEFT OUTER JOIN visit_traits capture2_vt
       ON visit_events.id = capture2_vt.visit_event_id AND capture2_vt.k_id = (select id from visit_trait_values where v = 'capture2')
     LEFT OUTER JOIN visit_trait_values capture2_vtv
