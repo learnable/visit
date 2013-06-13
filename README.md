@@ -140,9 +140,9 @@ There are a number of ways you can be storing data you don't need:
 If you then want to save space in your database:
 
     bundle exec rails console
-    > Visit::DestroyUnused.new(dry_run: true).sources! { |sources| puts sources.to_yaml }
-    > Visit::DestroyUnused.new(dry_run: true).events! { |events| puts events.to_yaml }
-    > Visit::DestroyUnused.new(dry_run: true).source_values! { |source_values| puts source_values.to_yaml }
+    > Visit::DestroyUnused.new(dry_run: true).sources! { |sources| puts sources.map { |source| [source.key.v, source.value.v] } }
+    > Visit::DestroyUnused.new(dry_run: true).events! { |events| puts events.map { |event| event.url } }
+    > Visit::DestroyUnused.new(dry_run: true).source_values! { |source_values| puts source_values.map { |sv| sv.v } }
     # ok, looks good, I'm now going to irrevocably delete!
     > Visit::DestroyUnused.new.irrevocable!
 
