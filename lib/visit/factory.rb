@@ -1,5 +1,10 @@
+require 'visit/has_temporary_cache'
+
 module Visit
   class Factory
+
+    include Visit::HasTemporaryCache
+
     def self.delete_traits
       Visit::Trait.delete_all
       Visit::TraitValue.delete_all
@@ -18,7 +23,7 @@ module Visit
     end
 
     def run(request_payload_hashes)
-      cache_setup
+      temporary_cache_setup
 
       boxes = request_payload_hashes.map do |rph|
         Box.new RequestPayload.new(rph)
@@ -40,7 +45,7 @@ module Visit
 
       create_traits boxes
 
-      cache_restore_original
+      temporary_cache_teardown
     end
 
     private
@@ -54,21 +59,6 @@ module Visit
       collect.bulk_insert!
     end
 
-    def cache_setup
-      if Configurable.cache.instance_of? Visit::Cache::Null
-        @original_cache = Configurable.cache
-        Configurable.cache = Visit::Cache::Memory.new
-      else
-        @original_cache = nil
-      end
-    end
-
-    def cache_restore_original
-      if !@original_cache.nil?
-        Configurable.cache = @original_cache
-        @original_cache = nil
-      end
-    end
   end
 
   class Box < Struct.new(:request_payload, :event, :traits)
