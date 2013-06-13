@@ -1,5 +1,10 @@
+require 'visit/has_temporary_cache'
+
 module Visit
   class DestroyUnused
+
+    include Visit::HasTemporaryCache
+
     def initialize(opts = {})
       @dry_run = opts[:dry_run]
       @keep_urls = opts[:keep_urls]
@@ -22,6 +27,8 @@ module Visit
     end
 
     def events!
+      temporary_cache_setup
+
       Event.includes(:visit_source_values_url).find_in_batches do |events|
         ignorable_events = events.select { |event| !keep_url?(event) && event.ignorable? }
 
@@ -34,6 +41,8 @@ module Visit
 
         yield ignorable_events if block_given?
       end
+
+      temporary_cache_teardown
     end
 
     def source_values!
