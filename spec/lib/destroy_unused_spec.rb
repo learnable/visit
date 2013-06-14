@@ -19,7 +19,7 @@ describe Visit::DestroyUnused do
     it "deletes sources that are dependent on deleted events" do
       expect {
         Visit::DestroyUnused.events!
-      }.to change { Visit::Source.count }.by(-2)
+      }.to change { Visit::Source.count }.by(-1)
     end
 
     it "leaves alone events that aren't ignored" do
@@ -38,15 +38,24 @@ describe Visit::DestroyUnused do
   end
 
   context "#sources!" do
+    def create_unused_source
+      s = Visit::Source.new
+      s.k_id = Visit::SourceValue.first.id
+      s.v_id = Visit::SourceValue.first.id
+      s.visit_event_id = Visit::Event.first.id
+      s.save!
+    end
+
     before do
       h1 = new_request_payload_hash cookies: { "flip_fred" => "blah" }
       Visit::Factory.new.run [ h1 ]
+      create_unused_source
     end
 
     it "deletes sources that aren't in Configurable.cookies_match" do
       expect {
         Visit::DestroyUnused.sources!
-      }.to change { Visit::Source.count }.by(-6)
+      }.to change { Visit::Source.count }.by(-1)
     end
 
     it "leaves alone sources that aren't ignored" do

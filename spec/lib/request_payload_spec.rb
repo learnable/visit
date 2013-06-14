@@ -18,11 +18,9 @@ describe Visit::RequestPayload do
   end
 
   it "#to_pairs should return the cookies" do
-    subject.to_pairs.should have(2).items
+    subject.to_pairs.should have(1).item
     subject.to_pairs.first[:k_id].should == Visit::SourceValue.where(v: :a).first.id
     subject.to_pairs.first[:v_id].should == Visit::SourceValue.where(v: :b).first.id
-    subject.to_pairs.second[:k_id].should == Visit::SourceValue.where(v: :c).first.id
-    subject.to_pairs.second[:v_id].should == Visit::SourceValue.where(v: :d).first.id
   end
 
 end

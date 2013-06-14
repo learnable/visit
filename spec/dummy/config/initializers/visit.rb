@@ -11,6 +11,11 @@ module Visit
       /\/system\/blah/,
     ]
 
+    c.cookies_match = [
+      /^a$/,
+      /^flip_/
+    ]
+
     c.redis = $redis
   end
 end
