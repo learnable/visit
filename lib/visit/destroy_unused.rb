@@ -77,7 +77,7 @@ module Visit
     def source_value_ids(events)
       {}.tap do |h|
         events.each do |event|
-          if !(dry_run? && ignorable_event?(event))
+          if !dry_run? || !ignorable_event?(event)
             event.source_value_ids.each { |id| h[id] = true }
           end
         end
