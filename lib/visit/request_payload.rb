@@ -3,6 +3,12 @@ require 'visit/has_ignorable_path'
 module Visit
   class RequestPayload < Struct.new(:http_method, :url, :token, :user_id, :user_agent, :referer, :remote_ip, :cookies, :created_at)
 
+    def self.cookie_filter(cookies)
+      cookies.select do |k,v|
+        Configurable.cookies_match.any? { |re| k =~ re }
+      end
+    end
+
     include Visit::HasIgnorablePath
 
     def initialize(h = {})
@@ -38,7 +44,7 @@ module Visit
 
     def to_pairs
       [].tap do |ret|
-        self[:cookies].each do |k,v|
+        self.class.cookie_filter(self[:cookies]).each do |k,v|
           ret << {
             k_id: SourceValue.get_id_from_optimistic_find_or_create_by_v(k),
             v_id: SourceValue.get_id_from_optimistic_find_or_create_by_v(v)

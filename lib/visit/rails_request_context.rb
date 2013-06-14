@@ -5,12 +5,6 @@ module Visit
       cookies["token"] || session[:token]
     end
 
-    def self.cookie_filter(cookies)
-      cookies.select do |k,v|
-        Configurable.cookies_match.any? { |re| k =~ re }
-      end
-    end
-
     def get_path
       path || request.path
     end
@@ -36,7 +30,7 @@ module Visit
         h[:user_agent]  = request.env["HTTP_USER_AGENT"]
         h[:referer]     = request.referer
         h[:remote_ip]   = request.remote_ip
-        h[:cookies]     = self.class.cookie_filter(cookies)
+        h[:cookies]     = RequestPayload.cookie_filter(cookies)
         h[:created_at]  = Time.now
       end
     end
