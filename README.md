@@ -45,8 +45,13 @@ To customise, create a config/initializers/visit.rb, eg:
       end
 
       c.labels_match_first = [
-          [ :get, /^\/contact/, :contact_prompt ]
+          [ :get, %r{^/contact}, :contact_prompt ]
         ]
+
+      # urls containing ?invite=blah generate a trait: { :invite => :blah }
+      c.labels_match_all = c.labels_match_all.push *[
+        [ :get, %r{[?&]invite=(\w+)}, :invite ]
+      ]
 
       # our app uses Airbrake for exception handling
       c.notify = ->(e) { Airbrake.notify e } unless Rails.env.development?
@@ -146,6 +151,17 @@ If you then want to save space in your database:
     > Visit::DestroyUnused.new(dry_run: true).source_values! { |source_values| puts source_values.map { |sv| sv.v } }
     # ok, looks good, I'm now going to irrevocably delete!
     > Visit::DestroyUnused.new(keep_urls: [ %r{/api} ]).irrevocable!
+
+Flushing Configurable.cache
+---------------------------
+
+    bundle exec rails console
+    > Visit::Configurable.cache.has_key? Visit::Cache::Key.new("visit::traitvalue.find_by_v.id", "label")
+    true
+    > Visit::Configurable.cache.clear
+    [true]
+    > Visit::Configurable.cache.has_key? Visit::Cache::Key.new("visit::traitvalue.find_by_v.id", "label")
+    false
 
 Developing the gem
 ------------------
