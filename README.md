@@ -48,9 +48,8 @@ To customise, create a config/initializers/visit.rb, eg:
           [ :get, /^\/contact/, :contact_prompt ]
         ]
 
-      c.notify = ->(e) do
-        Airbrake.notify e # our app uses Airbrake for exception handling
-      end
+      # our app uses Airbrake for exception handling
+      c.notify = ->(e) { Airbrake.notify e } unless Rails.env.development?
 
       # lighten the load on the db (far fewer SELECTs)
       c.cache = Visit::Cache::Dalli.new \
