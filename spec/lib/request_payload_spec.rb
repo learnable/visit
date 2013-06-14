@@ -5,7 +5,6 @@ describe Visit::RequestPayload do
     request_payload_hash = new_request_payload_hash
     request_payload_hash[:cookies]["flip_blah"] = nil
     request_payload_hash
-
   }
   subject { Visit::RequestPayload.new request_payload_hash }
 
@@ -19,7 +18,7 @@ describe Visit::RequestPayload do
   end
 
   it "#to_values should return all the values" do
-    subject.to_values.should == [ "https://earl.io?utm_campaign=qqq", "mozilla", "http://blah.com", "a", "b", "flip_blah", "" ]
+    subject.to_values.sort.should == [ "https://earl.io?utm_campaign=qqq", "mozilla", "http://blah.com", "a", "b", "flip_blah", "" ].sort
   end
 
   it "#to_pairs should return the cookies" do
@@ -28,6 +27,19 @@ describe Visit::RequestPayload do
     subject.to_pairs.first[:v_id].should == Visit::SourceValue.where(v: :b).first.id
     subject.to_pairs.second[:k_id].should == Visit::SourceValue.where(v: :flip_blah).first.id
     subject.to_pairs.second[:v_id].should == Visit::SourceValue.where(v: "").first.id
+  end
+
+  context "when referer is nil" do
+    let (:request_payload_hash) {
+      request_payload_hash = new_request_payload_hash
+      request_payload_hash[:referer] = nil
+      request_payload_hash
+    }
+    subject { Visit::RequestPayload.new request_payload_hash }
+
+    it "#to_values handles it by mapping nil to ''" do
+      subject.to_values.sort.should == [ "https://earl.io?utm_campaign=qqq", "mozilla", "a", "b", "" ].sort
+    end
   end
 
 end

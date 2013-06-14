@@ -32,7 +32,7 @@ module Visit
     def to_values
       [].tap do |ret|
         [:url, :user_agent, :referer].each do |k|
-          ret << self[k]
+          ret << non_nil_v(self[k])
         end
 
         filtered_cookies.each do |k,v|
