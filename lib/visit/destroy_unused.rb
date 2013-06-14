@@ -30,7 +30,7 @@ module Visit
       temporary_cache_setup
 
       Event.includes(:visit_source_values_url).find_in_batches do |events|
-        ignorable_events = events.select { |event| !keep_url?(event) && event.ignorable? }
+        ignorable_events = events.select { |event| ignorable_event?(event) }
 
         if !dry_run?
           ids = ignorable_events.map(&:id)
@@ -77,7 +77,9 @@ module Visit
     def source_value_ids(events)
       {}.tap do |h|
         events.each do |event|
-          event.source_value_ids.each { |id| h[id] = true }
+          if !(dry_run? && ignorable_event?(event))
+            event.source_value_ids.each { |id| h[id] = true }
+          end
         end
       end.keys
     end
@@ -88,6 +90,10 @@ module Visit
 
     def keep_url?(event)
       @keep_urls && @keep_urls.any? { |re| event.url =~ re }
+    end
+
+    def ignorable_event?(event)
+      !keep_url?(event) && event.ignorable?
     end
 
     class CreateSourceValueRefererences < ActiveRecord::Migration
