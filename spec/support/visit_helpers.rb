@@ -40,4 +40,6 @@ def delete_all_visits
   Visit::SourceValue.delete_all
   Visit::Trait.delete_all
   Visit::TraitValue.delete_all
+
+  Visit::SerializedList.new.clear
 end
