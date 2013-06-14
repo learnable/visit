@@ -21,7 +21,7 @@ To customise, create a config/initializers/visit.rb, eg:
       c.bulk_insert_batch_size = 100 # cache requests in redis and bulk insert when cache size == 100
 
       c.cookies_match = [
-        /flip_.*/, # save cookies set via the flip gem
+        /^flip_/, # save cookies set via the flip gem
       ]
 
       c.create = ->(request_payload_hashes) do
@@ -131,11 +131,11 @@ If you serve http requests via a non-Rails app (eg PHP), you can:
 * shove all requests into redis, and
 * in a Rails worker, take the request from redis and pass it to <code>Onboarder.accept_unless_ignorable</code>.
 
-Deleting unused rows
---------------------
+Destroying unused rows
+----------------------
 There are a number of ways you can be storing data you don't need:
 * you don't set Configurable.ignorable,
-* after using the gem for a while you narrow the set of cookies you're interested in (`Configurable.cookies_match`)
+* you narrow the set of cookies you're interested in (`Configurable.cookies_match`)
 
 If you then want to save space in your database:
 
