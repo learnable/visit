@@ -9,7 +9,7 @@ module Visit
       #
       unless request.ignorable?
         begin
-          list = SerializedList.new("request_payload_hashes")
+          list = SerializedList.new
 
           list_length = list.pipelined_append_and_return_length request.to_h
 

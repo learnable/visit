@@ -1,7 +1,7 @@
 module Visit
   class SerializedList
 
-    def initialize(key_suffix)
+    def initialize(key_suffix = "request_payload_hashes")
       @key = "visit:#{Rails.application.class.parent_name}:#{key_suffix}"
     end
 
