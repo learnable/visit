@@ -8,6 +8,10 @@ module Visit
         h.merge! get_match_first(event, path)
         h.merge! get_match_all(event, path).inject(&:merge)
         h.merge! get_user_agent_robot(event)
+
+        h.each do |k,v|
+          h[k] = non_nil_v(v)
+        end
       end
     end
 
@@ -35,5 +39,10 @@ module Visit
         end
       end
     end
+
+    def non_nil_v(v)
+      v.to_s
+    end
+
   end
 end

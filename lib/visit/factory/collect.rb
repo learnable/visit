@@ -46,8 +46,6 @@ module Visit
       protected
 
       def candidate_for_import(value, created_at)
-        value = "" if value.nil?
-
         if should_import?(value)
           @to_import.fetch(cache_key(value)) do
             { value: value, created_at: created_at }

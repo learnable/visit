@@ -16,6 +16,11 @@ module Visit
       /^flip_/
     ]
 
+    c.labels_match_all = c.labels_match_all.push *[
+      [ :get, %r{[?&]invite=(\w+)},    :invite        ],
+      [ :get, %r{[?&]trait_no_value}, :trait_no_value ],
+    ]
+
     c.redis = $redis
   end
 end
