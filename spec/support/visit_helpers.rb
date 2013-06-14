@@ -16,6 +16,7 @@ end
 
 def start_with_visits(a)
   delete_all_visits
+  Visit::SerializedList.new.clear
   run_requests_through_factory a
 end
 
