@@ -5,29 +5,29 @@ describe Visit::SerializedList::Redis do
 
   before { list.clear }
 
-  it "allows append and retrieval of serialized data" do
-    list.append({a: 1})
+  it "allows push and retrieval of serialized data" do
+    list.push({a: 1})
 
     expect(list.values).to eq([{a: 1}])
   end
 
-  it "appends list data to a list" do
-    list.append({a: 1})
-    list.append({b: 2})
+  it "pushs list data to a list" do
+    list.push({a: 1})
+    list.push({b: 2})
 
     expect(list.values).to eq([{a: 1}, {b: 2}])
   end
 
   it "has a length" do
-    list.append({a: 1})
+    list.push({a: 1})
     expect(list.length).to eq(1)
 
-    list.append({b: 2})
+    list.push({b: 2})
     expect(list.length).to eq(2)
   end
 
   it "can be cleared" do
-    list.append({a: 1})
+    list.push({a: 1})
     expect(list.length).to eq(1)
 
     list.clear
@@ -36,11 +36,11 @@ describe Visit::SerializedList::Redis do
     expect(list.length).to eq(0)
   end
 
-  it "has a pipelined append+length operation" do
-    length = list.pipelined_append_and_return_length({a: 1})
+  it "has a pipelined push+length operation" do
+    length = list.pipelined_push_and_return_length({a: 1})
     expect(length).to eq(1)
 
-    length = list.pipelined_append_and_return_length({b: 2})
+    length = list.pipelined_push_and_return_length({b: 2})
     expect(length).to eq(2)
   end
 end
