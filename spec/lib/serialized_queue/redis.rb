@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Visit::SerializedList do
+describe Visit::SerializedList::Redis do
   let(:list) { Visit::SerializedList.new('test:serialized_list') }
 
   before { list.clear }

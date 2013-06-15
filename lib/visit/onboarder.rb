@@ -9,14 +9,14 @@ module Visit
       #
       unless request.ignorable?
         begin
-          list = SerializedList.new
+          queue = SerializedQueue::Redis.new
 
-          list_length = list.pipelined_append_and_return_length request.to_h
+          queue_length = queue.pipelined_append_and_return_length request.to_h
 
-          if list_length >= Configurable.bulk_insert_batch_size
-            Configurable.create.call list.values
+          if queue_length >= Configurable.bulk_insert_batch_size
+            Configurable.create.call queue.values
 
-            list.clear
+            queue.clear
           end
         rescue => e
           Configurable.notify.call e

@@ -13,7 +13,7 @@ Dir[File.join(File.dirname(__FILE__), 'visit', '*.rb')].each do |file|
   require file unless (file =~ /engine/)
 end
 
-%w( cache factory flow query ).each do |subdir|
+%w( cache factory flow query serialized_queue ).each do |subdir|
   Dir[File.join(File.dirname(__FILE__), 'visit', subdir, '*.rb')].each do |file|
     require file
   end

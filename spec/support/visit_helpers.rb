@@ -16,7 +16,6 @@ end
 
 def start_with_visits(a)
   delete_all_visits
-  Visit::SerializedList.new.clear
   run_requests_through_factory a
 end
 
@@ -41,5 +40,5 @@ def delete_all_visits
   Visit::Trait.delete_all
   Visit::TraitValue.delete_all
 
-  Visit::SerializedList.new.clear
+  Visit::SerializedQueue::Redis.new.clear
 end

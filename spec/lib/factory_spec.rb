@@ -3,7 +3,6 @@ require 'spec_helper'
 describe Visit::Factory do
   before do
     delete_all_visits
-    Visit::SerializedList.new.clear
   end
 
   context "events that have labels" do
