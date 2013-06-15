@@ -14,9 +14,9 @@ module Visit
           queue_length = queue.pipelined_push_and_return_length request.to_h
 
           if queue_length >= Configurable.bulk_insert_batch_size
-            Configurable.create.call queue.values
+            values = queue.pipelined_pop_and_clear(Configurable.bulk_insert_batch_size)
 
-            queue.clear
+            Configurable.create.call values
           end
         rescue => e
           Configurable.notify.call e
