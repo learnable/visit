@@ -2,7 +2,9 @@ module Visit
   class SerializedQueue
     class Redis
 
-      def initialize(key_suffix = "request_payload_hashes")
+      def initialize(redis, key_suffix = "request_payload_hashes")
+        raise "redis must be set" if redis.nil?
+        @redis = redis
         @key = "visit:#{Rails.application.class.parent_name}:#{key_suffix}"
       end
 
@@ -55,12 +57,9 @@ module Visit
       private
 
       def redis
-        if Visit::Configurable.redis.nil?
-          raise "Visit::Connfigurable.redis is not set, please configure it"
-        else
-          Visit::Configurable.redis
-        end
+        @redis
       end
+
     end
   end
 end
