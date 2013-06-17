@@ -6,16 +6,12 @@ module Visit
         @key = "visit:#{Rails.application.class.parent_name}:#{key_suffix}"
       end
 
-      def push(data)
+      def rpush(data)
         redis.rpush(@key, data.to_yaml)
       end
 
-      def pop
+      def lpop
         redis.lpop @key
-      end
-
-      def values
-        redis.lrange(@key, 0, -1).map { |data| YAML.load(data) }
       end
 
       def length
@@ -26,11 +22,11 @@ module Visit
         redis.del(@key)
       end
 
-      def pipelined_push_and_return_length data
+      def pipelined_rpush_and_return_length(data)
         redis_future_for_length = nil
 
         redis.pipelined do
-          push data
+          rpush data
 
           redis_future_for_length = length
         end
@@ -38,12 +34,12 @@ module Visit
         redis_future_for_length.value
       end
 
-      def pipelined_pop_and_clear(max)
+      def pipelined_lpop_and_clear(max)
         redis_future_values = []
 
         redis.pipelined do
           for count in (1..max) do
-            redis_future_values.push pop
+            redis_future_values.push lpop
           end
         end
 

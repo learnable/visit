@@ -11,10 +11,10 @@ module Visit
         begin
           queue = SerializedQueue::Redis.new
 
-          queue_length = queue.pipelined_push_and_return_length request.to_h
+          queue_length = queue.pipelined_rpush_and_return_length request.to_h
 
           if queue_length >= Configurable.bulk_insert_batch_size
-            values = queue.pipelined_pop_and_clear(Configurable.bulk_insert_batch_size)
+            values = queue.pipelined_lpop_and_clear(Configurable.bulk_insert_batch_size)
 
             Configurable.create.call values
           end
