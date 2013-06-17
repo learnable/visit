@@ -20,7 +20,5 @@ module Visit
       [ :get, %r{[?&]invite=(\w+)},    :invite        ],
       [ :get, %r{[?&]trait_no_value}, :trait_no_value ],
     ]
-
-    c.redis = $redis
   end
 end

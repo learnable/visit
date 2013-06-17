@@ -9,7 +9,7 @@ module Visit
       #
       unless request.ignorable?
         begin
-          queue = SerializedQueue::Redis.new
+          queue = Configurable.new_serialized_queue.call
 
           queue_length = queue.pipelined_rpush_and_return_length request.to_h
 
