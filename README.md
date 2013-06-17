@@ -18,7 +18,7 @@ To customise, create a config/initializers/visit.rb, eg:
 
     Visit::Configurable.configure do |c|
 
-      c.bulk_insert_batch_size = 100 # cache requests in redis and bulk insert when cache size == 100
+      c.bulk_insert_batch_size = 100 # cache requests in a SerializedQueue (see below)
 
       c.cookies_match = [
         /^flip_/, # save cookies set via the flip gem
@@ -52,6 +52,13 @@ To customise, create a config/initializers/visit.rb, eg:
       c.labels_match_all = c.labels_match_all.push *[
         [ :get, %r{[?&]invite=(\w+)}, :invite ]
       ]
+
+      # If you set bulk_insert_batch_size > 1, you need a persistent SerializedQueue:
+      # - in your app, add 'redis' to your Gemfile
+      # - in your app, configure redis in config/initializers/redis.rb: $redis = Redis.connect(url: Settings.redis.url)
+
+      require 'redis'
+      c.new_serialized_queue = ->() { Visit::SerializedQueue::Redis.new($redis) }
 
       # our app uses Airbrake for exception handling
       c.notify = ->(e) { Airbrake.notify e } unless Rails.env.development?
@@ -243,7 +250,3 @@ MAJOR
 
 MODERATE
 * implement archiving - zip up everying over 3 months old and send to S3?
-
-MINOR
-* refactoring: SerializedList should become SerializedList::Redis
-  (with 'require' in the initializer) with the gem defaulting to a new class: SerializedList::Memory

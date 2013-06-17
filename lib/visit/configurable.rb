@@ -4,7 +4,7 @@ module Visit
       attr_accessor :bulk_insert_batch_size, :cache, :create, :cookies_match,
         :case_insensitive_string_comparison, :current_user_id, :ignorable,
         :is_token_cookie_set_in, :labels_match_all, :labels_match_first,
-        :notify, :redis, :user_agent_robots
+        :new_serialized_queue, :notify, :user_agent_robots
 
       def bulk_insert_batch_size
         @bulk_insert_batch_size ||= 1
@@ -87,15 +87,18 @@ module Visit
         @labels_match_first ||= []
       end
 
+      def new_serialized_queue
+        @new_serialized_queue ||= ->() do
+          # Visit::SerializedQueue::Redis.new($redis)
+          Visit::SerializedQueue::Memory.new
+        end
+      end
+
       def notify
         @notify ||= ->(e) do
           Rails.logger.error "ERROR IN VISIT GEM: #{e.to_s}\nBACKTRACE: #{e.backtrace}"
           $stderr.puts "ERROR IN VISIT GEM: #{e.to_s}\nBACKTRACE: #{e.backtrace}"
         end
-      end
-
-      def redis
-        @redis ||= nil
       end
 
       def user_agent_robots
