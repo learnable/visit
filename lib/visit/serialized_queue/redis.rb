@@ -11,7 +11,7 @@ module Visit
       end
 
       def lpop
-        redis.lpop @key
+        YAML.load(redis.lpop(@key))
       end
 
       def length
@@ -39,7 +39,7 @@ module Visit
 
         redis.pipelined do
           for count in (1..max) do
-            redis_future_values.push lpop
+            redis_future_values.push redis.lpop(@key)
           end
         end
 
