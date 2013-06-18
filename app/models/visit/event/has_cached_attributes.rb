@@ -1,5 +1,13 @@
 module Visit
   module Event::HasCachedAttributes
+    extend ActiveSupport::Concern
+
+    module ClassMethods
+      def cache_key_for_id(id)
+        Cache::Key.new "Event.find", id
+      end
+    end
+
     def url
       fetch_from_cache(url_id) do
         nil_or_value visit_source_values_url
@@ -21,9 +29,7 @@ module Visit
     private
 
     def fetch_from_cache(id)
-      key = Cache::Key.new "SourceValue.find", id
-
-      Configurable.cache.fetch(key) do
+      Configurable.cache.fetch(self.class.cache_key_for_id(id)) do
         yield
       end
     end
