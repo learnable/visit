@@ -2,7 +2,6 @@ require 'visit/has_temporary_cache'
 
 module Visit
   class Factory
-
     include Visit::HasTemporaryCache
 
     def self.delete_traits
