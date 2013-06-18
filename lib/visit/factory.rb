@@ -23,6 +23,7 @@ module Visit
 
     def run(request_payload_hashes)
       # Manage.log "AMHERE: Factory.run: request_payload_hashes: #{request_payload_hashes}"
+
       temporary_cache_setup
 
       boxes = request_payload_hashes.map do |rph|
