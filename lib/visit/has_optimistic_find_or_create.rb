@@ -3,7 +3,7 @@ module Visit
     def get_id_from_optimistic_find_or_create_by_v(v)
       raise "unexpected v.nil?" if v.nil?
 
-      Configurable.cache.fetch(cache_key(v)) do
+      Configurable.cache.fetch(cache_key_for_v(v)) do
         optimistic_find_or_create_by_v(v).id
       end
     end
@@ -13,7 +13,7 @@ module Visit
 
       id = nil
 
-      k = cache_key(v)
+      k = cache_key_for_v(v)
 
       id = Configurable.cache.fetch(k) do
         row = self.where(v: v).first
@@ -28,8 +28,10 @@ module Visit
       id
     end
 
-    def cache_key(v)
-      Cache::Key.new cache_key_prefix, v
+    def cache_key_for_v(v)
+      @cache_key_for_v_prefix ||= "#{self.to_s}.find_by_v.id"
+
+      Cache::Key.new @cache_key_for_v_prefix, v
     end
 
     private
@@ -44,8 +46,5 @@ module Visit
       end
     end
 
-    def cache_key_prefix
-      @cache_key_prefix ||= "#{self.to_s}.find_by_v.id"
-    end
   end
 end
