@@ -48,11 +48,8 @@ module Visit
       end
 
       def destroy_values(model_class_value, id_duplicates)
-        model_class_value.
-          where(id: id_duplicates).
-          destroy_all
+        model_class_value.delete_all(id: id_duplicates)
       end
-
     end
   end
 end
