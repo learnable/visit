@@ -10,20 +10,19 @@ module Visit
 
     def get_id_from_find_by_v(v)
       raise "unexpected v.nil?" if v.nil?
+
       id = nil
 
       k = cache_key(v)
 
-      if Configurable.cache.has_key? k
-        id = Configurable.cache.fetch(k)
-      else
+      id = Configurable.cache.fetch(k) do
         row = self.where(v: v).first
 
-        if !row.nil?
-          id = Configurable.cache.fetch(k) do
-            row.id
-          end
-        end
+        row.nil? ? nil : row.id
+      end
+
+      if id.nil? && Configurable.cache.has_key?(k)
+        Configurable.cache.delete(k)
       end
 
       id
