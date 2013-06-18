@@ -5,6 +5,10 @@ module Visit
         super cache
       end
 
+      def delete(key)
+        cache.delete key
+      end
+
       def has_key?(key)
         raise_if_not_key(key)
 

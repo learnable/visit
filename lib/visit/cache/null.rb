@@ -5,6 +5,9 @@ module Visit
         super
       end
 
+      def delete(key)
+      end
+
       def has_key?(key)
         raise_if_not_key(key)
 

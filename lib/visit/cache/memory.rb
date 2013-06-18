@@ -5,6 +5,10 @@ module Visit
         @cache = {}
       end
 
+      def delete(key)
+        cache.delete key.to_s
+      end
+
       def has_key?(key)
         raise_if_not_key(key)
 
