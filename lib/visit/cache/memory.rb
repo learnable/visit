@@ -10,9 +10,9 @@ module Visit
       end
 
       def has_key?(key)
-        raise_if_not_key(key)
+        raise_if_not_key key
 
-        @cache.has_key?(key.to_s)
+        @cache.has_key? key.to_s
       end
 
       def fetch(key, options = {})
@@ -22,7 +22,7 @@ module Visit
 
         is_hit = true
 
-        if !has_key?(key)
+        if !has_key? key
           is_hit = false
 
           @cache[k] = yield

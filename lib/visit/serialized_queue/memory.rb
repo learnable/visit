@@ -23,7 +23,7 @@ module Visit
       end
 
       def pipelined_rpush_and_return_length(data)
-        rpush(data)
+        rpush data
         length
       end
 

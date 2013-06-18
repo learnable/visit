@@ -9,19 +9,19 @@ module Visit
       end
 
       def rpush(data)
-        redis.rpush(@key, data.to_yaml)
+        redis.rpush @key, data.to_yaml
       end
 
       def lpop
-        YAML.load(redis.lpop(@key))
+        YAML.load redis.lpop(@key)
       end
 
       def length
-        redis.llen(@key)
+        redis.llen @key
       end
 
       def clear
-        redis.del(@key)
+        redis.del @key
       end
 
       def pipelined_rpush_and_return_length(data)

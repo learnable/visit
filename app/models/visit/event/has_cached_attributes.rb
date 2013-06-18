@@ -21,7 +21,7 @@ module Visit
     private
 
     def fetch_from_cache(id)
-      key = Cache::Key.new("SourceValue.find", id)
+      key = Cache::Key.new "SourceValue.find", id
 
       Configurable.cache.fetch(key) do
         yield

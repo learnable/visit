@@ -28,7 +28,8 @@ module Visit
 
     class Collect::Values < Collect
       def initialize(model, boxes)
-        super(model, boxes)
+        super model, boxes
+
         @to_import = Cache::Memory.new
       end
 
@@ -46,7 +47,7 @@ module Visit
       protected
 
       def candidate_for_import(value, created_at)
-        if should_import?(value)
+        if should_import? value
           @to_import.fetch(cache_key(value)) do
             { value: value, created_at: created_at }
           end
@@ -71,7 +72,7 @@ module Visit
       end
 
       def cache_key(v)
-        model_class.cache_key(v)
+        model_class.cache_key v
       end
     end
 
@@ -83,7 +84,7 @@ module Visit
       def transform!
         @boxes.each do |box|
           box.request_payload.to_values.each do |value|
-            candidate_for_import(value, box.request_payload[:created_at])
+            candidate_for_import value, box.request_payload[:created_at]
           end
         end
       end
@@ -97,8 +98,8 @@ module Visit
       def transform!
         @boxes.each do |box|
           box[:traits].each do |k,v|
-            candidate_for_import(k, box.event.created_at)
-            candidate_for_import(v, box.event.created_at)
+            candidate_for_import k, box.event.created_at
+            candidate_for_import v, box.event.created_at
           end
         end
       end
@@ -119,8 +120,8 @@ module Visit
         models = @boxes.flat_map do |box|
           box[:traits].map do |k,v|
             model_class.new.tap do |model|
-              model.k_id = Visit::TraitValue.get_id_from_find_by_v(k)
-              model.v_id = Visit::TraitValue.get_id_from_find_by_v(v)
+              model.k_id = Visit::TraitValue.get_id_from_find_by_v k
+              model.v_id = Visit::TraitValue.get_id_from_find_by_v v
               model.visit_event_id = box.event.id
               model.created_at = box.event.created_at
             end
@@ -170,7 +171,8 @@ module Visit
 
     class Collect::Sources < Collect
       def initialize(boxes)
-        super(Visit::Source, boxes)
+        super Visit::Source, boxes
+
         @a = []
       end
 

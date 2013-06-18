@@ -2,8 +2,8 @@ require 'spec_helper'
 
 shared_examples "a nice deduper" do |model_class_pair, model_class_value|
   before {
-    DuplicateFixture.create_duplicates_for_value(model_class_value)
-    DuplicateFixture.create_duplicates_for_pair(model_class_pair, model_class_value)
+    DuplicateFixture.create_duplicates_for_value model_class_value
+    DuplicateFixture.create_duplicates_for_pair model_class_pair, model_class_value
   }
 
   context "and in the Value model" do
@@ -23,7 +23,7 @@ shared_examples "a nice deduper" do |model_class_pair, model_class_value|
   end
 
   it "leave no Traits referencing duplicate values" do
-    id_duplicates = DuplicateFixture.id_duplicates(model_class_value)
+    id_duplicates = DuplicateFixture.id_duplicates model_class_value
 
     Visit::ValueDeduper.run
 
@@ -45,13 +45,13 @@ describe Visit::ValueDeduper do
 
     context "in the presence of duplicate SourceValues and duplicate Events" do
       before {
-        DuplicateFixture.create_duplicates_for_value(Visit::SourceValue)
-        DuplicateFixture.create_duplicates_for_pair(Visit::Source, Visit::SourceValue)
-        DuplicateFixture.create_duplicates_for_event(Visit::SourceValue)
+        DuplicateFixture.create_duplicates_for_value Visit::SourceValue
+        DuplicateFixture.create_duplicates_for_pair Visit::Source, Visit::SourceValue
+        DuplicateFixture.create_duplicates_for_event Visit::SourceValue
       }
       
       it "leave no Traits referencing duplicate values" do
-        id_duplicates = DuplicateFixture.id_duplicates(Visit::SourceValue)
+        id_duplicates = DuplicateFixture.id_duplicates Visit::SourceValue
 
         Visit::ValueDeduper.run
 

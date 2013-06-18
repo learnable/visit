@@ -10,9 +10,9 @@ module Visit
       end
 
       def has_key?(key)
-        raise_if_not_key(key)
+        raise_if_not_key key
 
-        @cache.exist?(key.to_s)
+        @cache.exist? key.to_s
       end
 
       def fetch(key, options = {})

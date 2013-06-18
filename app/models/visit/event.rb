@@ -32,7 +32,7 @@ module Visit
     TOKEN_LENGTH = 16
 
     def to_traits
-      Traits.new(self)
+      Traits.new self
     end
 
     def source_value_ids

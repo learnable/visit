@@ -27,7 +27,7 @@ module Visit
     end
 
     def start_time_in_words
-      helpers.distance_of_time_in_words(Time.now, events.first.created_at)
+      helpers.distance_of_time_in_words Time.now, events.first.created_at
     end
 
     def time_on_site_in_words

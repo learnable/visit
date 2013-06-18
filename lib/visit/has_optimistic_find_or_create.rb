@@ -30,14 +30,14 @@ module Visit
     end
 
     def cache_key(v)
-      Cache::Key.new(cache_key_prefix, v)
+      Cache::Key.new cache_key_prefix, v
     end
 
     private
 
     def optimistic_find_or_create_by_v(v)
       begin
-        self.find_or_create_by_v(v)
+        self.find_or_create_by_v v
       rescue ActiveRecord::StatementInvalid => e
         # multiple workers using find_or_create_by can result in a race condition
         # in which case, assume the row exists and return it
