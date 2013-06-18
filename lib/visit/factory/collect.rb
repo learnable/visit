@@ -30,49 +30,85 @@ module Visit
       def initialize(model, boxes)
         super model, boxes
 
-        @to_import = Cache::Memory.new
+        @to_import = {}
       end
 
       def bulk_insert!
-        models = @to_import.to_h.map do |cache_key, h|
-          model_class.new.tap do |model|
-            model.v = h[:value]
-            model.created_at = h[:created_at]
+        models = [].tap do |models|
+          @to_import.each do |v, created_at|
+            models << model_class.new.tap do |model|
+              model.v = v
+              model.created_at = created_at
+            end
           end
         end
 
         bulk_insert_models! models
+
+        warm_cache(@to_import)
+      end
+
+      def transform!
+        @to_import = boxes_to_candidates
+
+        # Manage::log "AMHERE: 1: start: model_class: #{model_class.to_s} to_import: #{@to_import}"
+
+        dont_import_when_in_cache(@to_import)
+
+        # Manage::log "AMHERE: 2: after checking cache: to_import: #{@to_import}"
+
+        dont_import_when_in_db(@to_import)
+
+        # Manage::log "AMHERE: 3: after checking db: to_import: #{@to_import}"
       end
 
       protected
 
-      def candidate_for_import(value, created_at)
-        if should_import? value
-          @to_import.fetch(cache_key(value)) do
-            { value: value, created_at: created_at }
-          end
+      def dont_import_when_in_cache(candidates)
+        # TODO test this with a real cache
+        candidates.select! { |v, created_at| !Configurable.cache.has_key?(cache_key_for_v(v)) }
+      end
+
+      def dont_import_when_in_db(candidates)
+        for_each_row_in_values_table(candidates) do |row|
+          candidates.delete(row.v)
+
+          warm_cache_row(row.id, row.v)
+        end
+      end
+
+      def for_each_row_in_values_table(candidates)
+        if !candidates.empty?
+          values = candidates.keys
+
+          begin
+            subset = values.slice!(0,100)
+
+            model_class.where(v: subset).each do |row|
+              yield row
+            end
+          end while !values.empty?
+        end
+      end
+
+      def warm_cache(candidates)
+        for_each_row_in_values_table(candidates) do |row|
+          warm_cache_row(row.id, row.v)
+        end
+      end
+
+      def warm_cache_row(id, v)
+        Configurable.cache.fetch(cache_key_for_v(v)) { id }
+
+        if model_class == Visit::SourceValue
+          Configurable.cache.fetch(Visit::Event.cache_key_for_id(id)) { v }
         end
       end
 
       private
 
-      def should_import?(value)
-        k = cache_key(value)
-
-        ret = true
-        # Manage.log "AMHERE 1: value: #{value} k: #{k.to_s}"
-
-        ret = ret && !@to_import.has_key?(k)
-        # Manage.log "AMHERE 2: ret: #{ret}"
-
-        ret = ret && !model_class.get_id_from_find_by_v(value)
-        # Manage.log "AMHERE 3: ret: #{ret}"
-
-        ret
-      end
-
-      def cache_key(v)
-        model_class.cache_key v
+      def cache_key_for_v(v)
+        model_class.cache_key_for_v v
       end
     end
 
@@ -81,10 +117,14 @@ module Visit
         super Visit::SourceValue, boxes
       end
 
-      def transform!
-        @boxes.each do |box|
-          box.request_payload.to_values.each do |value|
-            candidate_for_import value, box.request_payload[:created_at]
+      protected
+
+      def boxes_to_candidates
+        {}.tap do |candidates|
+          @boxes.each do |box|
+            box.request_payload.to_values.each do |value|
+              candidates[value] = box.request_payload[:created_at] unless candidates.has_key?(value)
+            end
           end
         end
       end
@@ -95,11 +135,15 @@ module Visit
         super Visit::TraitValue, boxes
       end
 
-      def transform!
-        @boxes.each do |box|
-          box[:traits].each do |k,v|
-            candidate_for_import k, box.event.created_at
-            candidate_for_import v, box.event.created_at
+      protected
+
+      def boxes_to_candidates
+        {}.tap do |candidates|
+          @boxes.each do |box|
+            box[:traits].each do |k,v|
+              candidates[k.to_s] = box.event.created_at unless candidates.has_key?(k)
+              candidates[v] = box.event.created_at unless candidates.has_key?(v)
+            end
           end
         end
       end
