@@ -1,6 +1,5 @@
 module Visit
   class Factory
-
     class Collect
       attr_reader :boxes
 
