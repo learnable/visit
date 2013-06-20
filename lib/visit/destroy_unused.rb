@@ -14,6 +14,7 @@ module Visit
       sources!
       events!
       source_values!
+      # TODO traits and traitvalues
     end
 
     def sources!
@@ -49,17 +50,15 @@ module Visit
       # The temporary table has fk references to the visit_source_values we want to keep.
       # visit_source_values that aren't pointed to by a fk reference are deleted.
       #
-      CreateSourceValueRefererences.up
-
       Event.includes(:visit_sources).find_in_batches do |events|
         models = source_value_ids(events).map do |id|
-          SourceValueReference.new fk: id
+          DeduperValue.new fk: id
         end
 
-        SourceValueReference.import models
+        DeduperValue.import models
       end
 
-      condition = "id NOT IN (SELECT DISTINCT fk from visit_source_value_references)"
+      condition = "id NOT IN (SELECT DISTINCT fk from #{DeduperValue.table_name})"
 
       SourceValue.delete_all(condition) if !dry_run?
 
@@ -69,7 +68,7 @@ module Visit
         end
       end
 
-      CreateSourceValueRefererences.down
+      DeduperValue.connection.execute("TRUNCATE TABLE #{DeduperValue.table_name}")
     end
 
     private
@@ -94,26 +93,6 @@ module Visit
 
     def ignorable_event?(event)
       !keep_url?(event) && event.ignorable?
-    end
-
-    class CreateSourceValueRefererences < ActiveRecord::Migration
-      def self.up
-        ActiveRecord::Migration.verbose = false
-        create_table :visit_source_value_references, :temporary => true do |t|
-          # this doesn't use t.references :visit_source_value because of http://bugs.mysql.com/bug.php?id=15324
-          t.integer :fk, :null => false
-        end
-        add_index :visit_source_value_references, :fk
-      end
-
-      def self.down
-        drop_table :visit_source_value_references
-        ActiveRecord::Migration.verbose = true
-      end
-    end
-
-    class SourceValueReference < ActiveRecord::Base
-      self.table_name_prefix = 'visit_'
     end
   end
 end
