@@ -181,7 +181,7 @@ module Visit
       end
 
       def bulk_insert!
-        ActiveRecord::Base.transaction do
+        Event.transaction do
           @boxes.each do |box|
             event = Visit::Event.new \
               token:     box.request_payload[:token],
