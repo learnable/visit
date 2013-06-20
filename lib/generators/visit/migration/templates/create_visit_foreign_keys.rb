@@ -12,9 +12,9 @@ class CreateVisitForeignKeys < ActiveRecord::Migration
   end
 
   def indexes_exist?
-    keys = [ "fk__visit_events_user_id", "fk_visit_events_user_id" ]
+    keys = [ "fk__visit_events_user_agent_id", "fk_visit_events_user_agent_id" ]
 
-    keys.map { |k| index_exists? :visit_events, :user_id, :name => k }.include? true
+    keys.map { |k| index_exists? :visit_events, :user_agent_id, :name => k }.include? true
   end
 
   def add_indexes!
@@ -34,7 +34,6 @@ class CreateVisitForeignKeys < ActiveRecord::Migration
 
   def all_indexes
     [
-      { table: "visit_events",  foreign_key: "user_id",        references: "users"               },
       { table: "visit_events",  foreign_key: "url_id",         references: "visit_source_values" },
       { table: "visit_events",  foreign_key: "referer_id",     references: "visit_source_values" },
       { table: "visit_events",  foreign_key: "user_agent_id",  references: "visit_source_values" },
