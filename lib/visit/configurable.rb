@@ -2,7 +2,8 @@ module Visit
   class Configurable
     class << self
       attr_accessor :bulk_insert_batch_size, :cache, :create, :cookies_match,
-        :case_insensitive_string_comparison, :current_user_id, :ignorable,
+        :case_insensitive_string_comparison, :current_user_id,
+        :db_connection, :ignorable,
         :is_token_cookie_set_in, :labels_match_all, :labels_match_first,
         :new_serialized_queue, :notify, :user_agent_robots
 
@@ -42,6 +43,10 @@ module Visit
         @current_user_id ||= ->(controller) do
           controller.instance_eval { current_user ? current_user.id : nil }
         end
+      end
+
+      def db_connection
+        @db_connection ||= nil
       end
 
       def ignorable
