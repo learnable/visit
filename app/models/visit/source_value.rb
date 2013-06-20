@@ -1,7 +1,5 @@
 module Visit
-  class SourceValue < ActiveRecord::Base
-    self.table_name_prefix = 'visit_'
-
+  class SourceValue < BaseModel
     extend HasOptimisticFindOrCreate
 
     attr_accessible :v

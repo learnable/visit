@@ -2,10 +2,7 @@ require 'addressable/uri'
 require 'visit/has_ignorable_path'
 
 module Visit
-  class Event < ActiveRecord::Base
-
-    self.table_name_prefix = 'visit_'
-
+  class Event < BaseModel
     has_many :visit_traits,  class_name: "Visit::Trait",  foreign_key: "visit_event_id", dependent: :destroy
     has_many :visit_sources, class_name: "Visit::Source", foreign_key: "visit_event_id", dependent: :destroy
 

@@ -1,7 +1,5 @@
 module Visit
-  class TraitValue < ActiveRecord::Base
-    self.table_name_prefix = 'visit_'
-
+  class TraitValue < BaseModel
     extend HasOptimisticFindOrCreate
 
     attr_accessible :v

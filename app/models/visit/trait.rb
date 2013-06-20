@@ -1,7 +1,5 @@
 module Visit
-  class Trait < ActiveRecord::Base
-    self.table_name_prefix = 'visit_'
-
+  class Trait < BaseModel
     belongs_to :visit_event, :class_name => "Visit::Event"
     belongs_to :key,         :class_name => "Visit::TraitValue", foreign_key: :k_id
     belongs_to :value,       :class_name => "Visit::TraitValue", foreign_key: :v_id
