@@ -21,7 +21,11 @@ module Visit
       private
 
       def bulk_insert_models!(models)
+        Visit::Factory.instrumenter.mark "before_bulk_insert_#{model_class.table_name}" => models.count
+
         model_class.import models, :validate => false
+
+        Visit::Factory.instrumenter.mark "after_bulk_insert_#{model_class.table_name}" => nil
       end
     end
 
@@ -45,6 +49,8 @@ module Visit
         bulk_insert_models! models
 
         warm_cache(@to_import)
+
+        Visit::Factory.instrumenter.mark "after_warm_cache_#{model_class.table_name}" => nil
       end
 
       def transform!
@@ -181,6 +187,8 @@ module Visit
       end
 
       def bulk_insert!
+        Visit::Factory.instrumenter.mark "before_bulk_insert_#{model_class.table_name}" => @boxes.count
+
         Event.transaction do
           @boxes.each do |box|
             event = Visit::Event.new \
@@ -198,6 +206,8 @@ module Visit
             box.event = event
           end
         end
+
+        Visit::Factory.instrumenter.mark "after_bulk_insert_#{model_class.table_name}" => @boxes.count
       end
 
       def transform!

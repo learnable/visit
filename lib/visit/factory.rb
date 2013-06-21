@@ -9,6 +9,10 @@ module Visit
       Visit::TraitValue.delete_all
     end
 
+    def self.instrumenter
+      @instrumenter ||= Instrumenter.new(:factory)
+    end
+
     def recreate_traits
       Configurable.cache.clear
 
@@ -23,6 +27,9 @@ module Visit
 
     def run(request_payload_hashes)
       # Manage.log "AMHERE: Factory.run: request_payload_hashes: #{request_payload_hashes}"
+
+      self.class.instrumenter.clear
+      self.class.instrumenter.mark start: :run, count: request_payload_hashes.count
 
       temporary_cache_setup
 
@@ -47,6 +54,9 @@ module Visit
       create_traits boxes
 
       temporary_cache_teardown
+
+      self.class.instrumenter.mark finish: :run
+      self.class.instrumenter.save_to_log { Configurable.bulk_insert_batch_size > 1 }
     end
 
     private
