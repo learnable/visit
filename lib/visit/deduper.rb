@@ -10,7 +10,11 @@ module Visit
         instrumenter.clear
         instrumenter.mark "start_#{model_class_value.table_name}" => nil
 
-        Query::DuplicateValue.new(model_class_value).scoped.pluck(:v).each do |v|
+        duplicate_values = Query::DuplicateValue.new(model_class_value).scoped.pluck(:v)
+
+        instrumenter.mark "after_duplicate_value_query_#{model_class_value.table_name}" => duplicate_values.count
+
+        duplicate_values.each do |v|
           for_each_duplicate(model_class_pair, model_class_value, v) do |id_primary, id_duplicates|
             change_references_in_table_pair model_class_pair, id_primary, id_duplicates
 
