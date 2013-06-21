@@ -2,17 +2,18 @@ module Visit
   class Instrumenter
     def initialize(category)
       @category = category
+      @toggle = Configurable.instrumenter_toggle.call(category)
       clear
     end
 
     def mark(h)
       raise "expected Hash" if !h.instance_of?(Hash)
 
-      mark_with_created_at h
+      mark_with_created_at h if toggle?
     end
 
     def save_to_log
-      if (block_given? ? yield : true)
+      if toggle? && (block_given? ? yield : true)
         l = Log.new category: @category, message: to_json
         l.save!
       end
@@ -25,6 +26,10 @@ module Visit
     end
 
     private
+
+    def toggle?
+      @toggle
+    end
 
     def mark_with_created_at(h)
       @marks << hash_with_created_at(h)

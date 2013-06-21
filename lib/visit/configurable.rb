@@ -3,7 +3,7 @@ module Visit
     class << self
       attr_accessor :bulk_insert_batch_size, :cache, :create, :cookies_match,
         :case_insensitive_string_comparison, :current_user_id,
-        :db_connection, :ignorable,
+        :db_connection, :ignorable, :instrumenter_toggle,
         :is_token_cookie_set_in, :labels_match_all, :labels_match_first,
         :new_serialized_queue, :notify, :user_agent_robots
 
@@ -58,6 +58,12 @@ module Visit
         #   /^\/api/
         # ]
         @ignorable ||= []
+      end
+
+      def instrumenter_toggle
+        @instrumenter_toggle ||= ->(category) do
+          category == :deduper
+        end
       end
 
       def is_token_cookie_set_in
