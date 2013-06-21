@@ -2,10 +2,14 @@ module Visit
   class ValueDeduper
     class << self
       def run
+        instrumenter.mark "start"
+
         {
           Visit::Source => Visit::SourceValue,
           Visit::Trait => Visit::TraitValue
         }.each do |model_class_pair, model_class_value|
+          instrumenter.mark "start for #{model_class_pair.to_s} and #{model_class_value.to_s}"
+
           Query::DuplicateValue.new(model_class_value).scoped.pluck(:v).each do |v|
             for_each_duplicate(model_class_pair, model_class_value, v) do |id_primary, id_duplicates|
               change_references_in_table_pair model_class_pair, id_primary, id_duplicates
@@ -15,7 +19,13 @@ module Visit
               destroy_values model_class_value, id_duplicates
             end
           end
+
+          instrumenter.mark "end for #{model_class_pair.to_s} and #{model_class_value.to_s}"
         end
+
+        instrumenter.mark "end"
+        instrumenter.save_to_log
+        instrumenter.clear
       end
 
       def for_each_duplicate(model_class_pair, model_class_value, v)
@@ -49,6 +59,10 @@ module Visit
 
       def destroy_values(model_class_value, id_duplicates)
         model_class_value.delete_all(id: id_duplicates)
+      end
+
+      def instrumenter
+        @instrumenter ||= Instrumenter.new(:dedupder)
       end
     end
   end
