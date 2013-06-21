@@ -2,13 +2,14 @@ module Visit
   class Deduper
     class << self
       def run
-        instrumenter.mark "start"
+        instrumenter.mark start: nil
 
         {
           Visit::Source => Visit::SourceValue,
           Visit::Trait => Visit::TraitValue
         }.each do |model_class_pair, model_class_value|
-          instrumenter.mark "start for #{model_class_pair.to_s} and #{model_class_value.to_s}"
+          instrumenter.clear
+          instrumenter.mark "start_#{model_class_value.table_name}" => nil
 
           Query::DuplicateValue.new(model_class_value).scoped.pluck(:v).each do |v|
             for_each_duplicate(model_class_pair, model_class_value, v) do |id_primary, id_duplicates|
@@ -20,12 +21,11 @@ module Visit
             end
           end
 
-          instrumenter.mark "end for #{model_class_pair.to_s} and #{model_class_value.to_s}"
+          instrumenter.mark "finish_#{model_class_value.table_name}" => nil
         end
 
-        instrumenter.mark "end"
+        instrumenter.mark finish: nil
         instrumenter.save_to_log
-        instrumenter.clear
       end
 
       def for_each_duplicate(model_class_pair, model_class_value, v)
