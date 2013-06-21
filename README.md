@@ -274,10 +274,4 @@ MAJOR
 
 MODERATE
 * archiving - zip up everying over n months old and send to S3?
-* instrumentation - supported by a table that collects debugging information
-  about the behaviour of the gem itself
 * support a use-case in which all an app has to do is shove a request payload into redis and it's done.    
-  Things to instrument:    
-  * deduper
-  * bulk insert
-* deduper should dedupe traits and trait values
