@@ -15,6 +15,7 @@ module Visit
         visit_traits
         visit_foreign_keys
         visit_deduper_values
+        visit_logs
       }.each do |name|
         migration_template "create_#{name}.rb", "db/migrate/create_#{name}.rb"
       end
