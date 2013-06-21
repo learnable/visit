@@ -24,11 +24,12 @@ To customise, create a config/initializers/visit.rb, eg:
         /^flip_/, # save cookies set via the flip gem
       ]
 
+      # write to the db in a worker (don't slow down the Rails request cycle)
+      # It's advised to implement this as some kind of async worker when using
+      # the bulk_insert_batch_size option, otherwise event insertion will be
+      # done during a request.
+      #
       c.create = ->(request_payload_hashes) do
-        # write to the db in a worker (don't slow down the Rails request cycle)
-        # It's advised to implement this as some kind of async worker when using
-        # the bulk_insert_batch_size option, otherwise event insertion will be
-        # done during a request.
         VisitFactoryWorker.perform_async(request_payload_hashes)
       end
 
@@ -40,6 +41,13 @@ To customise, create a config/initializers/visit.rb, eg:
           /^\/api/, # don't store requests to /api
         ]
 
+      # Some slow-running parts of the gem are instrumented.
+      # The output is in the visit_logs table.
+      #
+      c.instrumenter_toggle = ->(category) do
+        false # category == :deduper || category == :factory
+      end
+
       c.is_token_cookie_set_in = ->(sym) do
         sym == :visit_tag_controller # :application_controller or :visit_tag_controller
       end
@@ -49,6 +57,7 @@ To customise, create a config/initializers/visit.rb, eg:
         ]
 
       # urls containing ?invite=blah generate a trait: { :invite => :blah }
+      #
       c.labels_match_all = c.labels_match_all.push *[
         [ :get, %r{[?&]invite=(\w+)}, :invite ]
       ]
@@ -56,14 +65,16 @@ To customise, create a config/initializers/visit.rb, eg:
       # If you set bulk_insert_batch_size > 1, you need a persistent SerializedQueue:
       # - in your app, add 'redis' to your Gemfile
       # - in your app, configure redis in config/initializers/redis.rb: $redis = Redis.connect(url: Settings.redis.url)
-
+      #
       require 'redis'
       c.new_serialized_queue = ->() { Visit::SerializedQueue::Redis.new($redis) }
 
       # our app uses Airbrake for exception handling
+      #
       c.notify = ->(e) { Airbrake.notify e } unless Rails.env.development?
 
       # lighten the load on the db (far fewer SELECTs)
+      #
       c.cache = Visit::Cache::Dalli.new \
         ActiveSupport::Cache.lookup_store \
           :dalli_store,
