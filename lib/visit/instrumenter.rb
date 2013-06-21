@@ -44,5 +44,27 @@ module Visit
     def to_json
       JSON.generate @marks
     end
+
+    class History
+      def initialize(str)
+        @marks = JSON.parse str
+      end
+
+      def hostname
+        @marks.first["hostname"]
+      end
+
+      def pid
+        @marks.first["pid"]
+      end
+
+      def keys
+        @marks.slice(1, @marks.length).map { |h| h.first.first }
+      end
+
+      def timeline
+        @marks.map { |h| Time.parse h["created_at"] }
+      end
+    end
   end
 end
