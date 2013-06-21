@@ -93,25 +93,28 @@ Which in turn supports queries like this:
       where(created_at: (1.day.ago..Time.now)).
       count
 
-Value Deduper
--------------
-For internal consistency, the gem requires each row in tables visit_source_values and visit_trait_values 
-to have a unique value of 'v'.
+Deduper
+-------
+The gem supports [eventual consistency](http://en.wikipedia.org/wiki/Eventual_consistency)
+of SourceValues and TraitValues for reasons of:
+* performance (bulk insert of n requests is many times faster than n inserts),
+* scalability (multiple workers can by bulk inserting at the same time), and
+* mysql indexes can only cover the first 255 chars of a VARCHAR column
+  (ignoring <code>innodb_large_prefix</code>), so the 'v' columns must have non-unique indexes.
 
-But because mysql indexes can only cover the first 255 chars of a VARCHAR column
-(ignoring <code>innodb_large_prefix</code>), the 'v' columns have non-unique indexes.
+When consistent, each row in tables visit_source_values and visit_trait_values have a unique value of 'v'.
 
-So your app should periodically run Visit::ValueDeduper.run
+To create consistency, your app should periodically run Visit::Deduper.run
 (eg. daily) to eliminate duplicate values of 'v' and fix any references to those duplicates.
 
 Here's what a sidekiq worker looks like:
 
     require "visit"
 
-    class VisitValueDeduperWorker < BaseWorker
+    class VisitDeduperWorker < BaseWorker
       def perform
         begin
-          Visit::ValueDeduper.run
+          Visit::Deduper.run
         rescue
           Airbrake.notify $!
         end

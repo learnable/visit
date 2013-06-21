@@ -8,7 +8,7 @@ shared_examples "a nice deduper" do |model_class_pair, model_class_value|
 
   context "and in the Value model" do
     it "delete the duplicate rows" do
-      Visit::ValueDeduper.run
+      Visit::Deduper.run
 
       DuplicateFixture.starting_point(model_class_value).map(&:v).each do |v|
         model_class_value.where(v: v).count.should == 1
@@ -17,7 +17,7 @@ shared_examples "a nice deduper" do |model_class_pair, model_class_value|
   
     it "not delete any other rows" do
       expect {
-        Visit::ValueDeduper.run
+        Visit::Deduper.run
       }.to change { Visit::Query::DuplicateValue.new(model_class_value).scoped.all.count }.by(-3)
     end
   end
@@ -25,13 +25,13 @@ shared_examples "a nice deduper" do |model_class_pair, model_class_value|
   it "leave no Traits referencing duplicate values" do
     id_duplicates = DuplicateFixture.id_duplicates model_class_value
 
-    Visit::ValueDeduper.run
+    Visit::Deduper.run
 
     Visit::Query::PairsReferencingValues.new(model_class_pair, id_duplicates).scoped.count.should == 0
   end
 end
 
-describe Visit::ValueDeduper do
+describe Visit::Deduper do
   before { DuplicateFixture.setup }
 
   context "#run" do
@@ -53,7 +53,7 @@ describe Visit::ValueDeduper do
       it "leave no Traits referencing duplicate values" do
         id_duplicates = DuplicateFixture.id_duplicates Visit::SourceValue
 
-        Visit::ValueDeduper.run
+        Visit::Deduper.run
 
         Visit::Query::EventsReferencingValues.new(id_duplicates).scoped.count.should == 0
       end

@@ -22,7 +22,7 @@ class DuplicateFixture
 
           new_id = duplicate_corresponding_to(model_class_value, id)
 
-          Visit::ValueDeduper.save_model_after_updating_attributes new_model, [:k_id, :v_id], new_id, [id]
+          Visit::Deduper.save_model_after_updating_attributes new_model, [:k_id, :v_id], new_id, [id]
         end
       end
     end
@@ -37,7 +37,7 @@ class DuplicateFixture
 
           new_id = duplicate_corresponding_to(model_class_value, id)
 
-          Visit::ValueDeduper.save_model_after_updating_attributes new_model, [:url_id, :user_agent_id, :referer_id], new_id, [id]
+          Visit::Deduper.save_model_after_updating_attributes new_model, [:url_id, :user_agent_id, :referer_id], new_id, [id]
         end
       end
     end
