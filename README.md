@@ -104,7 +104,7 @@ of SourceValues and TraitValues for reasons of:
 
 When consistent, each row in tables visit_source_values and visit_trait_values have a unique value of 'v'.
 
-To create consistency, your app should periodically run Visit::Deduper.run
+To create consistency, your app should periodically run Visit::Deduper.new.run
 (eg. daily) to eliminate duplicate values of 'v' and fix any references to those duplicates.
 
 Here's what a sidekiq worker looks like:
@@ -114,7 +114,7 @@ Here's what a sidekiq worker looks like:
     class VisitDeduperWorker < BaseWorker
       def perform
         begin
-          Visit::Deduper.run
+          Visit::Deduper.new.run
         rescue
           Airbrake.notify $!
         end
