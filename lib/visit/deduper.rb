@@ -29,7 +29,7 @@ module Visit
       end
 
       def for_each_duplicate(model_class_pair, model_class_value, v)
-        id_duplicates = model_class_value.select(:id).where(v: v).order("id ASC").pluck(:id)
+        id_duplicates = model_class_value.where(v: v).order("id ASC").pluck(:id)
 
         id_primary = id_duplicates.delete_at(0)
 
