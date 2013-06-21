@@ -159,7 +159,7 @@ If you then want to save space in your database:
     # ok, looks good, I'm now going to irrevocably delete!
     > Visit::DestroyUnused.new(keep_urls: [ %r{/api} ]).irrevocable!
 
-Flushing Configurable.cache
+Flush Configurable.cache
 ---------------------------
 
     bundle exec rails console
@@ -169,6 +169,27 @@ Flushing Configurable.cache
     [true]
     > Visit::Configurable.cache.has_key? Visit::Cache::Key.new("visit::traitvalue.find_by_v.id", "label")
     false
+
+Configure the gem to not use the default database
+-------------------------------------------------
+    Visit::Configurable.configure do |c|
+
+      c.db_connect = "visit_database_for_#{Rails.env}"
+
+    end
+
+And in your database.yml:
+
+    visit_database_for_development:
+      database: visit_development
+
+    visit_database_for_test:
+      database: visit_test
+
+    visit_database_for_production:
+      database: visit_production
+
+And of course you need to create those databases, set permissions, apply schemas etc.
 
 Developing the gem
 ------------------
@@ -249,4 +270,11 @@ TODO
 MAJOR
 
 MODERATE
-* implement archiving - zip up everying over 3 months old and send to S3?
+* archiving - zip up everying over n months old and send to S3?
+* instrumentation - supported by a table that collects debugging information
+  about the behaviour of the gem itself
+* support a use-case in which all an app has to do is shove a request payload into redis and it's done.    
+  Things to instrument:    
+  * deduper
+  * bulk insert
+* deduper should dedupe traits and trait values

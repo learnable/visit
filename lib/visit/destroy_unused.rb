@@ -14,7 +14,6 @@ module Visit
       sources!
       events!
       source_values!
-      # TODO traits and traitvalues
     end
 
     def sources!
