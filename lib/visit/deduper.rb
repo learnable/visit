@@ -62,7 +62,7 @@ module Visit
     end
 
     def instrumenter
-      @instrumenter ||= Instrumenter.new(:dedupder)
+      @instrumenter ||= Instrumenter.new(:deduper)
     end
   end
 end
