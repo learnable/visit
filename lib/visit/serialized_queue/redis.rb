@@ -5,23 +5,23 @@ module Visit
         raise "redis must be set" if redis.nil?
 
         @redis = redis
-        @key = "visit:#{Rails.application.class.parent_name}:#{key_suffix}"
+        @key ||= key_from_suffix(key_suffix)
       end
 
       def rpush(data)
-        redis.rpush @key, data.to_yaml
+        redis.rpush key, data.to_yaml
       end
 
       def lpop
-        YAML.load redis.lpop(@key)
+        YAML.load redis.lpop(key)
       end
 
       def length
-        redis.llen @key
+        redis.llen key
       end
 
       def clear
-        redis.del @key
+        redis.del key
       end
 
       def pipelined_rpush_and_return_length(data)
@@ -41,7 +41,7 @@ module Visit
 
         redis.pipelined do
           for count in (1..max) do
-            redis_future_values.push redis.lpop(@key)
+            redis_future_values.push redis.lpop(key)
           end
         end
 
@@ -55,6 +55,12 @@ module Visit
       end
 
       private
+
+      attr_reader :key
+
+      def key_from_suffix(suffix)
+        "visit:#{Rails.application.class.parent_name}:#{suffix}"
+      end
 
       def redis
         @redis
