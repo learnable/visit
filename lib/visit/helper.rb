@@ -1,5 +1,5 @@
 module Visit
-  class Manage
+  class Helper
     class << self
 
       def log(msg)

@@ -28,7 +28,7 @@ module Visit
           @cache[k] = yield
         end
 
-        # Manage.log "AMHERE: cache: id: #{@cache.object_id} key: #{k} #{is_hit ? 'hit' : 'miss'} returns: #{@cache[k].to_s}" if k =~ /robot/i
+        # Helper.log "AMHERE: cache: id: #{@cache.object_id} key: #{k} #{is_hit ? 'hit' : 'miss'} returns: #{@cache[k].to_s}" if k =~ /robot/i
         @cache[k]
       end
 

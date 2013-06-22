@@ -56,15 +56,15 @@ module Visit
       def transform!
         @to_import = boxes_to_candidates
 
-        # Manage::log "AMHERE: 1: start: model_class: #{model_class.to_s} to_import: #{@to_import}"
+        # Helper::log "AMHERE: 1: start: model_class: #{model_class.to_s} to_import: #{@to_import}"
 
         dont_import_when_in_cache(@to_import)
 
-        # Manage::log "AMHERE: 2: after checking cache: to_import: #{@to_import}"
+        # Helper::log "AMHERE: 2: after checking cache: to_import: #{@to_import}"
 
         dont_import_when_in_db(@to_import)
 
-        # Manage::log "AMHERE: 3: after checking db: to_import: #{@to_import}"
+        # Helper::log "AMHERE: 3: after checking db: to_import: #{@to_import}"
       end
 
       protected

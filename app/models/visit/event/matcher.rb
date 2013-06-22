@@ -22,7 +22,7 @@ module Visit
 
     def path_matches?(path)
       @matchdata = re.match path
-      # Manage.log "AMHERE: path_matches?: re: #{re} path: #{path} matchdata: #{@matchdata}"
+      # Helper.log "AMHERE: path_matches?: re: #{re} path: #{path} matchdata: #{@matchdata}"
       ! @matchdata.nil?
     end
 

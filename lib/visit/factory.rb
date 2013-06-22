@@ -26,7 +26,7 @@ module Visit
     end
 
     def run(request_payload_hashes)
-      # Manage.log "AMHERE: Factory.run: request_payload_hashes: #{request_payload_hashes}"
+      # Helper.log "AMHERE: Factory.run: request_payload_hashes: #{request_payload_hashes}"
 
       self.class.instrumenter.clear
       self.class.instrumenter.mark start: :run, count: request_payload_hashes.count
