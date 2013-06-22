@@ -25,9 +25,9 @@ module Visit
     def set_visit_token
       if !RailsRequestContext::get_token cookies, session
         if Configurable.is_token_cookie_set_in.call :application_controller
-          cookies["token"] = random_visit_token
+          cookies["token"] = Helper.random_token
         else
-          session["token"] = random_visit_token
+          session["token"] = Helper.random_token
         end
       end
     end
@@ -42,10 +42,5 @@ module Visit
           true,
           nil
     end
-
-    def random_visit_token
-      SecureRandom.base64(Visit::Event::TOKEN_LENGTH).slice(0,Visit::Event::TOKEN_LENGTH)
-    end
-
   end
 end
