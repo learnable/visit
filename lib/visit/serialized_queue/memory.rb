@@ -1,9 +1,13 @@
 module Visit
   class SerializedQueue
     class Memory
-
       def initialize
         @queue = []
+      end
+
+      def self.instance(key)
+        @instance ||= {}
+        @instance[key] ||= Memory.new
       end
 
       def rpush(data)
