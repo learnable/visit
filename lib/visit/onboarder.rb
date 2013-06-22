@@ -9,7 +9,7 @@ module Visit
       #
       unless request.ignorable?
         begin
-          queue = Configurable.serialized_queue.call
+          queue = Configurable.serialized_queue.call "request_payload_hashes"
 
           queue_length = queue.pipelined_rpush_and_return_length request.to_h
 
