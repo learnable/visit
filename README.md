@@ -42,10 +42,11 @@ To customise, create a config/initializers/visit.rb, eg:
         ]
 
       # Some slow-running parts of the gem are instrumented.
-      # The output is in the visit_logs table.
+      # To get a sense of it, bundle exec rails console:
+      # > puts Visit::Log.last.to_instrumenter_history.to_s
       #
       c.instrumenter_toggle = ->(category) do
-        false # category == :deduper || category == :factory
+        true # category == :deduper || category == :factory
       end
 
       c.is_token_cookie_set_in = ->(sym) do
@@ -136,14 +137,6 @@ MySQL users: if you are happy to increase <code>innodb_large_prefix</code>, you 
 increase the index :length limits in the CreateVisitSourceValues and CreateVisitTraitValues migrations.
 It might give you a little more lookup performance - when there are strings that are the
 same in the first 255 chars and different after that.
-
-Users
------
-The `visit_events` table has a column:  
-    t.integer  "user_id", :references => :users
-
-If your database doesn't have a `users` table, search for `user_id` in the `*_visit_*` migrations and
-remove any foreign key reference to `users`.  Add an index on the `visit_events.user_id` column instead.
 
 My app is part Rails and part non-Rails
 ---------------------------------------
