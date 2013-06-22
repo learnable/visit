@@ -101,7 +101,7 @@ module Visit
       def new_serialized_queue
         @new_serialized_queue ||= ->() do
           # Visit::SerializedQueue::Redis.new($redis)
-          Visit::SerializedQueue::Memory.new
+          Visit::SerializedQueue::Memory.instance
         end
       end
 
