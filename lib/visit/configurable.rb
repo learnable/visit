@@ -5,7 +5,7 @@ module Visit
         :case_insensitive_string_comparison, :current_user_id,
         :db_connection, :ignorable, :instrumenter_toggle,
         :is_token_cookie_set_in, :labels_match_all, :labels_match_first,
-        :new_serialized_queue, :notify, :user_agent_robots
+        :serialized_queue, :notify, :user_agent_robots
 
       def bulk_insert_batch_size
         @bulk_insert_batch_size ||= 1
@@ -98,8 +98,8 @@ module Visit
         @labels_match_first ||= []
       end
 
-      def new_serialized_queue
-        @new_serialized_queue ||= ->() do
+      def serialized_queue
+        @serialized_queue ||= ->() do
           # Visit::SerializedQueue::Redis.new($redis)
           Visit::SerializedQueue::Memory.instance
         end

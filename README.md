@@ -68,7 +68,7 @@ To customise, create a config/initializers/visit.rb, eg:
       # - in your app, configure redis in config/initializers/redis.rb: $redis = Redis.connect(url: Settings.redis.url)
       #
       require 'redis'
-      c.new_serialized_queue = ->() { Visit::SerializedQueue::Redis.new($redis) }
+      c.serialized_queue = ->() { Visit::SerializedQueue::Redis.new($redis) }
 
       # our app uses Airbrake for exception handling
       #
