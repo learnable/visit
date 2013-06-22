@@ -5,23 +5,21 @@ module Visit
         @marks = marks_from o
       end
 
+      attr_reader :marks
+
       def hostname
-        @marks.first["hostname"]
+        marks.first[:hostname]
       end
 
       def pid
-        @marks.first["pid"]
-      end
-
-      def marks
-        @marks.slice(1, @marks.length)
+        marks.first[:pid]
       end
 
       def timeline
-        @marks.map { |h| Time.parse h["created_at"] }
+        marks.map { |h| h[:created_at] }
       end
 
-      def to_pretty_str
+      def to_s
         lines = []
 
         marks.map do |mark|
