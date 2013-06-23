@@ -1,12 +1,15 @@
+require 'visit/has_ignorable.rb'
+
 module Visit
-  class RailsRequestContext < Struct.new(:request, :cookies, :session, :user_id, :is_ignorable, :path)
+  class RailsRequestContext < Struct.new(:request, :cookies, :session, :user_id, :must_insert, :hardcoded_path)
+    include Visit::HasIgnorable
 
     def self.get_token(cookies, session)
       cookies["token"] || session[:token]
     end
 
-    def get_path
-      path || request.path
+    def path
+      hardcoded_path || request.path
     end
 
     def get_url
@@ -15,10 +18,6 @@ module Visit
 
     def get_token
       RailsRequestContext.get_token cookies, session
-    end
-
-    def ignorable?
-      is_ignorable && Onboarder.ignorable?(get_path)
     end
 
     def to_h
@@ -31,9 +30,9 @@ module Visit
         h[:referer]     = request.referer
         h[:remote_ip]   = request.remote_ip
         h[:cookies]     = RequestPayload.cookie_filter(cookies)
+        h[:must_insert] = true if must_insert
         h[:created_at]  = Time.now
       end
     end
-
   end
 end

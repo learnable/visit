@@ -11,7 +11,7 @@ describe Visit::RailsRequestContext do
     def new_rails_request_context(opts = {})
       ret = Visit::RailsRequestContext.new
       ret.request = @request
-      ret.path = nil
+      ret.hardcoded_path = nil
       ret.session = session
 
       opts.each { |k,v| ret[k] = v }
@@ -20,17 +20,17 @@ describe Visit::RailsRequestContext do
     end
 
     context "#ignorable?" do
-      it "returns true when is_ignorable == true AND when the path is ignorable" do
-        new_rails_request_context({ is_ignorable: true, path: "/system/blah" }).ignorable?.should be_true
+      it "returns true when must_insert == false AND when the path is ignorable" do
+        new_rails_request_context({ must_insert: false, hardcoded_path: "/system/blah" }).ignorable?.should be_true
       end
       it "returns false when the path is ignorable" do
-        new_rails_request_context({ is_ignorable: false, path: "/system/blah" }).ignorable?.should be_false
+        new_rails_request_context({ must_insert: true, hardcoded_path: "/system/blah" }).ignorable?.should be_false
       end
-      it "returns false when rails_request_context.is_ignorable" do
-        new_rails_request_context({ is_ignorable: true, path: "/fred" }).ignorable?.should be_false
+      it "returns false when must_insert == false and the path isn't ignorable'" do
+        new_rails_request_context({ must_insert: false, hardcoded_path: "/fred" }).ignorable?.should be_false
       end
-      it "returns false when both rails_request_context.is_ignorable and path is ignorable" do
-        new_rails_request_context({ is_ignorable: false, path: "/fred" }).ignorable?.should be_false
+      it "returns false when must_insert == true and the path isn't ignorable" do
+        new_rails_request_context({ must_insert: true, hardcoded_path: "/fred" }).ignorable?.should be_false
       end
     end
 
