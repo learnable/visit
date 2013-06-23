@@ -2,7 +2,7 @@ require 'visit/has_ignorable'
 require 'visit/has_path'
 
 module Visit
-  class RequestPayload < Struct.new(:http_method, :url, :token, :user_id, :user_agent, :referer, :remote_ip, :cookies, :created_at)
+  class RequestPayload < Struct.new(:http_method, :url, :token, :user_id, :user_agent, :referer, :remote_ip, :cookies, :must_insert, :created_at)
 
     def self.cookie_filter(cookies)
       cookies.select do |k,v|
