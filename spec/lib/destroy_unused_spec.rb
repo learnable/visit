@@ -5,7 +5,7 @@ describe Visit::DestroyUnused do
     start_with_visits [
       { url: "http://a.com" },
       { url: "http://a.com" },
-      { url: "http://a.com/system/blah" },
+      { url: "http://a.com/system/blah", must_insert: true },
     ]
   end
 
