@@ -5,7 +5,7 @@ module Visit
         raise "redis must be set" if redis.nil?
 
         @redis = redis
-        @key ||= key_from_suffix(key_suffix)
+        @key = key_from_suffix(key_suffix)
       end
 
       def rpush(data)
@@ -54,7 +54,7 @@ module Visit
       attr_reader :redis
 
       def key_from_suffix(suffix)
-        "visit:#{Rails.application.class.parent_name}:#{suffix}"
+        "visit:#{Rails.application.class.parent_name.downcase}:#{suffix}"
       end
     end
   end
