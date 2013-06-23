@@ -71,7 +71,7 @@ To customise, create a config/initializers/visit.rb, eg:
       # - in your app, configure redis in config/initializers/redis.rb: $redis = Redis.connect(url: Settings.redis.url)
       #
       require 'redis'
-      c.serialized_queue = ->() { Visit::SerializedQueue::Redis.new($redis) }
+      c.serialized_queue = ->(key) { Visit::SerializedQueue::Redis.new($redis, key) }
 
       # our app uses Airbrake for exception handling
       #
@@ -108,8 +108,8 @@ Which in turn supports queries like this:
       where(created_at: (1.day.ago..Time.now)).
       count
 
-How it works
-------------
+How the gem hooks into the Rails request cycle
+----------------------------------------------
 In brief:
 - a controller filter builds a request_payload_hash (containing everything interesting about a web request),
   and pushes it onto the :filling SerializedQueue
@@ -117,7 +117,13 @@ In brief:
   and Configurable.bulk_insert_now is called
 - the request_payload_hashes are removed from the :available SerializedQueue and inserted into the database.
 
-Non Rails apps can push directly onto the :filling queue.
+My app is part Rails and part non-Rails
+---------------------------------------
+Non Rails apps can push a request_payload_hash directly onto the :filling queue.
+
+To figure out:
+- the format of the hash, see: rails_request_context.rb, and
+- the redis key, run from the Rails console, `Visit::SerializedQueue::Redis.new($redis, :filling).send(:key)`
 
 Deduper
 -------
@@ -152,13 +158,6 @@ increase the index :length limits in the CreateVisitSourceValues and CreateVisit
 It might give you a little more lookup performance - when there are strings that are the
 same in the first 255 chars and different after that.
 
-My app is part Rails and part non-Rails
----------------------------------------
-If you serve http requests via a non-Rails app (eg PHP), you can
-`rpush` directly into the :filling SerializedQueue.  To figure out:
-- the format of the hash, see: rails_request_context.rb, and
-- the redis key, run from the Rails console, `Visit::SerializedQueue::Redis.new($redis, :filling).send(:key)`
-
 Destroying unused rows
 ----------------------
 There are a number of ways you can be storing data you don't need:
@@ -177,7 +176,7 @@ If you then want to save space in your database:
     > Visit::DestroyUnused.new(keep_urls: [ %r{/api} ]).irrevocable!
 
 Flush Configurable.cache
----------------------------
+------------------------
 
     bundle exec rails console
     > Visit::Configurable.cache.has_key? Visit::Cache::Key.new("visit::traitvalue.find_by_v.id", "label")
@@ -186,6 +185,22 @@ Flush Configurable.cache
     [true]
     > Visit::Configurable.cache.has_key? Visit::Cache::Key.new("visit::traitvalue.find_by_v.id", "label")
     false
+
+Inspecting the queues
+---------------------
+
+    bundle exec rails console
+    > Visit::SerializedQueue::Manager.new.queue_lengths
+    => [{:filling=>1, :available=>1}, {:available=>[{"/POFK9EXX2QcThIW"=>10}]}]
+    > Visit::SerializedQueue::Manager.new.make_available
+    => "uUt/oW3nThtGfBH3"
+    > Visit::SerializedQueue::Manager.new.queue_lengths
+    => [{:filling=>0, :available=>2}, {:available=>[{"/POFK9EXX2QcThIW"=>10}, {"uUt/oW3nThtGfBH3"=>1}]}]
+    > Visit::Factory.new.run
+    => [{:filling=>0, :available=>1}, {:available=>[{"uUt/oW3nThtGfBH3"=>1}]}]
+    > Visit::Factory.new.run
+    => [{:filling=>0, :available=>0}]
+
 
 Configure the gem to not use the default database
 -------------------------------------------------
