@@ -13,10 +13,10 @@ module Visit
 
           queue_filling.pipelined_rpush_and_return_length rails_request_context.to_h
 
-          make_available(queue_filling) if queue_filling.full?
+          transfer_to_enroute(queue_filling) if queue_filling.full?
 
           # TODO: remove references to queue_legacy once flippa has migrated
-          make_available(queue_legacy) if (queue_legacy.length > 0)
+          transfer_to_enroute(queue_legacy) if (queue_legacy.length > 0)
         rescue => e
           Configurable.notify.call e
         end
@@ -25,8 +25,8 @@ module Visit
 
     private
 
-    def make_available(queue)
-      new_key = queue.make_available
+    def transfer_to_enroute(queue)
+      new_key = queue.transfer_to_enroute
 
       Configurable.bulk_insert_now.call if !new_key.nil?
     end

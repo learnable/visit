@@ -73,7 +73,7 @@ module Visit
     end
 
     def get_request_payloads
-      key = serialized_queue_for(:available).lpop
+      key = serialized_queue_for(:enroute).lpop
 
       raise "expected a key" if key.nil?
 

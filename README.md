@@ -20,13 +20,13 @@ To customise, create a config/initializers/visit.rb, eg:
 
       c.bulk_insert_batch_size = 100 # cache requests in a SerializedQueue (see below)
 
-      # This method is called when requests are on the :available SerializedQueue
+      # This method is called when requests are on the :enroute SerializedQueue
       # Your options are:
       # - don't override this method in your app, Visit::Factory.new.run will insert these
       #   requests (in the Rails request cycle)
       # - override this method in your app and delegate Visit::Factory.new.run to a worker
       # - override this method in your app, make it do nothing, because you have workers
-      #   that pop directly from the :available queue
+      #   that pop directly from the :enroute queue
       #
       c.bulk_insert_now = ->() do
         Visit::Factory.new.run
@@ -113,9 +113,9 @@ How the gem hooks into the Rails request cycle
 In brief:
 - a controller filter builds a request_payload_hash (containing everything interesting about a web request),
   and pushes it onto the :filling SerializedQueue
-- when the :filling SerializedQueue is full? it is moved into an :available SerializedQueue
+- when the :filling SerializedQueue is full? it is moved into an :enroute SerializedQueue
   and Configurable.bulk_insert_now is called
-- the request_payload_hashes are removed from the :available SerializedQueue and inserted into the database.
+- the request_payload_hashes are removed from the :enroute SerializedQueue and inserted into the database.
 
 My app is part Rails and part non-Rails
 ---------------------------------------
@@ -190,16 +190,22 @@ Inspecting the queues
 ---------------------
 
     bundle exec rails console
-    > Visit::SerializedQueue::Manager.new.queue_lengths
-    => [{:filling=>1, :available=>1}, {:available=>[{"/POFK9EXX2QcThIW"=>10}]}]
-    > Visit::SerializedQueue::Manager.new.make_available
+    > sqm=Visit::SerializedQueue::Manager.new
+    => #<Visit::SerializedQueue::Manager:0x000000072f9a48>
+    > sqm.queue_lengths
+    => [{:filling=>1, :enroute=>1}, {:enroute=>[{"/POFK9EXX2QcThIW"=>10}]}]
+    > sqm.transfer_to_enroute
     => "uUt/oW3nThtGfBH3"
-    > Visit::SerializedQueue::Manager.new.queue_lengths
-    => [{:filling=>0, :available=>2}, {:available=>[{"/POFK9EXX2QcThIW"=>10}, {"uUt/oW3nThtGfBH3"=>1}]}]
+    > sqm.queue_lengths
+    => [{:filling=>0, :enroute=>2}, {:enroute=>[{"/POFK9EXX2QcThIW"=>10}, {"uUt/oW3nThtGfBH3"=>1}]}]
     > Visit::Factory.new.run
-    => [{:filling=>0, :available=>1}, {:available=>[{"uUt/oW3nThtGfBH3"=>1}]}]
+    => ...
+    > sqm.queue_lengths
+    => [{:filling=>0, :enroute=>1}, {:enroute=>[{"uUt/oW3nThtGfBH3"=>1}]}]
     > Visit::Factory.new.run
-    => [{:filling=>0, :available=>0}]
+    => ...
+    > sqm.queue_lengths
+    => [{:filling=>0, :enroute=>0}]
 
 
 Configure the gem to not use the default database

@@ -5,14 +5,14 @@ module Visit
         [].tap do |a|
           a.push top_level_lengths
 
-          if queue(:available).length > 0
-            a.push ({ :available => available_lengths })
+          if queue(:enroute).length > 0
+            a.push ({ :enroute => available_lengths })
           end
         end
       end
 
-      def make_available
-        queue(:filling).make_available
+      def transfer_to_enroute
+        queue(:filling).transfer_to_enroute
       end
 
       private
@@ -24,12 +24,12 @@ module Visit
       def top_level_lengths
         {
           :filling => queue(:filling).length,
-          :available => queue(:available).length 
+          :enroute => queue(:enroute).length 
         }
       end
 
       def available_lengths
-        queue(:available).values.map do |key|
+        queue(:enroute).values.map do |key|
           { key => queue(key).length }
         end 
       end
