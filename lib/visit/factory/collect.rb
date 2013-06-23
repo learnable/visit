@@ -56,21 +56,14 @@ module Visit
       def transform!
         @to_import = boxes_to_candidates
 
-        # Helper::log "AMHERE: 1: start: model_class: #{model_class.to_s} to_import: #{@to_import}"
-
         dont_import_when_in_cache(@to_import)
 
-        # Helper::log "AMHERE: 2: after checking cache: to_import: #{@to_import}"
-
         dont_import_when_in_db(@to_import)
-
-        # Helper::log "AMHERE: 3: after checking db: to_import: #{@to_import}"
       end
 
       protected
 
       def dont_import_when_in_cache(candidates)
-        # TODO test this with a real cache
         candidates.select! { |v, created_at| !Configurable.cache.has_key?(cache_key_for_v(v)) }
       end
 

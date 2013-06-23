@@ -47,8 +47,6 @@ end
 def push_onto_filling_queue(rph)
   queue = Visit::Configurable.serialized_queue.call(:filling)
 
-  # puts "XXXAMHERE push_onto_filling_queue object id: #{queue.object_id}"
-
   queue.rpush rph
 end
 
