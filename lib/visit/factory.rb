@@ -18,9 +18,13 @@ module Visit
 
       Factory.delete_traits
 
+      temporary_cache_setup
+
       Visit::Event.includes(includes).find_in_batches do |a_event|
         create_traits a_event.map { |event| Box.new(nil, event, nil) }
       end
+
+      temporary_cache_teardown
     end
 
     def run
