@@ -26,12 +26,9 @@ module Visit
     private
 
     def make_available(queue)
-      new_key = queue.renamenx_to_random_key
+      new_key = queue.make_available
 
-      if !new_key.nil?
-        Configurable.serialized_queue.call(:available).rpush new_key
-        Configurable.bulk_insert_now.call
-      end
+      Configurable.bulk_insert_now.call if !new_key.nil?
     end
 
     def queue_filling
