@@ -37,6 +37,15 @@ shared_examples "Factory" do
         Visit::TraitValue.count.should == 5
       end
     end
+
+    context "hashes pushed on the :filling queue" do
+      pending "are inserted if :must_ignore == true" do
+      end
+      pending "are inserted if path is not ignorable" do
+      end
+      pending "are ignored if path is ignorable" do
+      end
+    end
   end
 
   context "events that have labels and other key/value pairs" do

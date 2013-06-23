@@ -18,24 +18,22 @@ module Visit
 
       Factory.delete_traits
 
-      Visit::Event.
-        includes([:visit_source_values_url, :visit_source_values_user_agent, :visit_source_values_referer]).
-        find_in_batches do |a_event|
-          create_traits a_event.map { |event| Box.new(nil, event, nil) }
-        end
+      Visit::Event.includes(includes).find_in_batches do |a_event|
+        create_traits a_event.map { |event| Box.new(nil, event, nil) }
+      end
     end
 
-    def run(request_payload_hashes)
-      # Helper.log "AMHERE: Factory.run: request_payload_hashes: #{request_payload_hashes}"
-
+    def run
       self.class.instrumenter.clear
-      self.class.instrumenter.mark start: :run, count: request_payload_hashes.count
+      self.class.instrumenter.mark start: :run
+
+      request_payloads = get_request_payloads
+
+      # Helper.log "AMHERE: Factory.run: count: #{request_payloads.count} request_payloads: #{request_payloads}"
 
       temporary_cache_setup
 
-      boxes = request_payload_hashes.map do |rph|
-        Box.new RequestPayload.new(rph)
-      end
+      boxes = request_payloads.map { |rp| Box.new rp }
 
       # Each import! step populates a table
       # that the next import! step references as a foreign key.
@@ -56,7 +54,7 @@ module Visit
       temporary_cache_teardown
 
       self.class.instrumenter.mark finish: :run
-      self.class.instrumenter.save_to_log { Configurable.bulk_insert_batch_size > 1 }
+      self.class.instrumenter.save_to_log
     end
 
     private
@@ -70,6 +68,40 @@ module Visit
       collect.bulk_insert!
     end
 
+    def get_request_payloads
+      key = serialized_queue_for(:available).lpop
+
+      raise "expected a key" if key.nil?
+
+      request_payload_hashes = serialized_queue_for(key).values
+
+      raise "expected queue to have values" if request_payload_hashes.empty?
+
+      request_payloads = request_payload_hashes.map do |rph|
+        RequestPayload.new rph
+      end.select do |request_payload|
+        !request_payload.ignorable?
+      end
+
+      self.class.instrumenter.mark \
+        after_get_request_payloads: key,
+        request_payloads_count: request_payloads.count,
+        request_payload_hashes_count: request_payload_hashes.count
+
+      request_payloads
+    end
+
+    def serialized_queue_for(key)
+      Configurable.serialized_queue.call(key)
+    end
+
+    def includes
+      [
+        :visit_source_values_url,
+        :visit_source_values_user_agent,
+        :visit_source_values_referer
+      ]
+    end
   end
 
   class Box < Struct.new(:request_payload, :event, :traits)
