@@ -108,6 +108,17 @@ Which in turn supports queries like this:
       where(created_at: (1.day.ago..Time.now)).
       count
 
+How it works
+------------
+In brief:
+- a controller filter builds a request_payload_hash (containing everything interesting about a web request),
+  and pushes it onto the :filling SerializedQueue
+- when the :filling SerializedQueue is full? it is moved into an :available SerializedQueue
+  and Configurable.bulk_insert_now is called
+- the request_payload_hashes are removed from the :available SerializedQueue and inserted into the database.
+
+Non Rails apps can push directly onto the :filling queue.
+
 Deduper
 -------
 The gem supports [eventual consistency](http://en.wikipedia.org/wiki/Eventual_consistency)
@@ -143,14 +154,10 @@ same in the first 255 chars and different after that.
 
 My app is part Rails and part non-Rails
 ---------------------------------------
-<code>Onboarder.accept_unless_ignorable</code> decides whether an http request should be ignored and if not,
-queues it to eventually create a Visit::Event.
-
-In a Rails app, <code>Onboarder.accept_unless_ignorable</code> is called witin the Rails request cycle.
-
-If you serve http requests via a non-Rails app (eg PHP), you can:
-* shove all requests into redis, and
-* in a Rails worker, take the request from redis and pass it to <code>Onboarder.accept_unless_ignorable</code>.
+If you serve http requests via a non-Rails app (eg PHP), you can
+`rpush` directly into the :filling SerializedQueue.  To figure out:
+- the format of the hash, see: rails_request_context.rb, and
+- the redis key, run from the Rails console, `Visit::SerializedQueue::Redis.new($redis, :filling).send(:key)`
 
 Destroying unused rows
 ----------------------
