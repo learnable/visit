@@ -10,7 +10,7 @@ module Visit
     protected
 
     def create_visit_event(path = nil)
-      Onboarder.accept_unless_ignorable \
+      Onboarder.new.accept_unless_ignorable \
         RailsRequestContext.new \
           request,
           cookies,
@@ -33,7 +33,7 @@ module Visit
     end
 
     def on_every_visit_request
-      Onboarder.accept_unless_ignorable \
+      Onboarder.new.accept_unless_ignorable \
         RailsRequestContext.new \
           request,
           cookies,
