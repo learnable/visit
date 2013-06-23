@@ -10,6 +10,10 @@ shared_examples "Factory" do
     context "in one run of the factory" do
       before { factory_run [ h1, h2 ] }
 
+      it "Events are created" do
+        Visit::Event.count.should == 2
+      end
+
       it "Traits are created" do
         Visit::Trait.count.should == 3
       end
@@ -38,14 +42,6 @@ shared_examples "Factory" do
       end
     end
 
-    context "hashes pushed on the :filling queue" do
-      pending "are inserted if :must_ignore == true" do
-      end
-      pending "are inserted if path is not ignorable" do
-      end
-      pending "are ignored if path is ignorable" do
-      end
-    end
   end
 
   context "events that have labels and other key/value pairs" do

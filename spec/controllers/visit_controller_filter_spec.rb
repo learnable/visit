@@ -10,6 +10,29 @@ describe "Visit::ControllerFilters", type: :controller do
   end
 
   let(:token) { "0123456789123456" }
+  let(:token_next) { "556" }
+  let(:user_id) { 444 }
+
+  def do_visit(path, token = token, uid = user_id)
+    @request.stub(:path) { path }
+    @request.cookies["token"] = token
+    if user_id
+      create :user, id: user_id if !User.exists?(user_id)
+      o = double
+      o.stub(:id) { uid }
+      @controller.stub(:current_user) { o }
+    end
+    get :index
+  end
+
+  def do_some_visits
+    do_visit "/"                                # X visits
+    do_visit "/learn/css"                       # X visits again
+    do_visit "/courses/xx-123"                  # X visits again
+    do_visit "/courses/blah.js"                 # ignored visit
+    do_visit "/system/blah"                     # ignored visit
+    do_visit "/teach", token_next, user_id      # Y visits
+  end
 
   shared_examples "a non altering controller filter" do
     context "when cookie contains a token" do
@@ -81,30 +104,6 @@ describe "Visit::ControllerFilters", type: :controller do
       do_some_visits
     end
 
-    let(:token_next) { "556" }
-    let(:user_id) { 444 }
-
-    def do_visit(path, token = token, uid = user_id)
-      @request.stub(:path) { path }
-      @request.cookies["token"] = token
-      if user_id
-        create :user, id: user_id if !User.exists?(user_id)
-        o = double
-        o.stub(:id) { uid }
-        @controller.stub(:current_user) { o }
-      end
-      get :index
-    end
-
-    def do_some_visits
-      do_visit "/"                                # X visits
-      do_visit "/learn/css"                       # X visits again
-      do_visit "/courses/xx-123"                  # X visits again
-      do_visit "/courses/blah.js"                 # ignored visit
-      do_visit "/system/blah"                     # ignored visit
-      do_visit "/teach", token_next, user_id      # Y visits
-    end
-
     context "when a token visits exactly once" do
       it "should create exactly one Visit::Event" do
         a_event = Visit::Event.find_all_by_token(token_next)
@@ -125,6 +124,36 @@ describe "Visit::ControllerFilters", type: :controller do
       it "the Visit::Event should have .user_id set" do
         Visit::Event.where(token: token_next).first.user_id.should == user_id
       end
+    end
+  end
+
+  context "hashes pushed on the :filling queue" do
+    let(:h_ignorable) { new_request_payload_hash url: "http://e.org/system/blah/x" }
+    let(:h_to_be_inserted) { new_request_payload_hash url: "http://e.org/" }
+    let(:h_must_insert) { new_request_payload_hash url: "http://e.org/system/blah/x", must_insert: true }
+    let(:queue) { Visit::Configurable.serialized_queue.call(:filling) }
+
+    before { delete_all_visits }
+
+    it "are inserted if :must_insert == true" do
+      expect {
+        push_onto_filling_queue h_must_insert
+        do_some_visits
+      }.to change { Visit::Event.count }.by(5)
+    end
+
+    it "are inserted if path is not ignorable" do
+      expect {
+        push_onto_filling_queue h_to_be_inserted
+        do_some_visits
+      }.to change { Visit::Event.count }.by(5)
+    end
+
+    it "are ignored if path is ignorable" do
+      expect {
+        push_onto_filling_queue h_ignorable
+        do_some_visits
+      }.to change { Visit::Event.count }.by(4)
     end
   end
 
