@@ -88,8 +88,8 @@ Sample implementation of `VisitFactoryWorker`:
 class VisitFactoryWorker
   include Sidekiq::Worker
 
-  def perform(request_payload_hashes)
-    Visit::Factory.new.run(request_payload_hashes)
+  def perform
+    Visit::Factory.new.run
   end
 end
 ```
