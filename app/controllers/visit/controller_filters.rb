@@ -16,7 +16,7 @@ module Visit
           cookies,
           session,
           Configurable.current_user_id.call(self),
-          false,
+          true,
           path
     end
 
@@ -39,7 +39,7 @@ module Visit
           cookies,
           session,
           Configurable.current_user_id.call(self),
-          true,
+          false,
           nil
     end
   end
