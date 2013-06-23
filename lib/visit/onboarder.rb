@@ -39,7 +39,11 @@ module Visit
     end
 
     def queue_legacy
-      @queue_legacy ||= Configurable.serialized_queue.call "request_payload_hashes"
+      if !@queue_legacy
+        @queue_legacy = Configurable.serialized_queue.call ""
+        @queue_legacy.instance_variable_set(:@key, "visit:#{Rails.application.class.parent_name}:request_payload_hashes")
+      end
+      @queue_legacy
     end
   end
 end
