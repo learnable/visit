@@ -20,7 +20,7 @@ describe Visit::DestroyUnused do
 
     before do
       h1 = new_request_payload_hash cookies: { "flip_fred" => "blah" }
-      Visit::Factory.new.run [ h1 ]
+      factory_run [ h1 ]
       create_unused_source
     end
 

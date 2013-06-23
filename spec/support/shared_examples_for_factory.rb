@@ -8,7 +8,7 @@ shared_examples "Factory" do
     let(:h3) { new_request_payload_hash url: "http://e.org/articles" }
 
     context "in one run of the factory" do
-      before { Visit::Factory.new.run [ h1, h2 ] }
+      before { factory_run [ h1, h2 ] }
 
       it "Traits are created" do
         Visit::Trait.count.should == 3
@@ -25,8 +25,8 @@ shared_examples "Factory" do
 
     context "in two runs of the factory" do
       before do
-        Visit::Factory.new.run [ h1, h2 ]
-        Visit::Factory.new.run [ h3 ]
+        factory_run [ h1, h2 ]
+        factory_run [ h3 ]
       end
 
       it "not too many SourceValues are created" do
@@ -44,7 +44,7 @@ shared_examples "Factory" do
       h1 = new_request_payload_hash url: "http://e.org/articles?utm_campaign=aaa&utm_source="
 
       expect {
-        Visit::Factory.new.run [ h1 ]
+        factory_run [ h1 ]
       }.to change { Visit::Trait.count }.by(3)
     end
   end
@@ -54,7 +54,7 @@ shared_examples "Factory" do
       h1 = new_request_payload_hash url: "http://e.org/articles?invite=aaa&trait_no_value"
 
       expect {
-        Visit::Factory.new.run [ h1 ]
+        factory_run [ h1 ]
       }.to change { Visit::Trait.count }.by(3)
     end
   end

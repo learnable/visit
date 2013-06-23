@@ -30,7 +30,18 @@ def run_requests_through_factory(a)
     end
   end
 
-  Visit::Factory.new.run b
+  factory_run b
+end
+
+def factory_run(a)
+  key = Visit::Helper.random_token
+
+  queue = Visit::SerializedQueue::Memory.instances(key)
+  a.each { |rph| queue.rpush rph }
+
+  Visit::Configurable.serialized_queue.call(:available).rpush key
+
+  Visit::Factory.new.run
 end
 
 def delete_all_visits

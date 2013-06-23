@@ -76,7 +76,6 @@ describe "Visit::ControllerFilters", type: :controller do
   end
 
   context "as a basic acceptance test, after some visits" do
-
     before do
       delete_all_visits
       do_some_visits
@@ -127,5 +126,8 @@ describe "Visit::ControllerFilters", type: :controller do
         Visit::Event.where(token: token_next).first.user_id.should == user_id
       end
     end
+  end
+
+  pending "test create_visit_event TODO" do
   end
 end
