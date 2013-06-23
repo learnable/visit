@@ -1,9 +1,5 @@
 module Visit
-  module HasIgnorablePath
-    def ignorable?
-      Onboarder.ignorable? path
-    end
-
+  module HasPath
     def path
       uri = Addressable::URI.parse(url)
 

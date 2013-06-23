@@ -1,5 +1,6 @@
 require 'addressable/uri'
-require 'visit/has_ignorable_path'
+require 'visit/has_ignorable'
+require 'visit/has_path'
 
 module Visit
   class Event < BaseModel
@@ -24,7 +25,8 @@ module Visit
 
     include Event::HasCachedAttributes
     include Event::HasHttpMethod
-    include HasIgnorablePath
+    include Visit::HasIgnorable
+    include Visit::HasPath
 
     TOKEN_LENGTH = 16
 

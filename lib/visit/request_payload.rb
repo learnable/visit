@@ -1,4 +1,5 @@
-require 'visit/has_ignorable_path'
+require 'visit/has_ignorable'
+require 'visit/has_path'
 
 module Visit
   class RequestPayload < Struct.new(:http_method, :url, :token, :user_id, :user_agent, :referer, :remote_ip, :cookies, :created_at)
@@ -9,7 +10,8 @@ module Visit
       end
     end
 
-    include Visit::HasIgnorablePath
+    include Visit::HasIgnorable
+    include Visit::HasPath
 
     def initialize(h = {})
       members.each do |k|
