@@ -20,18 +20,21 @@ To customise, create a config/initializers/visit.rb, eg:
 
       c.bulk_insert_batch_size = 100 # cache requests in a SerializedQueue (see below)
 
+      # This method is called when requests are on the :available SerializedQueue
+      # Your options are:
+      # - don't override this method in your app, Visit::Factory.new.run will insert these
+      #   requests (in the Rails request cycle)
+      # - override this method in your app and delegate Visit::Factory.new.run to a worker
+      # - override this method in your app, make it do nothing, because you have workers
+      #   that pop directly from the :available queue
+      #
+      c.bulk_insert_now = ->() do
+        Visit::Factory.new.run
+      end
+
       c.cookies_match = [
         /^flip_/, # save cookies set via the flip gem
       ]
-
-      # write to the db in a worker (don't slow down the Rails request cycle)
-      # It's advised to implement this as some kind of async worker when using
-      # the bulk_insert_batch_size option, otherwise event insertion will be
-      # done during a request.
-      #
-      c.create = ->(request_payload_hashes) do
-        VisitFactoryWorker.perform_async(request_payload_hashes)
-      end
 
       c.current_user_id = -> (controller) do
         controller.instance_eval { current_user ? current_user.id : nil }

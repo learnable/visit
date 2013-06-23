@@ -1,7 +1,7 @@
 module Visit
   class Configurable
     class << self
-      attr_accessor :bulk_insert_batch_size, :cache, :create, :cookies_match,
+      attr_accessor :bulk_insert_batch_size, :bulk_insert_now, :cache, :cookies_match,
         :case_insensitive_string_comparison, :current_user_id,
         :db_connection, :ignorable, :instrumenter_toggle,
         :is_token_cookie_set_in, :labels_match_all, :labels_match_first,
@@ -9,6 +9,12 @@ module Visit
 
       def bulk_insert_batch_size
         @bulk_insert_batch_size ||= 1
+      end
+
+      def bulk_insert_now
+        @bulk_insert_now ||= ->() do
+          Visit::Factory.new.run
+        end
       end
 
       def cache
@@ -27,16 +33,6 @@ module Visit
         @cookies_match ||= [
           /flip_.*/,
         ]
-      end
-
-      def create
-        # Write the visit to the database.
-        # The app should override this method and delegate to a worker
-        # because this method is called during the Rails request cycle.
-
-        @create ||= ->() do
-          Visit::Factory.new.run
-        end
       end
 
       def current_user_id

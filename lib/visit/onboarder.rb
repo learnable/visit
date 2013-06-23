@@ -30,7 +30,7 @@ module Visit
 
       if !new_key.nil?
         Configurable.serialized_queue.call(:available).rpush new_key
-        Configurable.create.call
+        Configurable.bulk_insert_now.call
       end
     end
 
