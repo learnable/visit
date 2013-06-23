@@ -1,13 +1,12 @@
+require 'visit/serialized_queue/has_instances.rb'
+
 module Visit
   class SerializedQueue
-    class Memory
+    class Memory < SerializedQueue
+      include Visit::SerializedQueue::HasInstances
+
       def initialize
         @queue = []
-      end
-
-      def self.instance(key)
-        @instance ||= {}
-        @instance[key] ||= Memory.new
       end
 
       def rpush(data)
@@ -31,16 +30,19 @@ module Visit
         length
       end
 
-      def pipelined_lpop_and_clear(max)
-        [].tap do |a|
-          for count in (1..max) do
-            a << lpop
-          end
-
-          clear
-        end
+      def values
+        @queue
       end
 
+      def renamenx_to_random_key
+        new_key = Helper.random_token
+
+        self.class.clone_to_instance(self, new_key)
+
+        clear
+
+        new_key
+      end
     end
   end
 end

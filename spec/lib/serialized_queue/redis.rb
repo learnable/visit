@@ -2,9 +2,11 @@ require 'spec_helper'
 
 describe Visit::SerializedQueue::Redis do
 
-  it_should_behave_like "a SerializedQueue" do
-    let(:queue) { Visit::SerializedQueue::Redis.new($redis, 'test_serialized_queue') }
+  new_queue = ->(key) do
+    Visit::SerializedQueue::Redis.new $redis, key
   end
+
+  it_should_behave_like "a SerializedQueue", new_queue
 
 end
 

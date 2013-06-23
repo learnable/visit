@@ -1,7 +1,7 @@
 module Visit
   class SerializedQueue
-    class Redis
-      def initialize(redis, key_suffix = "request_payload_hashes")
+    class Redis < SerializedQueue
+      def initialize(redis, key_suffix)
         raise "redis must be set" if redis.nil?
 
         @redis = redis
@@ -36,34 +36,25 @@ module Visit
         redis_future_for_length.value
       end
 
-      def pipelined_lpop_and_clear(max)
-        redis_future_values = []
+      def values
+        redis.lrange(key, 0, -1).map { |data| YAML.load(data) }
+      end
 
-        redis.pipelined do
-          for count in (1..max) do
-            redis_future_values.push redis.lpop(key)
-          end
-        end
+      def renamenx_to_random_key
+        new_key = Helper.random_token
 
-        clear
+        result = redis.renamenx key, key_from_suffix(new_key)
 
-        redis_future_values.map do |future|
-          future.value.nil? ? nil : YAML.load(future.value)
-        end.select do |value|
-          !value.nil?
-        end
+        result ? new_key : nil
       end
 
       private
 
       attr_reader :key
+      attr_reader :redis
 
       def key_from_suffix(suffix)
         "visit:#{Rails.application.class.parent_name}:#{suffix}"
-      end
-
-      def redis
-        @redis
       end
     end
   end
