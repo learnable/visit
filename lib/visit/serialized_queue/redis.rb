@@ -9,11 +9,11 @@ module Visit
       end
 
       def rpush(data)
-        redis.rpush key, data.to_yaml
+        redis.rpush key, data.to_json
       end
 
       def lpop
-        YAML.load redis.lpop(key)
+        JSON.parse redis.lpop(key)
       end
 
       def length
