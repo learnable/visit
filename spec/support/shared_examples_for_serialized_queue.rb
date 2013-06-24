@@ -5,30 +5,46 @@ shared_examples "a SerializedQueue" do |new_queue|
   before { queue.clear }
   after { queue.clear }
 
-  it "supports rpush and lpop of one item" do
-    queue.rpush({a: 1})
+  it "supports rpush and lpop of a Hash" do
+    queue.rpush({"a" => 1})
 
-    expect(queue.lpop).to eq({a: 1})
+    expect(queue.lpop).to eq({"a" => 1})
+  end
+
+  it "supports rpush and lpop of an Array" do
+    queue.rpush([1,2])
+
+    expect(queue.lpop).to eq([1,2])
+  end
+
+  it "raises an exception on rpush of a string" do
+    expect { queue.rpush("fred") }.to raise_error(RuntimeError)
+  end
+
+  it "supports rpush and lpop of a SerializedString" do
+    queue.rpush Visit::SerializedString.new("fred").encode
+
+    expect(Visit::SerializedString.new(queue.lpop).decode).to eq("fred")
   end
 
   it "supports rpush and lpop of two items" do
-    queue.rpush({a: 1})
-    queue.rpush({b: 2})
+    queue.rpush({"a" => 1})
+    queue.rpush({"b" => 2})
 
-    expect(queue.lpop).to eq({a: 1})
-    expect(queue.lpop).to eq({b: 2})
+    expect(queue.lpop).to eq({"a" => 1})
+    expect(queue.lpop).to eq({"b" => 2})
   end
 
   it "has a length" do
-    queue.rpush({a: 1})
+    queue.rpush({"a" => 1})
     expect(queue.length).to eq(1)
 
-    queue.rpush({b: 2})
+    queue.rpush({"b" => 2})
     expect(queue.length).to eq(2)
   end
 
   it "can be cleared" do
-    queue.rpush({a: 1})
+    queue.rpush({"a" => 1})
     expect(queue.length).to eq(1)
 
     queue.clear
@@ -37,23 +53,23 @@ shared_examples "a SerializedQueue" do |new_queue|
   end
 
   it "has a pipelined rpush+length operation" do
-    length = queue.pipelined_rpush_and_return_length({a: 1})
+    length = queue.pipelined_rpush_and_return_length({"a" => 1})
     expect(length).to eq(1)
 
-    length = queue.pipelined_rpush_and_return_length({b: 2})
+    length = queue.pipelined_rpush_and_return_length({"b" => 2})
     expect(length).to eq(2)
   end
 
   it "has values" do
-    queue.rpush ({a: 1})
-    queue.rpush ({b: 2})
-    queue.rpush ({c: 3})
+    queue.rpush ({"a" => 1})
+    queue.rpush ({"b" => 2})
+    queue.rpush ({"c" => 3})
 
-    expect(queue.values).to eq([{a: 1},{b: 2},{c: 3}])
+    expect(queue.values).to eq([{"a" => 1},{"b" => 2},{"c" => 3}])
   end
 
   it "has a renamenx_to_random_key operation" do
-    queue.rpush ({a: 1})
+    queue.rpush ({"a" => 1})
 
     key = queue.renamenx_to_random_key
 
@@ -61,6 +77,6 @@ shared_examples "a SerializedQueue" do |new_queue|
 
     q2 = new_queue.call key
 
-    expect(q2.values).to eq([{a: 1}])
+    expect(q2.values).to eq([{"a" => 1}])
   end
 end
