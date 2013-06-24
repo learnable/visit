@@ -1,3 +1,5 @@
+require 'visit/serialized_string'
+
 module Visit
   class SerializedQueue
     class Manager
@@ -29,7 +31,7 @@ module Visit
       end
 
       def available_lengths
-        queue(:enroute).values.map do |key|
+        queue(:enroute).values.map { |a| SerializedString.new(a).decode }.map do |key|
           { key => queue(key).length }
         end 
       end

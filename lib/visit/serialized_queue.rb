@@ -1,3 +1,5 @@
+require 'visit/serialized_string'
+
 module Visit
   class SerializedQueue
     def full?
@@ -14,7 +16,7 @@ module Visit
       new_key = renamenx_to_random_key
 
       if !new_key.nil?
-        Configurable.serialized_queue.call(:enroute).rpush new_key
+        Configurable.serialized_queue.call(:enroute).rpush SerializedString.new(new_key).encode
       end
 
       new_key

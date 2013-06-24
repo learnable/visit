@@ -1,4 +1,5 @@
 require 'visit/has_temporary_cache'
+require 'visit/serialized_string'
 
 module Visit
   class Factory
@@ -73,9 +74,9 @@ module Visit
     end
 
     def get_request_payloads
-      key = serialized_queue_for(:enroute).lpop
+      key = SerializedString.new(serialized_queue_for(:enroute).lpop).decode
 
-      raise "expected a key" if key.nil?
+      raise "expected a key" if key.empty?
 
       request_payload_hashes = serialized_queue_for(key).values
 

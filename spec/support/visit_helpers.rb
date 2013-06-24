@@ -39,7 +39,7 @@ def factory_run(a)
   queue = Visit::SerializedQueue::Memory.instances(key)
   a.each { |rph| queue.rpush rph }
 
-  Visit::Configurable.serialized_queue.call(:enroute).rpush key
+  Visit::Configurable.serialized_queue.call(:enroute).rpush Visit::SerializedString.new(key).encode
 
   Visit::Factory.new.run
 end
