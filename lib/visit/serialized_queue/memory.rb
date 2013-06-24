@@ -10,6 +10,7 @@ module Visit
       end
 
       def rpush(data)
+        super data
         @queue << data
       end
 

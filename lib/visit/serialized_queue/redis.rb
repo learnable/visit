@@ -9,6 +9,8 @@ module Visit
       end
 
       def rpush(data)
+        super data
+
         redis.rpush key, data.to_json
       end
 
