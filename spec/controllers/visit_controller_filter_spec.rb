@@ -17,6 +17,9 @@ describe "Visit::ControllerFilters", type: :controller do
     end
   end
 
+  before { Visit::Configurable.token_cookie_mutator = :visit_tag_controller }
+  after { Visit::Configurable.token_cookie_mutator = :visit_tag_controller }
+
   def token; "0123456789123456"; end
 
   let(:token_next) { "111next111" }
