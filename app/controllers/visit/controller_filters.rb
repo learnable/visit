@@ -9,7 +9,7 @@ module Visit
 
     protected
 
-    def create_visit_event(path = nil)
+    def must_insert_visit_event(path = nil)
       Onboarder.new.accept_unless_ignorable \
         RailsRequestContext.new \
           request,
