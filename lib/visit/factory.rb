@@ -87,7 +87,7 @@ module Visit
     def get_request_payloads
       key = SerializedString.new(serialized_queue_for(:enroute).lpop).decode
 
-      raise "expected a key" if key.empty?
+      raise "Factory#run didn't expect the :enroute queue to be empty" if key.empty?
 
       request_payload_hashes = serialized_queue_for(key).values
 
