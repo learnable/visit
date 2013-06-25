@@ -11,11 +11,11 @@ module Visit
       def rpush(data)
         super data
 
-        redis.rpush key, data.to_json
+        redis.rpush key, encode(data)
       end
 
       def lpop
-        JSON.parse redis.lpop(key)
+        decode redis.lpop(key)
       end
 
       def length
@@ -39,7 +39,7 @@ module Visit
       end
 
       def values
-        redis.lrange(key, 0, -1).map { |data| YAML.load(data) }
+        redis.lrange(key, 0, -1).map { |data| decode(data) }
       end
 
       def renamenx_to_random_key
@@ -57,6 +57,14 @@ module Visit
 
       def key_from_suffix(suffix)
         "visit:#{Rails.application.class.parent_name.downcase}:#{suffix}"
+      end
+
+      def encode(data)
+        data.to_json
+      end
+
+      def decode(data)
+        JSON.parse data
       end
     end
   end
