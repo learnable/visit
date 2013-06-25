@@ -61,11 +61,13 @@ shared_examples "a SerializedQueue" do |new_queue|
   end
 
   it "has values" do
-    queue.rpush ({"a" => 1})
-    queue.rpush ({"b" => 2})
-    queue.rpush ({"c" => 3})
+    serialized_string = Visit::SerializedString.new("fred").encode
 
-    expect(queue.values).to eq([{"a" => 1},{"b" => 2},{"c" => 3}])
+    queue.rpush ({"a" => 1})
+    queue.rpush ([1,2,3])
+    queue.rpush serialized_string
+
+    expect(queue.values).to eq([{"a" => 1},[1,2,3],serialized_string])
   end
 
   it "has a renamenx_to_random_key operation" do
