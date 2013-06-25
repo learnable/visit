@@ -56,7 +56,7 @@ describe "Visit::ControllerFilters", type: :controller do
   shared_examples "a non altering controller filter" do
     context "when cookie contains a token" do
       it "should not alter session" do
-        @request.cookies["token"] = token
+        request.cookies["token"] = token
         get :index
         session.should_not have_key("token")
       end
@@ -66,7 +66,7 @@ describe "Visit::ControllerFilters", type: :controller do
       it "should not alter cookies" do
         session["token"] = token
         get :index
-        @request.cookies.should_not have_key("token")
+        response.cookies.should_not have_key("token")
       end
     end
   end
@@ -80,7 +80,7 @@ describe "Visit::ControllerFilters", type: :controller do
           get :index
           session.should have_key("token")
           session["token"].length.should == Visit::Event::TOKEN_LENGTH
-          @request.cookies.should_not have_key("token")
+          response.cookies.should_not have_key("token")
         end
       end
 
