@@ -5,33 +5,42 @@ describe "Visit::ControllerFilters", type: :controller do
   # ActionController::Base
   controller do
     def index
+      must_insert_visit_event if params.has_key? "must_insert"
       head :ok
     end
   end
 
-  let(:token) { "0123456789123456" }
-  let(:token_next) { "556" }
+  def token; "0123456789123456"; end
+
+  let(:token_next) { "111next111" }
   let(:user_id) { 444 }
 
-  def do_visit(path, token = token, uid = user_id)
+  def prepare_visit(path, opts = {})
+    t = opts[:token] || token
+    user_id = opts[:user_id]
     @request.stub(:path) { path }
-    @request.cookies["token"] = token
+    @request.cookies["token"] = t
+
     if user_id
       create :user, id: user_id if !User.exists?(user_id)
       o = double
-      o.stub(:id) { uid }
+      o.stub(:id) { user_id }
       @controller.stub(:current_user) { o }
     end
+  end
+
+  def do_visit(path, opts = {})
+    prepare_visit path, opts
     get :index
   end
 
   def do_some_visits
-    do_visit "/"                                # X visits
-    do_visit "/learn/css"                       # X visits again
-    do_visit "/courses/xx-123"                  # X visits again
-    do_visit "/courses/blah.js"                 # ignored visit
-    do_visit "/system/blah"                     # ignored visit
-    do_visit "/teach", token_next, user_id      # Y visits
+    do_visit "/"                                            # X visits
+    do_visit "/learn/css"                                   # X visits again
+    do_visit "/courses/xx-123"                              # X visits again
+    do_visit "/courses/blah.js"                             # ignored visit
+    do_visit "/system/blah"                                 # ignored visit
+    do_visit "/teach", token: token_next, user_id: user_id  # Y visits
   end
 
   shared_examples "a non altering controller filter" do
@@ -157,6 +166,35 @@ describe "Visit::ControllerFilters", type: :controller do
     end
   end
 
-  pending "test create_visit_event TODO" do
+  context "must_insert_visit_event" do
+    before do
+      delete_all_visits
+    end
+
+    it "inserts if path is not ignorable" do
+      prepare_visit "/teach", token: token_next, user_id: user_id
+
+      get :index
+      Visit::Event.count.should == 1
+      delete_all_visits
+
+      get :index, :must_insert => 'true'
+      Visit::Event.count.should == 2
+
+      Visit::Event.first.path == "/teach"
+    end
+
+    it "inserts even though the path is ignorable" do
+      prepare_visit "/system/blah", token: token_next, user_id: user_id
+
+      get :index
+      Visit::Event.count.should == 0
+
+      get :index, :must_insert => 'true'
+      Visit::Event.count.should == 1
+
+      Visit::Event.first.path == "/system/blah"
+    end
+
   end
 end
