@@ -64,7 +64,7 @@ module Visit
       end
 
       def decode(data)
-        JSON.parse data
+        data.nil? ? nil : JSON.parse(data)
       end
     end
   end

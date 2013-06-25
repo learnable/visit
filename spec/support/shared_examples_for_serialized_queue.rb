@@ -35,6 +35,10 @@ shared_examples "a SerializedQueue" do |new_queue|
     expect(queue.lpop).to eq({"b" => 2})
   end
 
+  it "#lpop on an empty queue returns nil" do
+    expect(queue.lpop).to eq(nil)
+  end
+
   it "has a length" do
     queue.rpush({"a" => 1})
     expect(queue.length).to eq(1)
