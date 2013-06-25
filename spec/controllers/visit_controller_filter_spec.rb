@@ -69,15 +69,7 @@ describe "Visit::ControllerFilters", type: :controller do
   end
 
   context "#set_visit_token" do
-    context "when Configurable.is_token_cookie_set_in(:visit_tag_controller)" do
-      before do
-        Visit::Configurable.configure do |c|
-          c.is_token_cookie_set_in = ->(sym) do
-            sym == :visit_tag_controller
-          end
-        end
-      end
-
+    context "when Configurable.token_cookie_mutator == :visit_tag_controller" do
       context "when neither session nor cookie contains a token" do
         it_should_behave_like "a non altering controller filter"
 
@@ -91,13 +83,9 @@ describe "Visit::ControllerFilters", type: :controller do
 
     end
 
-    context "when Configurable.is_token_cookie_set_in(:application_controller)" do
+    context "when Configurable.token_cookie_mutator :application_controller" do
       before do
-        Visit::Configurable.configure do |c|
-          c.is_token_cookie_set_in = ->(sym) do
-            sym == :application_controller
-          end
-        end
+        Visit::Configurable.token_cookie_mutator = :application_controller
       end
 
       context "when neither session nor cookie contains a token" do

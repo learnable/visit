@@ -4,7 +4,7 @@ module Visit
       attr_accessor :bulk_insert_batch_size, :bulk_insert_now, :cache, :cookies_match,
         :case_insensitive_string_comparison, :current_user_id,
         :db_connection, :ignorable, :instrumenter_toggle,
-        :is_token_cookie_set_in, :labels_match_all, :labels_match_first,
+        :token_cookie_mutator, :labels_match_all, :labels_match_first,
         :serialized_queue, :notify, :user_agent_robots
 
       def bulk_insert_batch_size
@@ -62,10 +62,8 @@ module Visit
         end
       end
 
-      def is_token_cookie_set_in
-        @is_token_cookie_set_in ||= ->(sym) do
-          sym == :visit_tag_controller # :application_controller or :visit_tag_controller
-        end
+      def token_cookie_mutator
+        @token_cookie_mutator ||= :visit_tag_controller # or :application_controller
       end
 
       def labels_match_all

@@ -52,9 +52,7 @@ To customise, create a config/initializers/visit.rb, eg:
         true # category == :deduper || category == :factory
       end
 
-      c.is_token_cookie_set_in = ->(sym) do
-        sym == :visit_tag_controller # :application_controller or :visit_tag_controller
-      end
+      c.token_cookie_mutator = :visit_tag_controller # or :application_controller
 
       c.labels_match_first = [
           [ :get, %r{^/contact}, :contact_prompt ]

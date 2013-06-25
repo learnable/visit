@@ -24,7 +24,7 @@ module Visit
 
     def set_visit_token
       if !RailsRequestContext::get_token cookies, session
-        if Configurable.is_token_cookie_set_in.call :application_controller
+        if Configurable.token_cookie_mutator == :application_controller
           cookies["token"] = Helper.random_token
         else
           session["token"] = Helper.random_token
