@@ -2,6 +2,12 @@ shared_examples "Factory" do
 
   before { delete_all_visits }
 
+  context "with no requests" do
+    it "raises an exception" do
+      expect { Visit::Factory.new.run }.to raise_error(RuntimeError)
+    end
+  end
+
   context "with some requests" do
     let(:h1) { new_request_payload_hash url: "http://e.org/articles" }
     let(:h2) { new_request_payload_hash url: "http://e.org/articles/1" }
