@@ -5,7 +5,14 @@ describe "Visit::ControllerFilters", type: :controller do
   # ActionController::Base
   controller do
     def index
-      must_insert_visit_event if params.has_key? "must_insert"
+      if params.has_key? "must_insert"
+        if params["must_insert"].nil?
+          must_insert_visit_event
+        else
+          must_insert_visit_event params["must_insert"]
+        end
+      end
+
       head :ok
     end
   end
@@ -171,30 +178,34 @@ describe "Visit::ControllerFilters", type: :controller do
       delete_all_visits
     end
 
-    it "inserts if path is not ignorable" do
-      prepare_visit "/teach", token: token_next, user_id: user_id
+    it "inserts if the request is not ignorable" do
+      prepare_visit "/teach"
 
-      get :index
-      Visit::Event.count.should == 1
-      delete_all_visits
+      get :index, :must_insert => nil
+      Visit::Event.count.should == 2 # one for the controller filter, one for must_insert
 
-      get :index, :must_insert => 'true'
-      Visit::Event.count.should == 2
-
-      Visit::Event.first.path == "/teach"
+      Visit::Event.all.first.path == "/teach"
+      Visit::Event.all.second.path == "/teach"
     end
 
-    it "inserts even though the path is ignorable" do
-      prepare_visit "/system/blah", token: token_next, user_id: user_id
+    it "inserts even though the request is ignorable" do
+      prepare_visit "/system/blah"
 
-      get :index
-      Visit::Event.count.should == 0
-
-      get :index, :must_insert => 'true'
+      get :index, :must_insert => nil
       Visit::Event.count.should == 1
 
       Visit::Event.first.path == "/system/blah"
     end
 
+    it "supports a hardcoded path that's different from request.path" do
+      path1 = "/system/blah/1"
+      path2 = "/system/blah/2"
+
+      prepare_visit path1
+
+      get :index, :must_insert => path2
+      Visit::Event.count.should == 1
+      Visit::Event.first.path == path2
+    end
   end
 end
