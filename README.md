@@ -82,6 +82,7 @@ To customise, create a config/initializers/visit.rb, eg:
           :dalli_store,
           "127.0.0.1:11211",
           { :namespace => "#{Rails.application.class.parent_name}::visit", :expires_in => 28.days }
+        #.silence! - stops cache logging to development.log
     end
 
 Sample implementation of `VisitFactoryWorker`:
