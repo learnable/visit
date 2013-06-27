@@ -15,17 +15,28 @@ module Visit
     end
 
     def recreate_traits
+      self.class.instrumenter.clear
+      self.class.instrumenter.mark start: :recreate_traits
+
       Configurable.cache.clear
 
       Factory.delete_traits
 
+      self.class.instrumenter.mark delete_traits_done: nil
+
       temporary_cache_setup
 
-      Visit::Event.includes(includes).find_in_batches do |a_event|
+      count = 0
+      batch_size = 1000
+      Visit::Event.includes(includes).find_in_batches(batch_size: batch_size) do |a_event|
         create_traits a_event.map { |event| Box.new(nil, event, nil) }
+        count += batch_size
+        self.class.instrumenter.mark create_traits_progress: count
       end
 
       temporary_cache_teardown
+      self.class.instrumenter.mark finish: :recreate_traits
+      self.class.instrumenter.save_to_log
     end
 
     def run
