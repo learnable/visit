@@ -3,8 +3,11 @@ module Visit
     def initialize(category)
       @category = category
       @toggle = Configurable.instrumenter_toggle.call(category)
+
       clear
     end
+
+    attr_writer :category
 
     def mark(h)
       raise "expected Hash" if !h.instance_of?(Hash)
