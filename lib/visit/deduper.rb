@@ -1,8 +1,6 @@
 module Visit
   class Deduper
     def run
-      instrumenter.mark start: nil
-
       {
         Visit::Source => Visit::SourceValue,
         Visit::Trait => Visit::TraitValue

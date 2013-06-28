@@ -10,10 +10,6 @@ module Visit
       Visit::TraitValue.delete_all
     end
 
-    def self.instrumenter
-      @instrumenter ||= Instrumenter.new(:factory)
-    end
-
     def recreate_traits
       self.class.instrumenter.category = :factory_recreate_traits
       self.class.instrumenter.clear
@@ -76,6 +72,10 @@ module Visit
     end
 
     private
+
+    def self.instrumenter
+      @instrumenter ||= Instrumenter.new
+    end
 
     def create_traits(boxes)
       collect = Collect::Traits.new boxes

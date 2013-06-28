@@ -1,6 +1,6 @@
 module Visit
   class Instrumenter
-    def initialize(category)
+    def initialize(category = "")
       @category = category
       @toggle = Configurable.instrumenter_toggle.call(category)
 
