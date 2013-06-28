@@ -15,6 +15,7 @@ module Visit
     end
 
     def recreate_traits
+      self.class.instrumenter.category = :factory_recreate_traits
       self.class.instrumenter.clear
       self.class.instrumenter.mark start: :recreate_traits
 
@@ -40,6 +41,7 @@ module Visit
     end
 
     def run
+      self.class.instrumenter.category = :factory_run
       self.class.instrumenter.clear
       self.class.instrumenter.mark start: :run
 
