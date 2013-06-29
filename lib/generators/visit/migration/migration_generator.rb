@@ -28,6 +28,5 @@ module Visit
         @prev_num = Time.now.utc.strftime("%Y%m%d%H%M%S").to_i
       end
     end
-
   end
 end

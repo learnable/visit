@@ -45,6 +45,5 @@ module Visit
         self.where(v: v).first
       end
     end
-
   end
 end

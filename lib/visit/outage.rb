@@ -26,6 +26,5 @@ module Visit
     def helpers
       ActionController::Base.helpers
     end
-
   end
 end

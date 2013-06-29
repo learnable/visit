@@ -2,7 +2,6 @@ require 'visit/has_temporary_cache'
 
 module Visit
   class DestroyUnused
-
     include Visit::HasTemporaryCache
 
     def initialize(opts = {})

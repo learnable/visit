@@ -28,7 +28,6 @@ class CreateVisitEvents < ActiveRecord::Migration
     add_index :visit_events, :created_at
   end
 
-
   def down
     drop_table :visit_events
   end

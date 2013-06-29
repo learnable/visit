@@ -25,6 +25,7 @@ module Visit
 
       count = 0
       batch_size = 1000
+
       Visit::Event.includes(includes).find_in_batches(batch_size: batch_size) do |a_event|
         create_traits a_event.map { |event| Box.new(nil, event, nil) }
         count += batch_size
@@ -124,5 +125,4 @@ module Visit
 
   class Box < Struct.new(:request_payload, :event, :traits)
   end
-
 end

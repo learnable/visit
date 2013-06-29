@@ -25,6 +25,5 @@ module Visit
     def select_string_for_traits
       @a_traits.map {|k| "#{k}_vtv.v as #{k}" }.join(",")
     end
-
   end
 end

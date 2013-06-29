@@ -55,5 +55,4 @@ class CreateVisitForeignKeys < ActiveRecord::Migration
   def foreign_key_symbol(h)
     "fk_#{h[:table]}_#{h[:foreign_key]}"
   end
-
 end
