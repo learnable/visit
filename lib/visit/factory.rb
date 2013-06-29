@@ -29,16 +29,19 @@ module Visit
       batch_size = 1000
 
       Visit::Event.includes(includes).find_in_batches(batch_size: batch_size) do |a_event|
+        self.class.instrumenter.mark recreate_traits_after_find_in_batches: count
+
         create_traits a_event.map { |event| Box.new(nil, event, nil) }
 
         count += batch_size
-        self.class.instrumenter.mark create_traits_progress: count
+        self.class.instrumenter.mark recreate_traits_progress: count
       end
 
       temporary_cache_teardown
 
       self.class.instrumenter.mark finish: :recreate_traits
       self.class.instrumenter.save_to_log
+      # puts "AMHERE: timegaps: #{self.class.instrumenter.to_instrumenter_history.timegaps}"
     end
 
     def run
