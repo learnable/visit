@@ -59,6 +59,10 @@ shared_examples "Cache" do
         hit.should == "ac"
       end
     end
+
+    it "takes options" do
+      cache.fetch(k1, expires_in: 1.second) {}
+    end
   end
   
   context "#has_key?" do

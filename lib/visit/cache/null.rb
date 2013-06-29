@@ -14,7 +14,7 @@ module Visit
         false
       end
 
-      def fetch(key, options = {})
+      def fetch(key, options = nil)
         yield
       end
 

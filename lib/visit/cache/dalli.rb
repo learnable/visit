@@ -15,7 +15,7 @@ module Visit
         @cache.exist? key.to_s
       end
 
-      def fetch(key, options = {})
+      def fetch(key, options = nil)
         if cache
           raise "expected Cache::key" unless key.instance_of? Visit::Cache::Key
 
