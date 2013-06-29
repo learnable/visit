@@ -36,11 +36,11 @@ module Visit
       private
 
       def bulk_insert_models!(models)
-        Visit::Factory.instrumenter.mark "before_bulk_insert_#{model_class.table_name}" => models.count
+        Visit::Factory.instrumenter.mark "before_bulk_insert_models_#{model_class.table_name}" => models.count
 
         model_class.import columns, models, :validate => false
 
-        Visit::Factory.instrumenter.mark "after_bulk_insert_#{model_class.table_name}" => nil
+        Visit::Factory.instrumenter.mark "after_bulk_insert_models_#{model_class.table_name}" => nil
       end
     end
 
@@ -166,6 +166,8 @@ module Visit
       end
 
       def bulk_insert!
+        Visit::Factory.instrumenter.mark "before_bulk_insert_traits" => nil
+
         models = @boxes.flat_map do |box|
           box[:traits].map do |k,v|
             [
@@ -189,8 +191,6 @@ module Visit
       private
 
       def warm_cache
-        Visit::Factory.instrumenter.mark "before_warm_cache_visit_source_values" => nil
-
         uk = UniqueKeys.new
         @boxes.each { |box| uk.push box.event.source_value_fk_ids }
 

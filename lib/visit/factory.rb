@@ -41,7 +41,10 @@ module Visit
 
       self.class.instrumenter.mark finish: :recreate_traits
       self.class.instrumenter.save_to_log
-      # puts "AMHERE: timegaps: #{self.class.instrumenter.to_instrumenter_history.timegaps}"
+
+      if Rails.env.development?
+        puts "AMHERE: timegaps: #{self.class.instrumenter.to_instrumenter_history.timegaps}"
+      end
     end
 
     def run
@@ -77,6 +80,7 @@ module Visit
 
       self.class.instrumenter.mark finish: :run
       self.class.instrumenter.save_to_log
+      # puts "AMHERE: timegaps: #{self.class.instrumenter.to_instrumenter_history.timegaps}"
     end
 
     private
