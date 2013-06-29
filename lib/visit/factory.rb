@@ -28,7 +28,7 @@ module Visit
       count = 0
       batch_size = 1000
 
-      Visit::Event.includes(includes).find_in_batches(batch_size: batch_size) do |a_event|
+      Visit::Event.find_in_batches(batch_size: batch_size) do |a_event|
         self.class.instrumenter.mark recreate_traits_after_find_in_batches: count
 
         create_traits a_event.map { |event| Box.new(nil, event, nil) }
@@ -119,14 +119,6 @@ module Visit
 
     def serialized_queue_for(key)
       Configurable.serialized_queue.call(key)
-    end
-
-    def includes
-      [
-        :visit_source_values_url,
-        :visit_source_values_user_agent,
-        :visit_source_values_referer
-      ]
     end
   end
 
