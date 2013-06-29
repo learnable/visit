@@ -25,10 +25,6 @@ module Visit
         @cache[k]
       end
 
-      def to_h
-        @cache
-      end
-
       def clear
         @cache = {}
       end
