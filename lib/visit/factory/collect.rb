@@ -23,7 +23,7 @@ module Visit
       def bulk_insert_models!(models)
         Visit::Factory.instrumenter.mark "before_bulk_insert_#{model_class.table_name}" => models.count
 
-        model_class.import models, :validate => false
+        model_class.import columns, models, :validate => false
 
         Visit::Factory.instrumenter.mark "after_bulk_insert_#{model_class.table_name}" => nil
       end
@@ -39,10 +39,7 @@ module Visit
       def bulk_insert!
         models = [].tap do |models|
           @to_import.each do |v, created_at|
-            models << model_class.new.tap do |model|
-              model.v = v
-              model.created_at = created_at
-            end
+            models << [v, created_at]
           end
         end
 
@@ -62,6 +59,10 @@ module Visit
       end
 
       protected
+
+      def columns
+        ["v", "created_at"]
+      end
 
       def dont_import_when_in_cache(candidates)
         candidates.select! { |v, created_at| !Configurable.cache.has_key?(cache_key_for_v(v)) }
@@ -161,16 +162,22 @@ module Visit
       def bulk_insert!
         models = @boxes.flat_map do |box|
           box[:traits].map do |k,v|
-            model_class.new.tap do |model|
-              model.k_id = Visit::TraitValue.get_id_from_find_by_v k
-              model.v_id = Visit::TraitValue.get_id_from_find_by_v v
-              model.visit_event_id = box.event.id
-              model.created_at = box.event.created_at
-            end
+            [
+              Visit::TraitValue.get_id_from_find_by_v(k),
+              Visit::TraitValue.get_id_from_find_by_v(v),
+              box.event.id,
+              box.event.created_at
+            ]
           end
         end
 
         bulk_insert_models! models
+      end
+
+      protected
+
+      def columns
+        ["k_id", "v_id", "visit_event_id", "created_at"]
       end
     end
 
@@ -235,16 +242,22 @@ module Visit
       def bulk_insert!
         models = @a.flat_map do |h|
           h[:pairs].map do |h_pair|
-            model_class.new.tap do |model|
-              model.k_id = h_pair[:k_id]
-              model.v_id = h_pair[:v_id]
-              model.visit_event_id = h[:visit_event_id]
-              model.created_at = h[:created_at]
-            end
+            [
+              h_pair[:k_id],
+              h_pair[:v_id],
+              h[:visit_event_id],
+              h[:created_at]
+            ]
           end
         end
 
         bulk_insert_models! models
+      end
+
+      protected
+
+      def columns
+        ["k_id", "v_id", "visit_event_id", "created_at"]
       end
     end
   end
