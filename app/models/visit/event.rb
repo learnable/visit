@@ -35,11 +35,10 @@ module Visit
     end
 
     def source_value_ids
-      [].tap do |ids|
-        ids << [ url_id, user_agent_id, referer_id].select { |id| !id.nil? }
-        ids << visit_sources.map { |source| [ source.k_id, source.v_id ] }
-      end.flatten.uniq
+      uk = UniqueKeys.new
+      uk.push [ url_id, user_agent_id, referer_id ]
+      visit_sources.each { |source| uk.push [ source.k_id, source.v_id ] }
+      uk.keys
     end
-
   end
 end
