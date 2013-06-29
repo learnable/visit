@@ -23,7 +23,7 @@ module Visit
 
       self.class.instrumenter.mark delete_traits_done: nil
 
-      temporary_cache_setup
+      temporary_cache_setup force: true
 
       count = 0
       batch_size = 1000
