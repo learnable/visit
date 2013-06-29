@@ -28,6 +28,10 @@ module Visit
       mark initial
     end
 
+    def to_instrumenter_history
+      History.new @marks
+    end
+
     private
 
     def toggle?
@@ -35,7 +39,9 @@ module Visit
     end
 
     def mark_with_created_at(h)
-      @marks << hash_with_created_at(h)
+      h = hash_with_created_at(h)
+      # puts "AMHERE: mark_with_created_at: #{h}"
+      @marks << h
     end
 
     def hash_with_created_at(h)
