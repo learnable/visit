@@ -7,13 +7,13 @@ describe Visit::Event::Matcher do
 
     describe "matches?" do
       it "http_method and path" do
-        matcher.matches?("get", path).should be_true
+        matcher.matches?(:get, path).should be_true
       end
 
       it "returns false when there's no match" do
-        matcher.matches?("blah", "/art").should be_false
-        matcher.matches?("post", "aldkcjka").should be_false
-        matcher.matches?("get", "/article").should be_false
+        matcher.matches?(:blah, "/art").should be_false
+        matcher.matches?(:post, "aldkcjka").should be_false
+        matcher.matches?(:get, "/article").should be_false
       end
     end
   end
@@ -23,15 +23,15 @@ describe Visit::Event::Matcher do
     let(:path) { "/articles/123" }
 
     it "matches? :get" do
-      matcher.matches?("get", path).should be_true
+      matcher.matches?(:get, path).should be_true
     end
     it "matches? :post" do
-      matcher.matches?("post", path).should be_true
+      matcher.matches?(:post, path).should be_true
     end
   end
 
   context "after matches?" do
-    before { matcher.matches?("get", path).should be_true }
+    before { matcher.matches?(:get, path).should be_true }
 
     context "matchdata_to_label_h" do
       context "when regexp has no captures" do

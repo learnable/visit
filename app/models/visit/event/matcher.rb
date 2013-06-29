@@ -16,23 +16,14 @@ module Visit
 
     private
 
-    def http_method_matches?(other)
-      any_http_method? || !other || same_http_method?(other)
-    end
-
     def path_matches?(path)
       @matchdata = re.match path
       # Helper.log "AMHERE: path_matches?: re: #{re} path: #{path} matchdata: #{@matchdata}"
       ! @matchdata.nil?
     end
 
-    def any_http_method?
-      http_method == :any
+    def http_method_matches?(other)
+      http_method == :any || http_method == other
     end
-
-    def same_http_method?(other)
-      String(http_method).casecmp(other.to_s) == 0
-    end
-
   end
 end
