@@ -4,6 +4,10 @@ module Visit
       @cache = cache
     end
 
+    def self.short_term
+      12.hours
+    end
+
     protected
 
     def raise_if_not_key(key)
