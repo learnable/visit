@@ -1,7 +1,7 @@
 module Visit
   module HasTemporaryCache
-    def temporary_cache_setup
-      if Configurable.cache.instance_of? Visit::Cache::Null
+    def temporary_cache_setup(opts = {})
+      if Configurable.cache.instance_of?(Visit::Cache::Null) || opts[:force]
         @temporary_cache_instead_of = Configurable.cache
         Configurable.cache = Visit::Cache::Memory.new
       else
