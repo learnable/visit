@@ -19,6 +19,28 @@ module Visit
         marks.map { |h| h[:created_at] }
       end
 
+      def timegaps
+        prev_created_at = nil
+
+        h = {}.tap do |h|
+          marks.each do |m|
+            k = m.keys.first
+            h[k] = [] if h[k].nil?
+            h[k] << (prev_created_at.nil? ? 0 : (m[:created_at] - prev_created_at))
+            prev_created_at = m[:created_at]
+          end
+        end
+
+        h.each do |k,v|
+          h[k] = v.inject { |sum, n| sum + n }
+        end
+
+        {
+          total: h.inject(0) { |sum,x| sum + x.last },
+          breakdown: h
+        }
+      end
+
       def to_s
         lines = []
 
