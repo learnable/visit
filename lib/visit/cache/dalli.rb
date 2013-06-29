@@ -16,15 +16,9 @@ module Visit
       end
 
       def fetch(key, options = nil)
-        if cache
-          raise "expected Cache::key" unless key.instance_of? Visit::Cache::Key
+        raise "expected Cache::key" unless key.instance_of? Visit::Cache::Key
 
-          cache.fetch(key.to_s, options) do
-            yield
-          end
-        else
-          yield
-        end
+        cache.fetch(key.to_s, options) { yield }
       end
 
       def clear
