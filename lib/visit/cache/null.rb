@@ -15,6 +15,8 @@ module Visit
       end
 
       def fetch(key, options = nil)
+        raise_if_not_key key
+
         yield
       end
 

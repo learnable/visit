@@ -16,7 +16,7 @@ module Visit
       end
 
       def fetch(key, options = nil)
-        raise "expected Cache::Key" unless key.instance_of? Visit::Cache::Key
+        raise_if_not_key key
 
         k = key.to_s
 
