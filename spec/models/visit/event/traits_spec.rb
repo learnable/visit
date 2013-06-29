@@ -16,13 +16,13 @@ describe Visit::Event::Traits do
       subject.to_h[:utm_source].should == "fred"
     end
 
-    it "#to_h_fk[:url] has keys whose values are traits" do
-      subject.to_h_fk[:url].keys.should_not be_empty
-      subject.to_h_fk[:url].should == subject.to_h
+    it "private h_fk[:url] has keys whose values are traits" do
+      subject.send(:h_fk)[:url].keys.should_not be_empty
+      subject.send(:h_fk)[:url].should == subject.to_h
     end
 
-    it "#to_h_fk[:user_agent] is empty" do
-      subject.to_h_fk[:user_agent].keys.should be_empty
+    it "private h_fk[:user_agent] is empty" do
+      subject.send(:h_fk)[:user_agent].keys.should be_empty
     end
 
     context "when the url matches a trait that has no value" do
@@ -54,11 +54,34 @@ describe Visit::Event::Traits do
       end
     end
 
-    it "#to_h_fk[:user_agent] has key :robot and an appropriate value" do
-      subject.to_h_fk[:user_agent][:robot].should == subject.to_h[:robot]
+    it "private h_fk[:user_agent] has key :robot and an appropriate value" do
+      subject.send(:h_fk)[:user_agent][:robot].should == subject.to_h[:robot]
     end
-    it "#to_h_fk[:url] does not have key :robot" do
-      subject.to_h_fk[:url].has_key?(:robot).should be_false
+    it "private h_fk[:url] does not have key :robot" do
+      subject.send(:h_fk)[:url].has_key?(:robot).should be_false
+    end
+  end
+
+  context "when Configurable.cache.instance_of? Cache::Memory, we can test that" do
+    before do
+      @cache = Visit::Configurable.cache
+
+      Visit::Configurable.cache = Visit::Cache::Memory.new
+    end
+
+    after { Visit::Configurable.cache = @cache }
+
+    let(:ve) { create(:visit_event, url: url , user_agent: "googlebot") }
+
+    it "to_traits hits the cache" do
+      klass = Visit::Event::MatcherCollection.clone
+
+      Visit::Event::MatcherCollection.should_receive(:new).twice { |o| klass.new o }
+
+      ve.to_traits # cache not hit: two calls to matcher
+      ve.to_traits # cache hit: no calls to matcher
+
+      ve.to_traits.to_h.should_not be_empty # also a cache hit
     end
   end
 end
