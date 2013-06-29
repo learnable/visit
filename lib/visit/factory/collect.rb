@@ -154,7 +154,7 @@ module Visit
 
       def transform!
         @boxes.each do |box|
-          box[:traits] = box.event.to_traits
+          box[:traits] = box.event.to_traits.to_h
         end
       end
 
