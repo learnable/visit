@@ -308,4 +308,3 @@ MAJOR
 
 MODERATE
 * archiving - zip up everying over n months old and send to S3?
-* support a use-case in which all an app has to do is shove a request payload into redis and it's done.    
