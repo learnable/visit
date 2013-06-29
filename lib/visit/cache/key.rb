@@ -1,17 +1,11 @@
 module Visit
   class Cache
-    class Key < Struct.new(:part_a, :part_b)
+    class Key
       def initialize(a,b)
-        self[:part_a] = case_convert a.to_s
-        self[:part_b] = case_convert b.to_s
-
-        self[:part_a].freeze
-        self[:part_b].freeze
+        @key ||= case_convert "#{a.to_s}:#{b.to_s}"
       end
 
-      def key
-        @key ||= "#{part_a}:#{part_b}" # this gets called a lot - optimise for speed
-      end
+      attr_reader :key
       alias_method :to_s, :key
 
       private
