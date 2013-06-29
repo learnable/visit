@@ -37,15 +37,11 @@ module Visit
     end
 
     def get_match_first
-       c = Event::MatcherCollection.new Configurable.labels_match_first
-
-       c.match_first_to_h(event.http_method, path)
+      self.class.matcher_collection_first.match_first_to_h(event.http_method, path)
     end
 
     def get_match_all
-       c = Event::MatcherCollection.new Configurable.labels_match_all
-
-       c.match_all_to_a(event.http_method, path)
+      self.class.matcher_collection_all.match_all_to_a(event.http_method, path)
     end
 
     def non_nil_v!(h)
@@ -68,6 +64,16 @@ module Visit
       id = event.send "#{fk}_id"
 
       Cache::Key.new "#{self.class.to_s}:#{fk}", id
+    end
+
+    def self.matcher_collection_first
+       @matcher_collection_first ||= \
+         Event::MatcherCollection.new Configurable.labels_match_first
+    end
+
+    def self.matcher_collection_all
+       @matcher_collection_all ||= \
+         Event::MatcherCollection.new Configurable.labels_match_all
     end
   end
 end

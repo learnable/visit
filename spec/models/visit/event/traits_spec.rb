@@ -74,12 +74,10 @@ describe Visit::Event::Traits do
     let(:ve) { create(:visit_event, url: url , user_agent: "googlebot") }
 
     it "to_traits hits the cache" do
-      klass = Visit::Event::MatcherCollection.clone
+      ve.should_receive(:http_method).twice.and_return(:get)
 
-      Visit::Event::MatcherCollection.should_receive(:new).twice { |o| klass.new o }
-
-      ve.to_traits # cache not hit: two calls to matcher
-      ve.to_traits # cache hit: no calls to matcher
+      ve.to_traits # cache not hit: two calls to http_method
+      ve.to_traits # cache hit: no calls to http_method
 
       ve.to_traits.to_h.should_not be_empty # also a cache hit
     end
