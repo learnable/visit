@@ -18,6 +18,18 @@ module Visit
 
       attr_reader :model_class
 
+      def warm_cache_row(id, v, model_class)
+        Configurable.cache.fetch(cache_key_for_v(v, model_class)) { id }
+
+        if model_class == Visit::SourceValue
+          Configurable.cache.fetch(Visit::Event.cache_key_for_id(id)) { v }
+        end
+      end
+
+      def cache_key_for_v(v, model_class)
+        model_class.cache_key_for_v v
+      end
+
       private
 
       def bulk_insert_models!(models)
@@ -65,14 +77,14 @@ module Visit
       end
 
       def dont_import_when_in_cache(candidates)
-        candidates.select! { |v, created_at| !Configurable.cache.has_key?(cache_key_for_v(v)) }
+        candidates.select! { |v, created_at| !Configurable.cache.has_key?(cache_key_for_v(v, model_class)) }
       end
 
       def dont_import_when_in_db(candidates)
         for_each_row_in_values_table(candidates) do |row|
           candidates.delete(row.v)
 
-          warm_cache_row(row.id, row.v)
+          warm_cache_row(row.id, row.v, model_class)
         end
       end
 
@@ -81,7 +93,7 @@ module Visit
           values = candidates.keys
 
           begin
-            subset = values.slice!(0,100)
+            subset = values.slice!(0, 1000)
 
             model_class.where(v: subset).each do |row|
               yield row
@@ -92,22 +104,8 @@ module Visit
 
       def warm_cache(candidates)
         for_each_row_in_values_table(candidates) do |row|
-          warm_cache_row(row.id, row.v)
+          warm_cache_row(row.id, row.v, model_class)
         end
-      end
-
-      def warm_cache_row(id, v)
-        Configurable.cache.fetch(cache_key_for_v(v)) { id }
-
-        if model_class == Visit::SourceValue
-          Configurable.cache.fetch(Visit::Event.cache_key_for_id(id)) { v }
-        end
-      end
-
-      private
-
-      def cache_key_for_v(v)
-        model_class.cache_key_for_v v
       end
     end
 
