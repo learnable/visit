@@ -153,6 +153,9 @@ module Visit
 
       def transform!
         Visit::Factory.instrumenter.mark "before_transform_#{model_class.table_name}" => nil
+
+        warm_cache
+
         @boxes.each do |box|
           box[:traits] = box.event.to_traits.to_h
         end
@@ -178,6 +181,25 @@ module Visit
 
       def columns
         ["k_id", "v_id", "visit_event_id", "created_at"]
+      end
+
+      private
+
+      def warm_cache
+        Visit::Factory.instrumenter.mark "before_warm_cache_visit_source_values" => nil
+
+        uk = UniqueKeys.new
+        @boxes.each { |box| uk.push box.event.source_value_fk_ids }
+
+        source_value_ids = uk.keys.select do |id|
+          ! Configurable.cache.has_key? Visit::Event.cache_key_for_id(id)
+        end
+
+        Visit::SourceValue.where(id: source_value_ids).each do |sv|
+          warm_cache_row(sv.id, sv.v, Visit::SourceValue)
+        end
+
+        Visit::Factory.instrumenter.mark "after_warm_cache_visit_source_values" => nil
       end
     end
 
