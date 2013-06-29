@@ -57,12 +57,19 @@ module Visit
       private
 
       def marks_from(o)
-        # o is either a string containing json or a instance of Visit::Log
+        # o is either:
+        # - a string containing json
+        # - an instance of Visit::Log
+        # - an array
 
-        JSON.parse(o.instance_of?(Visit::Log) ? o.message : o).map do |mark|
-          m = mark.symbolize_keys
-          m[:created_at] = Time.parse(m[:created_at]) if m.has_key?(:created_at)
-          m
+        if o.instance_of? Array
+          o
+        else
+          JSON.parse(o.instance_of?(Visit::Log) ? o.message : o).map do |mark|
+            m = mark.symbolize_keys
+            m[:created_at] = Time.parse(m[:created_at]) if m.has_key?(:created_at)
+            m
+          end
         end
       end
     end
