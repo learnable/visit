@@ -20,15 +20,8 @@ module Visit
 
         k = key.to_s
 
-        is_hit = true
+        @cache[k] = yield if !has_key? key
 
-        if !has_key? key
-          is_hit = false
-
-          @cache[k] = yield
-        end
-
-        # Helper.log "AMHERE: cache: id: #{@cache.object_id} key: #{k} #{is_hit ? 'hit' : 'miss'} returns: #{@cache[k].to_s}" if k =~ /robot/i
         @cache[k]
       end
 
