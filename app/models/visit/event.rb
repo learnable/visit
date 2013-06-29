@@ -34,6 +34,12 @@ module Visit
       Traits.new self
     end
 
+    def source_value_fk_ids
+      uk = UniqueKeys.new
+      uk.push [ url_id, user_agent_id, referer_id ]
+      uk.keys
+    end
+
     def source_value_ids
       uk = UniqueKeys.new
       uk.push [ url_id, user_agent_id, referer_id ]
