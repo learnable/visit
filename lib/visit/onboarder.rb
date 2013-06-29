@@ -14,9 +14,6 @@ module Visit
           queue_filling.pipelined_rpush_and_return_length rails_request_context.to_h
 
           transfer_to_enroute(queue_filling) if queue_filling.full?
-
-          # TODO: remove references to queue_legacy once flippa has migrated
-          transfer_to_enroute(queue_legacy) if (queue_legacy.length > 0)
         rescue => e
           Configurable.notify.call e
         end
@@ -33,14 +30,6 @@ module Visit
 
     def queue_filling
       @queue_filling ||= Configurable.serialized_queue.call :filling
-    end
-
-    def queue_legacy
-      if !@queue_legacy
-        @queue_legacy = Configurable.serialized_queue.call ""
-        @queue_legacy.instance_variable_set(:@key, "visit:#{Rails.application.class.parent_name}:request_payload_hashes")
-      end
-      @queue_legacy
     end
   end
 end
