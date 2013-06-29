@@ -14,6 +14,9 @@ module Visit
         collect.bulk_insert!
       end
 
+      def transform!
+      end
+
       protected
 
       attr_reader :model_class
@@ -232,9 +235,6 @@ module Visit
         Visit::Factory.instrumenter.mark "after_bulk_insert_#{model_class.table_name}" => @boxes.count
       end
 
-      def transform!
-      end
-
       private
 
       def payload_to_source_value_id(value)
@@ -247,28 +247,16 @@ module Visit
     class Collect::Sources < Collect
       def initialize(boxes)
         super Visit::Source, boxes
-
-        @a = []
-      end
-
-      def transform!
-        @boxes.each do |box|
-          @a << {
-            visit_event_id: box.event.id,
-            created_at: box.request_payload[:created_at],
-            pairs: box.request_payload.to_pairs
-          }
-        end
       end
 
       def bulk_insert!
-        models = @a.flat_map do |h|
-          h[:pairs].map do |h_pair|
+        models = @boxes.flat_map do |box|
+          box.request_payload.to_pairs.map do |h_pair|
             [
               h_pair[:k_id],
               h_pair[:v_id],
-              h[:visit_event_id],
-              h[:created_at]
+              box.event.id,
+              box.request_payload[:created_at]
             ]
           end
         end
