@@ -154,7 +154,7 @@ module Visit
       def transform!
         Visit::Factory.instrumenter.mark "before_transform_#{model_class.table_name}" => nil
 
-        warm_cache
+        warm_cache if @boxes.first.request_payload.nil?
 
         @boxes.each do |box|
           box[:traits] = box.event.to_traits.to_h
