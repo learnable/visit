@@ -8,6 +8,10 @@ module Visit
       cookies["token"] || session[:token]
     end
 
+    def get_url
+      hardcoded_path.nil? ? request.url : hardcoded_path_to_url
+    end
+
     def path
       hardcoded_path || request.path
     end
@@ -19,7 +23,7 @@ module Visit
     def to_h
       {}.tap do |h|
         h[:http_method] = request.method
-        h[:url]         = request.url
+        h[:url]         = get_url
         h[:token]       = get_token
         h[:user_id]     = user_id
         h[:user_agent]  = request.env["HTTP_USER_AGENT"]
@@ -29,6 +33,12 @@ module Visit
         h[:must_insert] = true if must_insert
         h[:created_at]  = Time.now
       end
+    end
+
+    private
+
+    def hardcoded_path_to_url
+      request.url.sub(/\?.*/, "").sub(/(.*)#{request.path}/, '\1') + hardcoded_path
     end
   end
 end

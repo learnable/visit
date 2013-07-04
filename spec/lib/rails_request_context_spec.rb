@@ -6,6 +6,9 @@ describe Visit::RailsRequestContext do
       def index
         head :ok
       end
+      def show
+        head :ok
+      end
     end
 
     def new_rails_request_context(opts = {})
@@ -53,12 +56,26 @@ describe Visit::RailsRequestContext do
         end
       end
 
-      it "does not remove query parameters" do
-        get :index, foo: "bar"
+      context "the :url key has the correct scheme, host, query params etc" do
+        it "when the url is supplied via the Rails request" do
+          get :index, foo: "bar"
 
-        url = new_rails_request_context(cookies: {}).to_h[:url]
+          url = new_rails_request_context(cookies: {}).to_h[:url]
 
-        expect(url).to eq("http://test.host/anonymous?foo=bar")
+          expect(url).to match(/\?foo=bar/)
+          expect(url).to match(Regexp.new(request.host))
+          expect(url).to match(Regexp.new(request.scheme))
+        end
+
+        it "when the path is hardcoded" do
+          get :show, id: 3, aaa: "bbb"
+
+          url = new_rails_request_context({ cookies: { "token" => "123"}, must_insert: true, hardcoded_path: "/fred?foo=bar" }).to_h[:url]
+
+          expect(url).to match(/\/fred\?foo=bar/)
+          expect(url).to match(Regexp.new(request.host))
+          expect(url).to match(Regexp.new(request.scheme))
+        end
       end
     end
 
