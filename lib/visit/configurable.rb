@@ -94,7 +94,6 @@ module Visit
 
       def serialized_queue
         @serialized_queue ||= ->(key) do
-          # Visit::SerializedQueue::Redis.new($redis, key)
           Visit::SerializedQueue::Memory.instances(key)
         end
       end
