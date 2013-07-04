@@ -23,11 +23,11 @@ describe Visit::Factory do
       @sq = Visit::Configurable.serialized_queue
       Visit::Configurable.serialized_queue = ->(key) { Visit::SerializedQueue::Redis.new($redis, key) }
 
-     RSpec.configure do |config|
+      RSpec.configure do |config|
         config.order_groups_and_examples do |list|
           list.sort_by { |item| item.description }
         end
-     end
+      end
     end
 
     after { Visit::Configurable.serialized_queue = @sq }
