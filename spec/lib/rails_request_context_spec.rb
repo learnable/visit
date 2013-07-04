@@ -52,6 +52,14 @@ describe Visit::RailsRequestContext do
           subject[:cookies]["flip_bbb"].should == "bbb"
         end
       end
+
+      it "does not remove query parameters" do
+        get :index, foo: "bar"
+
+        url = new_rails_request_context(cookies: {}).to_h[:url]
+
+        expect(url).to eq("http://test.host/anonymous?foo=bar")
+      end
     end
 
   end

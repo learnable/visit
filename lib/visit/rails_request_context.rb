@@ -12,10 +12,6 @@ module Visit
       hardcoded_path || request.path
     end
 
-    def get_url
-      path ? "#{request.scheme}://#{request.host}/#{path}" : request.url
-    end
-
     def get_token
       RailsRequestContext.get_token cookies, session
     end
@@ -23,7 +19,7 @@ module Visit
     def to_h
       {}.tap do |h|
         h[:http_method] = request.method
-        h[:url]         = get_url
+        h[:url]         = request.url
         h[:token]       = get_token
         h[:user_id]     = user_id
         h[:user_agent]  = request.env["HTTP_USER_AGENT"]
