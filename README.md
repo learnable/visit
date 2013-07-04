@@ -249,6 +249,14 @@ Via <code>psql</code>
 CREATE USER visit CREATEDB;
 ```
 
+### redis
+
+You'll need a redis server running.
+
+### Memcache
+
+You'll need a memcache server running on port 11211.
+
 ### Then
 ```bash
 bundle
@@ -258,6 +266,14 @@ rails g visit:migration
 bundle exec rake db:migrate
 bundle exec rake db:migrate RAILS_ENV=test
 ```
+
+If the generated visit migration changes, remove them
+
+```
+rm spec/dummy/db/migrate/*_visit_*
+```
+
+and re-run them.
 
 visit_event_views
 -----------------
