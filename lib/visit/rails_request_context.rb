@@ -8,10 +8,6 @@ module Visit
       cookies["token"] || session[:token]
     end
 
-    def get_url
-      hardcoded_path.nil? ? request.url : hardcoded_path_to_url
-    end
-
     def path
       hardcoded_path || request.path
     end
@@ -36,6 +32,10 @@ module Visit
     end
 
     private
+
+    def get_url
+      hardcoded_path.nil? ? request.url : hardcoded_path_to_url
+    end
 
     def hardcoded_path_to_url
       request.url.sub(/\?.*/, "").sub(/(.*)#{request.path}/, '\1') + hardcoded_path
