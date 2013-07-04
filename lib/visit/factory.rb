@@ -95,6 +95,8 @@ module Visit
 
       raise "expected queue to have values" if request_payload_hashes.empty?
 
+      serialized_queue_for(key).clear
+
       request_payloads = request_payload_hashes.map do |rph|
         RequestPayload.new rph
       end.select do |request_payload|
