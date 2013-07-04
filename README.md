@@ -261,19 +261,12 @@ You'll need a memcache server running on port 11211.
 ```bash
 bundle
 cd spec/dummy
+rm db/migrate/*_visit_* # only necessary if migrations change, but can't hurt
 bundle exec rake db:create
 rails g visit:migration
 bundle exec rake db:migrate
 bundle exec rake db:migrate RAILS_ENV=test
 ```
-
-If the generated visit migration changes, remove them
-
-```
-rm spec/dummy/db/migrate/*_visit_*
-```
-
-and re-run them.
 
 visit_event_views
 -----------------
