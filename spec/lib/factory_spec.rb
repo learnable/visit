@@ -34,8 +34,8 @@ describe Visit::Factory do
 
     it_should_behave_like "Factory"
 
-    context "zzz after redis specs" do
-      it "hasn't leaked any keys" do
+    context "zzz after behaving like a factory" do
+      it "no keys have leaked into Redis" do
         $redis.keys.count.should == 0
       end
     end
