@@ -4,6 +4,8 @@ require 'visit/has_path'
 
 module Visit
   class Event < BaseModel
+    self.table_name = "visit_events"
+
     has_many :visit_traits,  class_name: "Visit::Trait",  foreign_key: "visit_event_id", dependent: :destroy
     has_many :visit_sources, class_name: "Visit::Source", foreign_key: "visit_event_id", dependent: :destroy
 
