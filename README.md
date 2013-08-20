@@ -249,10 +249,19 @@ Via <code>psql</code>
 CREATE USER visit CREATEDB;
 ```
 
+### redis
+
+You'll need a redis server running.
+
+### Memcache
+
+You'll need a memcache server running on port 11211.
+
 ### Then
 ```bash
 bundle
 cd spec/dummy
+rm db/migrate/*_visit_* # only necessary if migrations change, but can't hurt
 bundle exec rake db:create
 rails g visit:migration
 bundle exec rake db:migrate

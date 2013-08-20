@@ -12,10 +12,6 @@ module Visit
       hardcoded_path || request.path
     end
 
-    def get_url
-      path ? "#{request.scheme}://#{request.host}/#{path}" : request.url
-    end
-
     def get_token
       RailsRequestContext.get_token cookies, session
     end
@@ -33,6 +29,16 @@ module Visit
         h[:must_insert] = true if must_insert
         h[:created_at]  = Time.now
       end
+    end
+
+    private
+
+    def get_url
+      hardcoded_path.nil? ? request.url : hardcoded_path_to_url
+    end
+
+    def hardcoded_path_to_url
+      request.url.sub(/\?.*/, "").sub(/(.*)#{request.path}/, '\1') + hardcoded_path
     end
   end
 end

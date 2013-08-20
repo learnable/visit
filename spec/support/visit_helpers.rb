@@ -36,7 +36,7 @@ end
 def factory_run(a)
   key = Visit::Helper.random_token
 
-  queue = Visit::SerializedQueue::Memory.instances(key)
+  queue = Visit::Configurable.serialized_queue.call(key)
   a.each { |rph| queue.rpush rph }
 
   Visit::Configurable.serialized_queue.call(:enroute).rpush Visit::SerializedString.new(key).encode

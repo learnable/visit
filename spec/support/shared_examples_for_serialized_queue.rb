@@ -74,15 +74,19 @@ shared_examples "a SerializedQueue" do |new_queue|
     expect(queue.values).to eq([{"a" => 1},[1,2,3],serialized_string])
   end
 
-  it "has a renamenx_to_random_key operation" do
-    queue.rpush ({"a" => 1})
+  context "the renamenx_to_random_key operation" do
+    after { new_queue.call(@key).clear }
 
-    key = queue.renamenx_to_random_key
+    it "renames the key" do
+      queue.rpush ({"a" => 1})
 
-    key.should_not be_nil
+      @key = queue.renamenx_to_random_key
 
-    q2 = new_queue.call key
+      @key.should_not be_nil
 
-    expect(q2.values).to eq([{"a" => 1}])
+      q2 = new_queue.call @key
+
+      expect(q2.values).to eq([{"a" => 1}])
+    end
   end
 end

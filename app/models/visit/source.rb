@@ -1,5 +1,7 @@
 module Visit
   class Source < BaseModel
+    self.table_name = "visit_sources"
+
     belongs_to :visit_event, :class_name => "Visit::Event"
     belongs_to :key,         :class_name => "Visit::SourceValue", foreign_key: :k_id
     belongs_to :value,       :class_name => "Visit::SourceValue", foreign_key: :v_id
