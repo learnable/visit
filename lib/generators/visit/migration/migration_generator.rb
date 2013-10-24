@@ -1,4 +1,4 @@
-require "rails/generators/active_record/migration"
+require "rails/generators/active_record"
 
 module Visit
   class MigrationGenerator < Rails::Generators::Base
