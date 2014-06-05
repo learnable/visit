@@ -162,6 +162,12 @@ describe "Visit::ControllerFilters", type: :controller do
         do_some_visits
       }.to change { Visit::Event.count }.by(4)
     end
+
+    it "doesn't call Visit::Configurable.current_user_id for ignorable" do
+      expect(Visit::Configurable.current_user_id).to receive(:call).exactly(4).times
+      push_onto_filling_queue h_ignorable
+      do_some_visits
+    end
   end
 
   context "must_insert_visit_event" do

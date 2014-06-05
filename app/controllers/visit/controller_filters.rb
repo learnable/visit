@@ -33,6 +33,8 @@ module Visit
     end
 
     def on_every_visit_request
+      return if Onboarder.ignorable?(request.path)
+
       Onboarder.new.accept_unless_ignorable \
         RailsRequestContext.new \
           request,
