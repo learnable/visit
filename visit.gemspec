@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
 
   # Dependencies for dev/testing of the actual gem. Test gems are required
   # manually in spec_helper.
-  s.add_development_dependency("rspec-rails")
+  s.add_development_dependency("rspec-rails", "~> 2")
   s.add_development_dependency("factory_girl_rails")
 
   # NOTE dependencies for the dummy app are in the Gemfile
