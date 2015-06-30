@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/learnable/visit"
   s.summary     = %q{Record visits to a site so that they're easy to analyse afterward.}
   s.description = %q{Based on Learnable visit events}
+  s.license     = 'GPL-2'
 
   s.rubyforge_project = "visit"
 
