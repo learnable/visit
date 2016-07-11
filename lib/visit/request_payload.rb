@@ -48,8 +48,8 @@ module Visit
       [].tap do |ret|
         filtered_cookies.each do |k,v|
           ret << {
-            k_id: SourceValue.get_id_from_optimistic_find_or_create_by_v(k),
-            v_id: SourceValue.get_id_from_optimistic_find_or_create_by_v(non_nil_v(v))
+            k_id: SourceValue.get_id_from_optimistic_find_or_create_by(v: k),
+            v_id: SourceValue.get_id_from_optimistic_find_or_create_by(v: non_nil_v(v))
           }
         end
       end

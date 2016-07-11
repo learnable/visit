@@ -147,7 +147,7 @@ module Visit
           end
         end
       end
-    end    
+    end  
 
     class Collect::Traits < Collect
       def initialize(boxes)
@@ -240,7 +240,7 @@ module Visit
       def payload_to_source_value_id(value)
         value.nil? ?
           nil :
-          Visit::SourceValue.get_id_from_optimistic_find_or_create_by_v(value)
+          Visit::SourceValue.get_id_from_optimistic_find_or_create_by(v: value)
       end
     end
 

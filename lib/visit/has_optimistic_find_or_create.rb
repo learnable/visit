@@ -1,10 +1,10 @@
 module Visit
   module HasOptimisticFindOrCreate
-    def get_id_from_optimistic_find_or_create_by_v(v)
+    def get_id_from_optimistic_find_or_create_by(v: v)
       raise "unexpected v.nil?" if v.nil?
 
       Configurable.cache.fetch(cache_key_for_v(v)) do
-        optimistic_find_or_create_by_v(v).id
+        optimistic_find_or_create_by(v: v).id
       end
     end
 
@@ -36,9 +36,9 @@ module Visit
 
     private
 
-    def optimistic_find_or_create_by_v(v)
+    def optimistic_find_or_create_by(v: v)
       begin
-        self.find_or_create_by_v v
+        self.find_or_create_by(v: v)
       rescue ActiveRecord::StatementInvalid => e
         # multiple workers using find_or_create_by can result in a race condition
         # in which case, assume the row exists and return it

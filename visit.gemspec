@@ -22,8 +22,8 @@ Gem::Specification.new do |s|
   # specify any dependencies here; for example:
   # s.add_runtime_dependency "rest-client"
 
-  s.add_dependency("rails", "~> 3.2")
-  s.add_dependency("activerecord-import", ">= 0.3.1")
+  s.add_dependency("rails", "~> 4.0")
+  s.add_dependency("activerecord-import", ">= 0.15.0")
   s.add_dependency("i18n")
   s.add_dependency("addressable")
   s.add_dependency("user_agent_parser")
