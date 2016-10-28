@@ -1,6 +1,6 @@
 module Visit
   class Query::Trait < Query
-    def initialize(trait, relation = Event.scoped)
+    def initialize(trait, relation = Event.all)
       @trait = trait
       super relation
     end

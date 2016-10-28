@@ -1,6 +1,6 @@
 module Visit
   class Query::LabelledEvent < Query
-    def initialize(a_traits = [], relation = Event.scoped)
+    def initialize(a_traits = [], relation = Event.all)
       @relation = relation
       @a_traits = a_traits.map(&:to_s)
     end
