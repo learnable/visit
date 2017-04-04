@@ -1,6 +1,6 @@
 module Visit
   module HasOptimisticFindOrCreate
-    def get_id_from_optimistic_find_or_create_by(v: v)
+    def get_id_from_optimistic_find_or_create_by(v: vee)
       raise "unexpected v.nil?" if v.nil?
 
       Configurable.cache.fetch(cache_key_for_v(v)) do
@@ -36,7 +36,7 @@ module Visit
 
     private
 
-    def optimistic_find_or_create_by(v: v)
+    def optimistic_find_or_create_by(v: vee)
       begin
         self.find_or_create_by(v: v)
       rescue ActiveRecord::StatementInvalid => e
