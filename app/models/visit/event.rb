@@ -21,10 +21,6 @@ module Visit
     include Visit::StoresIpAddress
     stores_ip_address :remote_ip
 
-    attr_accessible :token
-    attr_accessible :user_id
-    attr_accessible :remote_ip
-
     include Event::HasCachedAttributes
     include Event::HasHttpMethod
     include Visit::HasIgnorable
